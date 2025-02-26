@@ -1,0 +1,19 @@
+1) Qu'est ce que Git ? Quelle différence avec GitHub ?
+
+Git est un système de gestion de versions alors que GitHub est une plateforme d'hébergement de dépôts Git.
+
+2) Qu'est ce qu'un Repository ?
+
+Un "Repository" est un dossier qui contient un projet fait par un utilisateur avec l'historique des modifications.
+
+3) Qu'est ce qu'un commit ? Un push ? Un pull ?
+
+Un "commit" permet d'enregistrer les modifications apportées aux fichiers, un "push" envoie les commits enregistrés sur l'ordinateur vers un "Repository" en ligne et un "pull" récupère les dernières modifications d'un repository en ligne.
+
+4) A quoi sert le fichier README.md dans un repository GitHub ?
+
+Un fichier README.MD permet de présenter son projet, d'expliquer son utilisation et de donner des instructions d'installation.
+
+5) Comment récupérer un repository GitHub en ligne de commande sur un invite de commande ?
+
+Pour récupérer un repository GitHub en ligne de commande, il faut taper la commande : "git clone URL_DU_REPO".
