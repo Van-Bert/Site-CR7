@@ -1,0 +1,140 @@
+/* Style général */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #0b6623; /* Couleur verte pour imiter l'herbe d'un terrain de football */
+    margin: 0;
+    padding: 0;
+    color: white;
+    text-align: center;
+}
+
+/* Bannière ou titre principal */
+h1 {
+    font-size: 3em;
+    margin-top: 20px;
+    color: #f70612; /* Couleur jaune pour rappeler les maillots ou le soleil */
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Conteneur principal */
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Style des boutons, en forme de ballon */
+.button {
+    display: inline-block;
+    background-color: #ff0101; /* Jaune rappelant la couleur des ballons de foot ou des arbitres */
+    color: #000;
+    border: 2px solid #000;
+    padding: 15px 30px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #e74c3c; /* Rouge pour l'effet hover */
+}
+
+button {
+    color: #c01e1e;
+    text-decoration: none;
+}
+
+button:hover {
+    color: #961818;
+    text-shadow: 1px 1px 6px #ffffff;
+}
+
+/* Style des cartes (par exemple pour des joueurs ou des équipes) */
+.card {
+    background-color: #ffffff;
+    color: #000;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px;
+    display: inline-block;
+    width: 250px;
+    text-align: left;
+    font-size: 1.2em;
+}
+
+/* Ligne de but en bas de page */
+footer {
+    background-color: #2c3e50;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    color: #fff;
+}
+
+/* Animation des ballons de foot */
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.football {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background: url('football.png') no-repeat center;
+    background-size: contain;
+    animation: bounce 1s infinite;
+}
+
+/* Style du terrain de foot */
+.field {
+    background-color: #27ae60; /* Vert pour l'herbe */
+    border: 5px solid white; /* Lignes du terrain */
+    position: relative;
+    height: 400px;
+    width: 600px;
+    margin: 50px auto;
+}
+
+.field::before, .field::after {
+    content: "";
+    position: absolute;
+    background-color: white;
+}
+
+.field::before {
+    width: 5px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+}
+
+.field::after {
+    width: 100%;
+    height: 5px;
+    top: 50%;
+    left: 0;
+}
+
+.goal {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    background-color: rgb(196, 24, 24);
+    height: 100px;
+    width: 10px;
+}
+
+
