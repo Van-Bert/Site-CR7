@@ -5,854 +5,965 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600;800&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500&display=swap">
 <style>
-/* Layout : une table de jeu verticale qui tient sur un écran de téléphone — adversaire en haut, vous en bas, main en éventail défilant. */
+/* Layout : une boutique de nuit sous la lune — en-tête collant, contenu défilant, barre d'onglets en bas ; l'ouverture de booster prend tout l'écran. */
 :root{
-  --table:#15121e; --table2:#1d1829; --panel:#251f35; --line:#3b3252;
-  --ink:#f0e7d4; --muted:#a99fbd; --gold:#e3b14b; --gold-ink:#2a1d05;
-  --hp:#e5484d; --mana:#4ea6ff; --ok:#62d784; --frost:#9fdcff;
-  --feu:#e8643c; --eau:#3d9ee0; --sylve:#5fb35a; --ombre:#a374db;
+  --night:#100d1a; --night2:#1a1530; --panel:#221c38; --panel2:#2b2447; --line:#3d3460;
+  --ink:#f3ead6; --muted:#a79dc2; --moon:#f5d77e; --moon-ink:#2b1f05; --ok:#6fdc8c; --bad:#ff6b6f;
+  --c:#9a99a4; --p:#79d391; --r:#6fb2ff; --e:#c58bff; --l:#ffcf5a; --m:#ff7ad9;
   --f-display:"Grenze Gotisch", "Palatino Linotype", Georgia, serif;
   --f-body:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
+html{background:var(--night)}
 body{
-  background:radial-gradient(120% 70% at 50% 50%, var(--table2), var(--table) 70%) fixed, var(--table);
-  color:var(--ink); font-family:var(--f-body); font-size:14px;
-  -webkit-user-select:none; user-select:none; touch-action:manipulation;
-  -webkit-tap-highlight-color:transparent;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.55) 0 1px, transparent 1.5px) 0 0/97px 89px,
+    radial-gradient(circle at 63% 41%, rgba(255,255,255,.35) 0 1px, transparent 1.5px) 0 0/131px 113px,
+    radial-gradient(120% 60% at 50% 0%, #2a2150, var(--night) 70%) fixed,
+    var(--night);
+  color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.4;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--night)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 
-#app{
-  height:100%; max-width:540px; margin:0 auto;
-  padding-left:max(12px, env(safe-area-inset-left, 0px));
-  padding-right:max(12px, env(safe-area-inset-right, 0px));
-  padding-block:8px;
-  display:flex; flex-direction:column; gap:6px;
-}
+/* ——— En-tête ——— */
+header.top{position:sticky;top:env(safe-area-inset-top, 0px);z-index:9;background:color-mix(in srgb,var(--night) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
+.brand{font-family:var(--f-display);font-size:24px;line-height:1;color:var(--moon);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coins{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:var(--panel2);border:1px solid color-mix(in srgb,var(--moon) 45%,var(--line));font-weight:800;font-variant-numeric:tabular-nums}
+.coins .ic{font-size:15px}
+.sync{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.sync.cloud{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.sync.saving{background:var(--moon)}
 
-/* ——— Héros ——— */
-.hero{
-  display:flex; align-items:center; gap:10px; padding:6px 10px;
-  background:var(--panel); border:1px solid var(--line); border-radius:12px;
-  position:relative; flex:none; transition:box-shadow .2s, border-color .2s;
-}
-.hero .sigil{
-  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;
-  background:color-mix(in srgb, var(--elc) 30%, var(--table)); border:2px solid var(--elc); flex:none;
-}
-.hero .who{min-width:0;flex:1}
-.hero .hname{font-family:var(--f-display);font-size:19px;line-height:1;letter-spacing:.02em}
-.hero .sub{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-weight:800;font-variant-numeric:tabular-nums;font-size:15px}
-.pill.hp{background:color-mix(in srgb,var(--hp) 22%,transparent);color:#ffb3b5;border:1px solid color-mix(in srgb,var(--hp) 55%,transparent)}
-.pill.mn{background:color-mix(in srgb,var(--mana) 18%,transparent);color:#bfe0ff;border:1px solid color-mix(in srgb,var(--mana) 50%,transparent)}
-.hero.target{border-color:var(--hp);box-shadow:0 0 0 2px var(--hp),0 0 18px color-mix(in srgb,var(--hp) 60%,transparent);animation:pulse 1s ease-in-out infinite}
-.hero.target.friendly{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
-.pips{display:flex;gap:2px;margin-top:3px}
-.pip{width:7px;height:7px;border-radius:2px;transform:rotate(45deg);background:var(--line)}
-.pip.on{background:var(--mana);box-shadow:0 0 5px var(--mana)}
+main{padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px))}
+main .wrap{padding-block:16px;display:flex;flex-direction:column;gap:18px}
+h1,h2{font-family:var(--f-display);font-weight:800;margin:0;line-height:1.05;text-wrap:balance}
+h1{font-size:34px}
+h2{font-size:26px}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
 
-/* ——— Plateaux ——— */
-.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;flex:none;padding:4px 0}
-.slot{aspect-ratio:3/4;max-width:100%;border-radius:10px;border:1px dashed color-mix(in srgb,var(--line) 80%,transparent);background:color-mix(in srgb,var(--table) 60%,transparent)}
-.cr{
-  aspect-ratio:3/4;max-width:100%;border-radius:10px;position:relative;
-  background:linear-gradient(170deg, color-mix(in srgb,var(--elc) 35%,var(--panel)), var(--panel) 75%);
-  border:2px solid color-mix(in srgb,var(--elc) 70%,var(--line));
-  display:grid;place-items:center;transition:transform .15s, box-shadow .2s;
-}
-.cr .art{font-size:clamp(24px,8vw,34px);line-height:1;margin-top:-6px}
-.cr .kw{position:absolute;top:2px;left:0;right:0;display:flex;justify-content:center;gap:1px;font-size:11px;line-height:1}
-.stat{position:absolute;bottom:-6px;min-width:22px;height:22px;padding:0 4px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;border:2px solid var(--table)}
-.stat.a{left:-4px;background:var(--gold);color:var(--gold-ink)}
-.stat.h{right:-4px;background:var(--hp);color:#fff}
-.stat.h.hurt{background:#8d1c20;color:#ffd0d0}
-.stat.a.up{background:#ffd76e}
-.cr.ready{box-shadow:0 0 0 2px var(--ok),0 0 14px color-mix(in srgb,var(--ok) 50%,transparent)}
-.cr.sel{transform:translateY(-6px) scale(1.06);box-shadow:0 0 0 3px var(--gold),0 0 22px color-mix(in srgb,var(--gold) 70%,transparent);z-index:2}
-.cr.target{box-shadow:0 0 0 2px var(--hp),0 0 16px color-mix(in srgb,var(--hp) 65%,transparent);animation:pulse 1s ease-in-out infinite}
-.cr.target.friendly{box-shadow:0 0 0 2px var(--ok),0 0 16px color-mix(in srgb,var(--ok) 65%,transparent)}
-.cr.guard{border-style:double;border-width:4px}
-.cr.shield::after{content:"";position:absolute;inset:-5px;border-radius:13px;border:2px solid #fff6c9;box-shadow:0 0 10px #fff3a8, inset 0 0 8px #fff3a8;pointer-events:none}
-.cr.frozen{filter:saturate(.4) brightness(1.1)}
-.cr.frozen::before{content:"❄️";position:absolute;right:2px;top:14px;font-size:12px}
-.cr.sleep .art{opacity:.75}
-.cr .zz{position:absolute;right:3px;top:13px;font-size:10px;color:var(--muted);font-weight:700}
-.cr.enter{animation:enter .45s cubic-bezier(.2,1.4,.4,1)}
-.cr.dying{animation:die .45s ease-in forwards}
-.hit{animation:shake .35s}
+/* ——— Onglets ——— */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:9;background:color-mix(in srgb,var(--night) 92%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom, 0px);padding-left:max(8px, env(safe-area-inset-left, 0px));padding-right:max(8px, env(safe-area-inset-right, 0px))}
+nav.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px 8px;color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.04em}
+nav.tabs a .i{font-size:21px;line-height:1;filter:grayscale(.7);opacity:.8}
+nav.tabs a[aria-current="page"]{color:var(--moon)}
+nav.tabs a[aria-current="page"] .i{filter:none;opacity:1}
 
-/* ——— Bande centrale ——— */
-.mid{flex:1 1 auto;min-height:64px;display:flex;align-items:stretch;gap:8px}
-.info{
-  flex:1;min-width:0;background:color-mix(in srgb,var(--panel) 75%,transparent);border:1px solid var(--line);
-  border-radius:12px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:auto;
-}
-.info .t{font-weight:800;font-size:14px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
-.info .t small{font-weight:500;color:var(--muted);font-size:11.5px}
-.info .d{font-size:12.5px;color:#d9cfe6;line-height:1.3}
-.info .d b{color:var(--gold)}
-.info .hint{font-size:12px;color:var(--muted)}
-.info .act{margin-top:3px;align-self:flex-start;background:var(--gold);color:var(--gold-ink);border:0;border-radius:8px;padding:6px 14px;font-weight:800}
-.info .act[disabled]{background:var(--line);color:var(--muted)}
-.endbtn{
-  flex:none;width:84px;border-radius:12px;border:2px solid var(--gold);
-  background:linear-gradient(180deg,#3b2d14,#22190a);color:var(--gold);font-family:var(--f-display);font-size:17px;line-height:1.05;padding:4px;
-}
-.endbtn.glow{animation:pulseGold 1.4s ease-in-out infinite}
-.endbtn[disabled]{border-color:var(--line);color:var(--muted);background:var(--panel)}
+/* ——— Boutons ——— */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-weight:800;background:var(--moon);color:var(--moon-ink);font-size:16px}
+.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.btn.free{background:linear-gradient(90deg,#7ef0c0,#7ec8ff);color:#06222a}
+.btn[disabled]{background:var(--panel2);color:var(--muted);border-color:var(--line)}
+.btn.sm{padding:8px 12px;font-size:14px;border-radius:10px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 13px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-weight:700;font-size:13.5px;color:var(--muted);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--moon);color:var(--moon-ink);border-color:var(--moon)}
 
-/* ——— Main ——— */
-.hand{flex:none;display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;padding:14px 8px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
-.hand::-webkit-scrollbar{display:none}
-.hand .empty{color:var(--muted);font-size:12px;padding:20px 4px;height:132px}
-.card{
-  flex:none;width:94px;height:132px;border-radius:10px;position:relative;scroll-snap-align:start;
-  background:linear-gradient(175deg, color-mix(in srgb,var(--elc) 40%,var(--panel)), var(--panel) 60%);
-  border:2px solid color-mix(in srgb,var(--elc) 75%,var(--line));
-  display:flex;flex-direction:column;align-items:center;padding:4px 5px 5px;text-align:center;
-  transition:transform .18s, box-shadow .2s, opacity .2s;
-}
-.card .cost{position:absolute;top:-7px;left:-7px;width:24px;height:24px;border-radius:50%;background:var(--mana);color:#04213d;font-weight:800;display:grid;place-items:center;font-size:14px;border:2px solid var(--table)}
-.card .art{font-size:30px;line-height:1;margin-top:6px}
-.card .nm{font-weight:800;font-size:11.5px;line-height:1.1;margin-top:4px;min-height:25px;display:flex;align-items:center}
-.card .tx{font-size:9.5px;line-height:1.2;color:#d5cbe2;overflow:hidden;flex:1}
-.card .tx b{color:var(--gold)}
-.card .stat{bottom:-6px}
-.card .spell{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.12em;text-transform:uppercase;background:var(--table);border:1px solid var(--line);padding:1px 6px;border-radius:6px;color:var(--muted)}
-.card.dim{opacity:.55}
-.card.playable{box-shadow:0 0 0 2px var(--ok)}
-.card.sel{transform:translateY(-6px);box-shadow:0 0 0 3px var(--gold),0 6px 18px rgba(0,0,0,.5)}
-.card.big{width:150px;height:212px;padding:8px}
-.card.big .art{font-size:54px;margin-top:12px}
-.card.big .nm{font-size:16px;min-height:38px}
-.card.big .tx{font-size:12.5px}
-.card.big .cost{width:34px;height:34px;font-size:19px}
-.card.big .stat{height:30px;min-width:30px;font-size:17px;border-radius:15px}
+/* ——— Boutique ——— */
+.banner{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:linear-gradient(100deg,color-mix(in srgb,#7ef0c0 18%,var(--panel)),var(--panel));border:1px solid var(--line)}
+.banner .t{flex:1;min-width:0}
+.banner b{display:block}
+.banner small{color:var(--muted);font-variant-numeric:tabular-nums}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.offer{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;min-width:0}
+.offer .meta{font-size:13px;color:var(--muted)}
+.offer .meta b{color:var(--ink)}
+.offer .acts{display:flex;flex-direction:column;gap:8px;width:100%}
+.bar{height:6px;border-radius:3px;background:var(--night);overflow:hidden;width:100%}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--moon),#fff1c2);border-radius:3px}
+details.odds{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+details.odds summary{font-weight:800;cursor:pointer}
+.oddtable{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;font-variant-numeric:tabular-nums}
+.oddtable td{padding:5px 0;border-bottom:1px solid var(--line)}
+.oddtable td:last-child{text-align:right;color:var(--muted)}
+.gem{font-weight:800}
+.g-C{color:var(--c)}.g-P{color:var(--p)}.g-R{color:var(--r)}.g-E{color:var(--e)}.g-L{color:var(--l)}
+.g-M{background:linear-gradient(90deg,#ff7ad9,#ffd66b,#7ef0c0,#7ec8ff,#c58bff);-webkit-background-clip:text;background-clip:text;color:transparent}
 
-.el-feu{--elc:var(--feu)} .el-eau{--elc:var(--eau)} .el-sylve{--elc:var(--sylve)} .el-ombre{--elc:var(--ombre)}
+/* ——— Booster (emballage) ——— */
+.pk{container-type:inline-size;width:var(--pw,170px);max-width:100%}
+.pack{
+  position:relative;aspect-ratio:.64;border-radius:4cqw;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 38%, color-mix(in srgb,var(--pa) 55%,transparent) 0 22cqw, transparent 42cqw),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 3cqw, transparent 3cqw 6cqw),
+    linear-gradient(165deg,var(--p1),var(--p2));
+  box-shadow:0 2cqw 0 rgba(0,0,0,.25), 0 8cqw 16cqw rgba(0,0,0,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2cqw;color:#fff;
+}
+.pack::before,.pack .tear{content:"";position:absolute;left:0;right:0;height:7%;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 2.5cqw, rgba(0,0,0,.25) 2.5cqw 5cqw)}
+.pack::before{bottom:0}
+.pack .tear{top:0;transition:transform .5s cubic-bezier(.5,-.3,.6,1), opacity .5s}
+.pack::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.38) 50%,transparent 62%);background-size:300% 100%;animation:sheen 3.6s ease-in-out infinite;pointer-events:none}
+.pack .emb{font-size:34cqw;line-height:1;filter:drop-shadow(0 0 6cqw var(--pa))}
+.pack .pn{font-family:var(--f-display);font-size:11.5cqw;line-height:.95;text-align:center;padding:0 8cqw;text-shadow:0 1cqw 0 rgba(0,0,0,.5);text-wrap:balance}
+.pack .pc{font-size:6cqw;letter-spacing:.2em;text-transform:uppercase;opacity:.85;font-weight:800}
+.pack .logo{position:absolute;top:11%;font-family:var(--f-display);font-size:7.5cqw;letter-spacing:.06em;color:var(--moon);opacity:.95}
+.pack .six{position:absolute;bottom:11%;font-size:5.2cqw;font-weight:800;padding:1cqw 4cqw;border-radius:99px;background:rgba(0,0,0,.35)}
+
+/* ——— Carte ——— */
+.tc{container-type:inline-size;width:100%;position:relative}
+.face{
+  position:relative;aspect-ratio:63/88;border-radius:5cqw;padding:3.3cqw;display:flex;flex-direction:column;
+  background:var(--frame);box-shadow:0 1.5cqw 5cqw rgba(0,0,0,.45);overflow:hidden;color:#fff;
+}
+.r-C .face{--frame:linear-gradient(150deg,#b9b8c2,#5d5c66 55%,#8e8d97)}
+.r-P .face{--frame:linear-gradient(150deg,#c9f2d2,#3d8a57 55%,#9fdcb0)}
+.r-R .face{--frame:linear-gradient(150deg,#d5e8ff,#3561a8 55%,#9cc6ff)}
+.r-E .face{--frame:linear-gradient(150deg,#f0d9ff,#6a2fa6 50%,#d3a6ff)}
+.r-L .face{--frame:linear-gradient(120deg,#fff3c4,#c4881c 30%,#ffe189 50%,#a86c10 70%,#fff0b5);background-size:250% 250%;animation:goldframe 5s ease-in-out infinite}
+.r-M .face{--frame:conic-gradient(from var(--ang,0deg),#ff7ad9,#ffd66b,#7ef0c0,#7ec8ff,#c58bff,#ff7ad9);animation:spinframe 6s linear infinite}
+.inner{flex:1;display:flex;flex-direction:column;gap:1.8cqw;border-radius:3cqw;padding:2.4cqw;min-height:0;
+  background:linear-gradient(172deg, color-mix(in srgb,var(--ea) 55%,#1a1426), color-mix(in srgb,var(--eb) 85%,#0c0a12) 80%);
+  box-shadow:inset 0 0 0 .5cqw rgba(0,0,0,.35)}
+.hd{display:flex;align-items:center;gap:2cqw}
+.hd .nm{flex:1;min-width:0;font-family:var(--f-display);font-size:6.6cqw;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 .6cqw 0 rgba(0,0,0,.5)}
+.hd .nm.long{font-size:5.4cqw}
+.hd .es{width:8.5cqw;height:8.5cqw;flex:none;border-radius:50%;display:grid;place-items:center;font-size:5cqw;background:rgba(0,0,0,.35);box-shadow:0 0 0 .5cqw color-mix(in srgb,var(--ea) 70%,#fff)}
+.art{position:relative;height:53cqw;flex:none;border-radius:2cqw;overflow:hidden;box-shadow:inset 0 0 0 .7cqw rgba(0,0,0,.45);
+  background:
+    radial-gradient(circle at var(--sx) var(--sy), var(--glow) 0 var(--ss), color-mix(in srgb,var(--glow) 30%,transparent) calc(var(--ss) + 1cqw), transparent calc(var(--ss) + 9cqw)),
+    radial-gradient(circle, rgba(255,255,255,.85) 0 .35cqw, transparent .6cqw) var(--st1) / 13cqw 11cqw,
+    radial-gradient(circle, rgba(255,255,255,.5) 0 .3cqw, transparent .5cqw) var(--st2) / 19cqw 17cqw,
+    linear-gradient(180deg, var(--sky1), var(--sky2));}
+.art .ground{position:absolute;inset:auto 0 0 0;height:45%;
+  background:
+    radial-gradient(ellipse 60% 70% at var(--h1) 100%, color-mix(in srgb,var(--eb) 85%,#000) 0 60%, transparent 61%),
+    radial-gradient(ellipse 70% 55% at var(--h2) 100%, color-mix(in srgb,var(--eb) 60%,#000) 0 60%, transparent 61%)}
+.art .rays{position:absolute;inset:-30%;background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.13) 0 6deg, transparent 6deg 18deg);animation:spin 24s linear infinite}
+.art .halo{position:absolute;left:50%;top:52%;width:44cqw;height:44cqw;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, color-mix(in srgb,var(--glow) 55%,transparent), transparent 68%)}
+.art .em{position:absolute;inset:0;display:grid;place-items:center;font-size:29cqw;line-height:1;filter:drop-shadow(0 1.5cqw 0 rgba(0,0,0,.35)) drop-shadow(0 0 4cqw color-mix(in srgb,var(--glow) 70%,transparent))}
+.typ{display:flex;justify-content:space-between;align-items:center;gap:2cqw;font-size:3.9cqw;font-weight:700;padding:1cqw 2.2cqw;border-radius:1.6cqw;background:rgba(0,0,0,.38);white-space:nowrap}
+.typ span:first-child{overflow:hidden;text-overflow:ellipsis}
+.typ .gem{font-size:4.6cqw}
+.flv{flex:1;min-height:0;font-style:italic;font-size:4.9cqw;line-height:1.3;padding:2cqw 2.4cqw;border-radius:1.6cqw;background:rgba(255,255,255,.09);color:#efe6d6;overflow:hidden}
+.ft{display:flex;justify-content:space-between;align-items:center;font-size:3.5cqw;font-weight:800;font-variant-numeric:tabular-nums;padding:0 .6cqw}
+.ft .st{display:flex;gap:2.4cqw}
+.ft .no{opacity:.8;letter-spacing:.05em}
+/* Brillante */
+.tc.foil .face::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:color-dodge;opacity:.55;
+  background:linear-gradient(115deg,transparent 18%,rgba(255,60,180,.55) 30%,rgba(60,255,255,.55) 40%,rgba(255,255,90,.5) 50%,rgba(80,255,140,.5) 60%,rgba(140,110,255,.55) 70%,transparent 82%);
+  background-size:260% 260%;background-position:var(--fx,50%) var(--fy,50%);animation:foil 5s ease-in-out infinite alternate}
+.tc.foil.live .face::after{animation:none}
+.tc.foil .face::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
+  background:radial-gradient(circle at var(--gx,30%) var(--gy,20%), rgba(255,255,255,.35), transparent 45%);mix-blend-mode:overlay}
+.badge{position:absolute;z-index:3;font-size:11px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap}
+.badge.new{top:-7px;left:50%;transform:translateX(-50%);background:var(--ok);color:#06240f;box-shadow:0 0 10px var(--ok)}
+.badge.cnt{bottom:-6px;right:-4px;background:var(--night);border:1px solid var(--line);color:var(--ink);font-size:12px;text-transform:none}
+.badge.fo{bottom:-6px;left:-4px;background:linear-gradient(90deg,#ff7ad9,#7ef0c0,#7ec8ff);color:#1a0f24}
+/* Manquante */
+.tc.missing .face{--frame:linear-gradient(150deg,#2e2747,#1b1630);box-shadow:none;border:1px dashed var(--line)}
+.tc.missing .inner{background:linear-gradient(172deg,#211b36,#141022);box-shadow:none}
+.tc.missing .art{background:linear-gradient(180deg,#1d1830,#151125)}
+.tc.missing .em{filter:brightness(0) opacity(.55)}
+.tc.missing .nm,.tc.missing .flv,.tc.missing .typ span:first-child{color:var(--muted)}
+.tc.missing .ground,.tc.missing .halo,.tc.missing .rays{display:none}
+/* Dos de carte */
+.back{aspect-ratio:63/88;border-radius:5cqw;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(245,215,126,.25) 0 18cqw, transparent 34cqw),
+    radial-gradient(circle, rgba(255,255,255,.6) 0 .4cqw, transparent .7cqw) 0 0/11cqw 13cqw,
+    linear-gradient(160deg,#2b2160,#120d29);
+  box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 2cqw 6cqw rgba(0,0,0,.5);
+  display:grid;place-items:center}
+.back .mo{font-size:30cqw;filter:drop-shadow(0 0 5cqw var(--moon))}
+.back .wd{position:absolute;bottom:13%;width:100%;text-align:center;font-family:var(--f-display);font-size:8cqw;color:var(--moon);letter-spacing:.08em}
+.back.aura-R{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 10cqw var(--r)}
+.back.aura-E{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 14cqw var(--e);animation:throb 1.2s ease-in-out infinite}
+.back.aura-L{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 18cqw var(--l);animation:throb .9s ease-in-out infinite}
+.back.aura-M{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 20cqw var(--m), 0 0 40cqw #7ec8ff;animation:throb .7s ease-in-out infinite}
+
+/* ——— Collection ——— */
+.prog{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px}
+.prog .row{display:flex;justify-content:space-between;gap:10px;font-variant-numeric:tabular-nums;font-size:14px}
+.prog .row b{font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(102px,1fr));gap:16px 12px}
+.slot{position:relative;display:block;width:100%;padding:0;text-align:left}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tools .sp{flex:1}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+
+/* ——— Profil ——— */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted)}
+.rows{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 14px}
+.rows .r{display:grid;grid-template-columns:110px 1fr 64px;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+.rows .r:last-child{border-bottom:0}
+.rows .r span:last-child{text-align:right;color:var(--muted)}
+.note{font-size:13.5px;color:var(--muted)}
 
 /* ——— Superpositions ——— */
-#fx{position:fixed;inset:0;pointer-events:none;z-index:30}
-.float{position:fixed;transform:translate(-50%,-50%);font-weight:800;font-size:22px;text-shadow:0 2px 0 #000,0 0 8px #000;animation:floatUp .95s ease-out forwards}
-.float.dmg{color:#ff6b6f}.float.heal{color:var(--ok)}.float.shield{color:#fff3a8;font-size:15px}.float.info{color:var(--frost);font-size:15px}
-.banner{position:fixed;left:0;right:0;top:42%;text-align:center;font-family:var(--f-display);font-size:40px;color:var(--gold);text-shadow:0 3px 0 #000,0 0 24px rgba(227,177,75,.6);animation:banner 1s ease forwards;pointer-events:none;z-index:31}
-.showcase{position:fixed;inset:0;display:grid;place-items:center;z-index:29;pointer-events:none;background:rgba(10,8,16,.45);animation:fadeIO 1s ease forwards}
-.showcase .who{position:absolute;top:22%;width:100%;text-align:center;color:var(--muted);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.ov{position:fixed;inset:0;z-index:50;background:radial-gradient(100% 70% at 50% 40%, #2b2158 0%, #0b0915 75%);display:flex;flex-direction:column;align-items:center;
+  padding:calc(env(safe-area-inset-top, 0px) + 14px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px));overflow:hidden}
+.ov .bar2{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:40px}
+.ov .bar2 .ttl{font-family:var(--f-display);font-size:22px;color:var(--moon)}
+.ov .stage{flex:1;width:100%;display:grid;place-items:center;position:relative;perspective:1200px;min-height:0}
+.ov .hint{color:var(--muted);font-size:14px;text-align:center;min-height:22px}
+.ov .foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%;max-width:520px}
+.packstage{display:grid;place-items:center;gap:16px;cursor:pointer}
+.packstage .pk{--pw:min(62vw, 250px, calc(44vh * .64))}
+.packstage .pk.wiggle .pack{animation:wiggle .9s ease-in-out infinite}
+.packstage .pk.torn .tear{transform:translate(-25%,-160%) rotate(-14deg);opacity:0}
+.packstage .pk.out{transition:transform .5s ease-in, opacity .5s;transform:translateY(40%) scale(.9);opacity:0}
+.flipper{width:min(74vw, 320px, calc(56vh * .716));position:relative;cursor:pointer}
+.flipper .fl-in{position:relative;aspect-ratio:63/88;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.3,1.3,.5,1)}
+.flipper .fl-in > *{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flipper .fl-front{transform:rotateY(180deg)}
+.flipper.flipped .fl-in{transform:rotateY(180deg)}
+.flipper.enter{animation:dealIn .4s cubic-bezier(.2,1.2,.4,1)}
+.flipper.leave{transition:transform .35s ease-in, opacity .35s;transform:translateX(-120%) rotate(-14deg);opacity:0}
+.ov .stage > *{grid-area:1/1}
+.flipper{z-index:1}
+.stack{position:relative;aspect-ratio:63/88;width:min(74vw, 320px, calc(56vh * .716));pointer-events:none}
+.stack .pile{container-type:inline-size;position:absolute;inset:0}
+.counter{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:700}
+.reveal-label{position:absolute;left:0;right:0;bottom:-46px;text-align:center;font-family:var(--f-display);font-size:26px;opacity:0;transition:opacity .3s}
+.flipped .reveal-label{opacity:1}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 12px;width:100%;max-width:440px;overflow:auto;padding:10px 4px}
+.flash{position:fixed;inset:0;z-index:60;pointer-events:none;animation:flash .8s ease-out forwards}
+.spark{position:fixed;z-index:61;width:8px;height:8px;border-radius:50%;pointer-events:none;animation:spark 1.1s cubic-bezier(.1,.7,.3,1) forwards}
+.shake{animation:shakeA .5s}
 
-.screen{position:fixed;inset:0;z-index:40;overflow:auto;background:radial-gradient(120% 80% at 50% 0%, #2a2140, var(--table) 70%), var(--table);
-  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
-  padding-top:calc(env(safe-area-inset-top, 0px) + 22px);padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 22px)}
-.screen .inner{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-.logo{font-family:var(--f-display);font-size:clamp(40px,12vw,58px);line-height:.92;text-align:center;color:var(--gold);text-wrap:balance;text-shadow:0 3px 0 #000}
-.tag{text-align:center;color:var(--muted);font-size:14px;line-height:1.4;text-wrap:balance}
-.record{text-align:center;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-.record b{color:var(--ink)}
-.h2{font-family:var(--f-display);font-size:24px;margin-top:4px}
-.decks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.deck{
-  text-align:left;border-radius:14px;border:2px solid color-mix(in srgb,var(--elc) 70%,var(--line));
-  background:linear-gradient(160deg,color-mix(in srgb,var(--elc) 30%,var(--panel)),var(--panel) 70%);
-  padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0;
-}
-.deck .s{font-size:28px}
-.deck .n{font-family:var(--f-display);font-size:22px;line-height:1}
-.deck .h{font-size:12px;color:var(--muted)}
-.deck .d{font-size:12.5px;line-height:1.3;color:#d9cfe6}
-.rules{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45}
-.rules summary{font-weight:800;cursor:pointer}
-.rules ul{margin:8px 0 0;padding-left:18px;display:grid;gap:5px}
-.rules b{color:var(--gold)}
-.end{text-align:center;display:grid;gap:14px;margin-top:12vh}
-.end .big{font-family:var(--f-display);font-size:64px;line-height:1}
-.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:800;font-size:16px;background:var(--gold);color:var(--gold-ink)}
-.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
-.quit{flex:none;background:none;border:0;color:var(--muted);font-size:16px;padding:4px 2px 4px 4px;margin-right:-4px}
+.modal{position:fixed;inset:0;z-index:55;background:rgba(8,6,16,.86);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;overflow:auto;
+  padding:calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 20px) max(16px, env(safe-area-inset-left, 0px))}
+.modal .mtop{width:100%;max-width:440px;display:flex;justify-content:space-between;align-items:center}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);font-size:18px;display:grid;place-items:center;flex:none}
+.detail{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.tiltzone{perspective:900px;padding:12px 0;touch-action:none;display:flex;align-items:center;gap:8px;width:100%;justify-content:center}
+.tiltzone .tc{width:min(70vw, 300px, calc(52vh * .716));transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out;will-change:transform}
+.dinfo{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px}
+.dinfo h2{font-size:28px}
+.dinfo .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--muted)}
+.dinfo .own{display:flex;gap:10px;flex-wrap:wrap}
+.dinfo .own span{background:var(--night);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-weight:700;font-variant-numeric:tabular-nums}
+.dinfo .acts{display:flex;gap:8px;flex-wrap:wrap}
+.sheet{position:fixed;inset:0;z-index:70;background:rgba(5,4,10,.7);display:flex;align-items:flex-end;justify-content:center;padding:16px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px))}
+.sheet .box{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:12px;animation:up .25s ease-out}
+.sheet .box p{margin:0;color:var(--muted)}
+.sheet .box .acts{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:80;background:var(--panel2);border:1px solid color-mix(in srgb,var(--moon) 50%,var(--line));padding:10px 16px;border-radius:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:toast 2.6s ease forwards;max-width:calc(100vw - 32px);text-align:center}
 
-@keyframes pulse{50%{filter:brightness(1.25)}}
-@keyframes pulseGold{50%{box-shadow:0 0 16px color-mix(in srgb,var(--gold) 70%,transparent)}}
-@keyframes enter{from{transform:scale(.3) translateY(20px);opacity:0}}
-@keyframes die{to{transform:scale(.4) rotate(-12deg);opacity:0;filter:grayscale(1)}}
-@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-@keyframes floatUp{from{opacity:1;margin-top:0}to{opacity:0;margin-top:-46px}}
-@keyframes banner{0%{opacity:0;transform:scale(.7)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
-@keyframes fadeIO{0%{opacity:0}15%{opacity:1}85%{opacity:1}100%{opacity:0}}
-@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition:none!important}}
-@media (max-height:640px){
-  .card{height:118px;width:86px}.card .art{font-size:25px;margin-top:4px}.card .tx{font-size:9px}
-  .hero{padding:4px 8px}.hero .sigil{width:32px;height:32px;font-size:17px}
-  .board{padding:2px 0}
-}
+@keyframes sheen{0%,20%{background-position:120% 0}60%,100%{background-position:-20% 0}}
+@keyframes goldframe{50%{background-position:100% 100%}}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spinframe{to{--ang:360deg}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes foil{0%{background-position:0% 0%}100%{background-position:100% 100%}}
+@keyframes throb{50%{filter:brightness(1.35)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}15%{transform:rotate(-3deg)}30%{transform:rotate(3deg)}45%{transform:rotate(-2deg)}60%{transform:rotate(0)}}
+@keyframes dealIn{from{transform:translateY(30%) scale(.85);opacity:0}}
+@keyframes flash{0%{opacity:.95}100%{opacity:0}}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+@keyframes shakeA{20%{transform:translate(-6px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div id="app"></div>
-<div id="fx"></div>
-<div id="menu" class="screen"></div>
+<header class="top"><div class="wrap">
+  <div class="brand">Ombrelune</div>
+  <span class="sync" id="sync" title="Sauvegarde locale"></span>
+  <span class="coins" id="coins" title="Éclats de lune"><span class="ic">🌙</span><span id="coinval">0</span></span>
+</div></header>
+<main><div class="wrap" id="view"></div></main>
+<nav class="tabs" aria-label="Navigation"><div class="in">
+  <a href="#boutique" data-tab="boutique"><span class="i">🎴</span>Boosters</a>
+  <a href="#collection" data-tab="collection"><span class="i">📖</span>Collection</a>
+  <a href="#profil" data-tab="profil"><span class="i">🌙</span>Profil</a>
+</div></nav>
+<div id="layer"></div>
 
 <script>
 (() => {
 "use strict";
 
-/* ===================== Données ===================== */
-const ELS = {
-  feu:   {name:"Braise", hero:"Ignara",  sigil:"🔥", desc:"Agressif : créatures rapides et sorts de dégâts directs."},
-  eau:   {name:"Marée",  hero:"Maëlis",  sigil:"🌊", desc:"Défensif : gardes solides, soins et gel."},
-  sylve: {name:"Sylve",  hero:"Sylvan",  sigil:"🌿", desc:"Croissance : créatures robustes et renforts."},
-  ombre: {name:"Ombre",  hero:"Morvane", sigil:"🌑", desc:"Ténèbres : vol de vie, venin et invocations."}
+/* ============================ Données du jeu ============================ */
+const ELEM = {
+  f:{n:"Feu",     s:"🔥", ea:"#ff7a45", eb:"#5c160a", sky1:"#ff9b5e", sky2:"#5a1612", glow:"#ffd27a"},
+  e:{n:"Eau",     s:"💧", ea:"#3fa9ff", eb:"#0a2a55", sky1:"#5fd0ff", sky2:"#0b2350", glow:"#c9f3ff"},
+  s:{n:"Sylve",   s:"🍃", ea:"#62c45a", eb:"#123b1a", sky1:"#a8e889", sky2:"#15402a", glow:"#f2ffb8"},
+  o:{n:"Ombre",   s:"🌙", ea:"#9b6bff", eb:"#1b0f36", sky1:"#5b3a9e", sky2:"#120a26", glow:"#e2d0ff"},
+  l:{n:"Lumière", s:"☀️", ea:"#ffd36b", eb:"#6b4a12", sky1:"#fff0b3", sky2:"#c78b2a", glow:"#ffffff"},
+  t:{n:"Foudre",  s:"⚡", ea:"#ffe94d", eb:"#1d2366", sky1:"#6c78d9", sky2:"#151a4a", glow:"#fff7a1"}
 };
-const KW = {
-  garde:    {ic:"🛡️", n:"Garde",     d:"Les ennemis doivent l'attaquer en premier."},
-  celerite: {ic:"⚡", n:"Célérité",  d:"Peut attaquer dès son invocation."},
-  drain:    {ic:"🩸", n:"Drain",     d:"Les dégâts qu'elle inflige soignent votre héros."},
-  bouclier: {ic:"✨", n:"Bouclier",  d:"Ignore la première source de dégâts."},
-  venin:    {ic:"🧪", n:"Venin",     d:"Détruit toute créature qu'elle blesse."},
-  furie:    {ic:"⚔️", n:"Furie",     d:"Peut attaquer deux fois par tour."}
+const EL_ORDER = "fesolt";
+const RAR = {
+  C:{n:"Commune",     g:"●", sell:5,   craft:40,   ord:0, col:"var(--c)"},
+  P:{n:"Peu commune", g:"◆", sell:10,  craft:80,   ord:1, col:"var(--p)"},
+  R:{n:"Rare",        g:"◆", sell:30,  craft:200,  ord:2, col:"var(--r)"},
+  E:{n:"Épique",      g:"◆", sell:80,  craft:500,  ord:3, col:"var(--e)"},
+  L:{n:"Légendaire",  g:"★", sell:250, craft:1500, ord:4, col:"var(--l)"},
+  M:{n:"Mythique",    g:"✦", sell:600, craft:4000, ord:5, col:"var(--m)"}
 };
+const PACK_PRICE = 100, FREE_EVERY = 4 * 3600e3, DAILY = 250, START_COINS = 1000, SERIES_BONUS = 1500;
 
-const C = (o) => o;
+const SERIES = [
+{code:"EP", name:"Éveil des Portails", emblem:"🌀", p1:"#4b2fa0", p2:"#0d5566", pa:"#8ef0ff",
+ blurb:"La première nuit où les portails se sont ouverts.", list:`
+C|f|🦎|Salamandre des braises|Reptile|Elle dort dans les cheminées et ronronne quand on rajoute une bûche.
+C|f|🐓|Coq de cendre|Bête|Son chant allume les lanternes du village à l'aube.
+C|f|🐜|Fourmi de lave|Insecte|Une colonie entière peut traverser un volcan en une nuit.
+C|e|🐸|Grenouille des mares|Amphibien|Elle prédit la pluie avec une précision vexante.
+C|e|🐟|Poisson-lanterne|Poisson|Il guide les noyés vers la surface, quand il est de bonne humeur.
+C|e|🦐|Crevette des récifs|Crustacé|Minuscule, mais elle a vu le fond de l'océan.
+C|s|🐌|Escargot moussu|Bête|Lent, oui. Mais il arrive toujours.
+C|s|🐿️|Écureuil glaneur|Bête|Il oublie la moitié de ses noisettes. Une forêt entière lui doit la vie.
+C|s|🍄|Champignon bavard|Plante|Il raconte des ragots à toutes les racines du bois.
+C|o|🦇|Chauve-souris des cryptes|Bête|Elle ne craint pas la lumière. Elle la trouve juste vulgaire.
+C|o|🐀|Rat des catacombes|Bête|Il connaît chaque passage secret sous la ville.
+C|o|💀|Squelette apprenti|Mort-vivant|Il a encore du mal à garder sa mâchoire en place.
+C|l|🕊️|Colombe d'albâtre|Oiseau|Elle porte les traités de paix entre les royaumes.
+C|l|🐑|Agneau de l'aube|Bête|Sa laine brille faiblement les nuits sans lune.
+C|l|🕯️|Feu follet doux|Esprit|Il éclaire les chemins des voyageurs perdus.
+C|t|🐝|Abeille électrique|Insecte|Son miel picote la langue.
+C|t|🦔|Hérisson statique|Bête|Ne le caressez pas à rebrousse-poil.
+C|t|🐞|Coccinelle-étincelle|Insecte|Sept points, sept petites décharges.
+P|f|🦊|Renard flamboyant|Bête|Sa queue laisse une traînée d'étincelles dans la neige.
+P|f|👺|Gobelin pyromane|Gobelin|Il n'a jamais rien brûlé exprès. Enfin, presque jamais.
+P|e|🦦|Loutre des courants|Bête|Elle joue avec les galets que les rivières lui confient.
+P|e|🐢|Tortue corallienne|Reptile|Sur sa carapace pousse un jardin de corail.
+P|s|🦌|Cerf des mousses|Bête|Là où il marche, les fleurs repoussent.
+P|s|🐻|Ours des noisetiers|Bête|Il garde la forêt l'hiver, les yeux mi-clos.
+P|o|🕷️|Tisseuse de minuit|Arachnide|Ses toiles capturent les rêves égarés.
+P|o|🐈|Chat des ruelles noires|Bête|Il a neuf vies et en a déjà dépensé huit.
+P|l|🦢|Cygne nacré|Oiseau|Il ne nage que sur les lacs où se reflète la lune.
+P|l|🧚|Fée des lucioles|Fée|Elle allume les étoiles une à une, chaque soir.
+P|t|🐆|Guépard-éclair|Bête|On ne le voit jamais arriver. On entend seulement le tonnerre.
+P|t|🦅|Faucon d'orage|Oiseau|Il chasse au cœur des nuages noirs.
+R|f|🐺|Loup de braise|Bête|Sa meute hurle et la plaine s'embrase.
+R|f|🦂|Scorpion de magma|Arachnide|Son dard est plus chaud que le cœur du volcan.
+R|e|🐙|Pieuvre érudite|Céphalopode|Huit bras, huit livres ouverts à la fois.
+R|e|🦈|Requin des abysses|Poisson|Il sent une goutte de peur à trois lieues.
+R|s|🐗|Sanglier ancestral|Bête|Ses défenses sont faites de racines pétrifiées.
+R|o|👻|Spectre errant|Esprit|Il cherche encore la porte de sa maison.
+R|o|🧛|Comtesse vampire|Mort-vivant|Elle donne des bals d'où personne n'est jamais revenu.
+R|l|🦄|Licorne de l'aube|Bête mythique|Sa corne guérit tout, sauf l'orgueil.
+R|t|⚡|Élémentaire de foudre|Élémentaire|Né d'un éclair tombé deux fois au même endroit.
+E|f|🐦|Phénix naissant|Oiseau mythique|Chaque fois qu'il meurt, il renaît un peu plus brillant.
+E|e|🧜|Reine des ondines|Ondine|Les marins entendent sa voix bien avant de voir la côte.
+E|s|🌳|Tréant millénaire|Tréant|Il a vu naître la forêt, et il verra sa fin.
+E|o|🧙|Nécromancien du Seuil|Sorcier|Il appelle les morts par leur prénom.
+E|l|👼|Gardienne des portails|Ange|Aucune créature ne franchit le Seuil sans son accord.
+E|t|🌩️|Djinn de la tempête|Djinn|Faites un vœu. Mais pas par temps clair.
+L|f|🐉|Dragon écarlate|Dragon|Le ciel rougit quand il déploie ses ailes.
+L|e|🐋|Léviathan des marées|Titan marin|Quand il respire, la mer monte.
+L|o|👑|Seigneur liche|Mort-vivant|Il a vaincu la mort. Il lui manque désormais un adversaire.
+L|l|🌞|Avatar du soleil levant|Divinité|Chaque matin, il rappelle au monde qu'il existe.
+M|o|🌕|Ombrelune, la Lune qui veille|Divinité|Elle ouvre les portails une nuit sur mille. Cette nuit est arrivée.`},
+{code:"AB", name:"Abysses & Braises", emblem:"🌋", p1:"#a8320f", p2:"#0b3a7a", pa:"#ffb36b",
+ blurb:"Les volcans sous-marins se réveillent, et la mer bout.", list:`
+C|f|🦗|Criquet des cendres|Insecte|Il ne chante qu'au-dessus des braises.
+C|f|🐛|Chenille fumante|Insecte|Un jour, elle sera un papillon de feu. Patience.
+C|f|🐐|Chèvre des volcans|Bête|Elle broute la pierre ponce et digère tout.
+C|f|🌶️|Piment animé|Plante|Ne le croquez pas. Lui, il vous croquera.
+C|e|🐚|Bernard-l'ermite|Crustacé|Il change de coquille comme on change d'avis.
+C|e|🐠|Poisson-clown des coraux|Poisson|Il fait rire même les requins.
+C|e|🦀|Crabe des récifs|Crustacé|Il pince d'abord, il pose les questions ensuite.
+C|e|🐡|Poisson-globe|Poisson|Gonflé de colère, il double de volume.
+C|e|🦑|Calmar des grottes|Céphalopode|Son encre brille dans le noir.
+C|s|🌵|Cactus errant|Plante|Il marche la nuit pour trouver l'ombre le jour.
+C|s|🐇|Lapin des dunes|Bête|Il creuse jusqu'aux sources cachées.
+C|o|🦉|Chouette des cendres|Oiseau|Elle voit à travers la fumée.
+C|o|🐍|Vipère des sables|Reptile|Un sifflement, et c'est déjà trop tard.
+C|l|🦩|Flamant solaire|Oiseau|Il se tient sur une patte pour moins toucher le sol brûlant.
+C|l|🌻|Tournesol gardien|Plante|Il suit le soleil et prévient quand il se couche.
+C|t|🐊|Crocodile des marais orageux|Reptile|La foudre l'attire. Il adore ça.
+C|t|🦟|Moustique ionisé|Insecte|Sa piqûre vous fait dresser les cheveux.
+C|t|🐁|Souris dynamo|Bête|Elle court dans sa roue et alimente tout le village.
+P|f|🦏|Rhinocéros de magma|Bête|Il fonce tête baissée et laisse de la lave dans ses traces.
+P|f|🐎|Destrier de feu|Bête|Sa crinière ne s'éteint jamais, même sous l'orage.
+P|e|🐧|Manchot des banquises|Oiseau|Il glisse plus vite qu'il ne nage. Et il nage vite.
+P|e|🐬|Dauphin messager|Bête|Il porte les nouvelles d'une côte à l'autre.
+P|e|🦞|Homard cuirassé|Crustacé|Sa carapace a arrêté une ancre.
+P|s|🦚|Paon des oasis|Oiseau|Mille yeux sur ses plumes, et aucun ne dort.
+P|s|🐫|Chameau des mirages|Bête|Il connaît le chemin vers toutes les oasis, même les fausses.
+P|o|👁️|Œil des profondeurs|Aberration|Il vous regarde depuis le fond du puits.
+P|o|🦴|Ossuaire marchant|Mort-vivant|Un tas d'os qui a décidé de se lever.
+P|l|🦁|Lion doré|Bête|Sa crinière capte les derniers rayons du jour.
+P|t|🦓|Zèbre de l'orage|Bête|Ses rayures sont des éclairs figés.
+P|t|🐲|Wyverne crépitante|Dragon|Une petite cousine des dragons, mais une grosse colère.
+R|f|😈|Diablotin des forges|Démon|Il souffle sur les braises des forgerons, contre un salaire.
+R|f|🦖|Tyran de lave|Reptile|Les volcans s'endorment quand il passe.
+R|e|🧊|Golem de glace|Élémentaire|Il fond chaque printemps et se reforme chaque hiver.
+R|e|🐳|Baleine chanteuse|Titan marin|Son chant traverse tous les océans du monde.
+R|e|🔱|Gardien du trident|Triton|Il défend la cité engloutie depuis mille ans.
+R|s|🦜|Perroquet prophète|Oiseau|Il répète ce qu'il entendra demain.
+R|o|🗡️|Lame nocturne|Assassin|Personne n'a jamais vu son visage. Personne n'a survécu pour essayer.
+R|l|☀️|Esprit du zénith|Esprit|À midi pile, il est partout à la fois.
+R|t|🌪️|Tornade vivante|Élémentaire|Elle danse, et les villages s'envolent.
+E|f|🌋|Cœur du volcan|Titan|Une montagne qui a décidé de se battre.
+E|e|🌊|Esprit du raz-de-marée|Élémentaire|Il emporte tout, puis rend la plage plus belle.
+E|s|🍃|Druide des sables|Druide|Il fait pousser des forêts dans le désert.
+E|o|🦑|Kraken des abysses|Titan marin|Les cartes marines s'arrêtent là où commence son territoire.
+E|l|🏺|Pharaon solaire|Roi|Son tombeau brille encore, trois mille ans après.
+E|t|⛈️|Roc du tonnerre|Oiseau mythique|Ses ailes battent et le ciel gronde.
+L|f|🔥|Ifrit, seigneur des braises|Démon|Il a signé un pacte avec le soleil, et il l'a trahi.
+L|e|🌀|Charybde, le gouffre|Titan marin|Les navires ne coulent pas. Ils tombent.
+L|s|🐘|Béhémoth des dunes|Titan|Le désert est son lit, les dunes ses couvertures.
+L|o|🕳️|La Fosse sans fond|Aberration|Ce qui y tombe n'atteint jamais le fond. On l'entend crier encore.
+M|e|💎|Perle des deux mondes|Relique|Mi-flamme, mi-écume. Qui la tient commande aux mers et aux volcans.`},
+{code:"CC", name:"Couronne Céleste", emblem:"👑", p1:"#b8862a", p2:"#26307a", pa:"#fff1b0",
+ blurb:"Au-dessus des nuages, les astres choisissent leur souverain.", list:`
+C|l|🐤|Poussin solaire|Oiseau|Il piaille dès que le jour se lève. Très tôt.
+C|l|🐄|Vache des nuages|Bête|Son lait a le goût d'une pluie d'été.
+C|l|🌼|Pâquerette céleste|Plante|Elle s'ouvre quand une étoile filante passe.
+C|l|🦋|Papillon d'aurore|Insecte|Ses ailes changent de couleur avec le ciel.
+C|l|🐏|Bélier doré|Bête|Sa toison est tissée de rayons de soleil.
+C|t|🦆|Canard des orages|Oiseau|Il adore la pluie. Les éclairs, un peu moins.
+C|t|🐂|Taureau grondant|Bête|Il charge au rythme du tonnerre.
+C|t|🦘|Kangourou-ressort|Bête|Il saute si haut qu'il touche parfois les nuages chargés.
+C|t|🐩|Caniche statique|Bête|Sa coiffure ne retombe jamais. Jamais.
+C|f|🦃|Dindon des feux de joie|Oiseau|Il est invité à la fête, pas au repas.
+C|f|🧨|Lutin pétard|Lutin|Il explose de rire. Littéralement.
+C|e|☁️|Nuage-mouton|Élémentaire|Il pleut sur ceux qu'il n'aime pas.
+C|e|🌧️|Ondin de pluie|Esprit|Il s'amuse à tomber sur les chapeaux.
+C|s|🌸|Bourgeon de cerisier|Plante|Il fleurit une seule journée, et c'est assez.
+C|s|🐒|Singe des cimes|Bête|Il vole les fruits des dieux depuis la plus haute branche.
+C|s|🐼|Panda des bambous célestes|Bête|Il médite si fort qu'il lévite.
+C|o|🎭|Masque errant|Esprit|Il cherche un visage à porter.
+C|o|🐾|Ombre rôdeuse|Esprit|On ne la voit pas. On voit juste ses traces.
+P|l|🐴|Pégase d'argent|Bête mythique|Il galope sur les nuages comme sur une prairie.
+P|l|🎐|Carillon des vents|Esprit|Il chante quand un ange passe.
+P|t|🐅|Tigre fulgurant|Bête|Ses griffes laissent des traces brûlées.
+P|t|🧲|Golem aimanté|Golem|Toutes les épées du champ de bataille finissent collées à lui.
+P|f|🏮|Lanterne-esprit|Esprit|Elle flotte au-dessus des fêtes et veille sur les enfants.
+P|f|🎇|Danseuse d'étincelles|Esprit|Elle danse, et le ciel s'illumine.
+P|e|🌈|Serpent arc-en-ciel|Serpent|Il relie la pluie au soleil.
+P|e|❄️|Fée du givre|Fée|Elle dessine des fougères sur les vitres.
+P|s|🌺|Nymphe des jardins suspendus|Nymphe|Ses jardins flottent entre ciel et terre.
+P|s|🐨|Koala somnambule|Bête|Il dort vingt heures par jour. Mais quelles heures.
+P|o|🌑|Prêtresse de l'éclipse|Prêtresse|Elle prie pour que le soleil se cache, juste un instant.
+P|o|🗿|Statue hantée|Golem|Elle bouge quand personne ne regarde.
+R|l|🛡️|Paladin céleste|Chevalier|Son serment est gravé sur la voûte du ciel.
+R|l|🌟|Étoile déchue|Esprit|Elle est tombée du ciel et refuse d'y remonter.
+R|t|🔨|Forgeron du tonnerre|Géant|Chaque coup de marteau fait trembler les montagnes.
+R|t|💫|Comète vivante|Élémentaire|Elle passe tous les cent ans et ne s'arrête jamais.
+R|f|⚔️|Chevalier des cendres|Chevalier|Son armure fume encore de sa dernière bataille.
+R|e|🧝|Elfe des nuées|Elfe|Elle tire ses flèches dans les nuages pour faire pleuvoir.
+R|s|🦒|Girafe des cimes|Bête|Sa tête est déjà au paradis.
+R|o|🃏|Bouffon du roi maudit|Sorcier|Il rit encore de la blague qui a ruiné le royaume.
+R|o|🧟|Chevalier sans repos|Mort-vivant|Il garde le château. Le château n'existe plus.
+E|l|👸|Princesse de l'aurore|Reine|Le jour se lève parce qu'elle le lui demande.
+E|t|🧞|Génie des cieux chargés|Djinn|Trois vœux, trois éclairs.
+E|f|🌅|Gardien du crépuscule|Titan|Il veille entre le jour et la nuit.
+E|e|🏰|Citadelle des nuages|Lieu vivant|Une forteresse qui flotte, respire, et choisit ses habitants.
+E|s|🌲|Roi des forêts hautes|Tréant|Ses branches touchent les étoiles.
+E|o|🌒|Mage de la nuit polaire|Sorcier|Il vole six mois de lumière chaque année.
+L|l|😇|Séraphin aux six ailes|Ange|Quand il chante, même les démons se taisent.
+L|t|🐯|Raijū, la bête-éclair|Bête mythique|Il dort dans le nombril des orages.
+L|f|☄️|Météore incarné|Élémentaire|Il est tombé du ciel en criant son nom.
+L|o|🌌|Le Roi sans étoiles|Divinité|Il a éteint une constellation pour s'en faire une couronne.
+M|l|🪐|L'Astre-Couronne|Divinité|Les planètes tournent autour d'elle. Les dieux aussi.`}
+];
+
+/* Construction du catalogue */
+function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { let s = seed || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; }; }
+const STAT_BASE = {C:[1,3], P:[2,4], R:[3,6], E:[5,8], L:[8,10], M:[11,12]};
 const CARDS = {};
-[
-  // —— Braise ——
-  C({id:"salamandre", el:"feu", t:"c", cost:1, atk:2, hp:1, art:"🦎", name:"Salamandre cendrée"}),
-  C({id:"diablotin",  el:"feu", t:"c", cost:1, atk:1, hp:1, art:"😈", name:"Diablotin rieur", kw:["furie"]}),
-  C({id:"gobelin",    el:"feu", t:"c", cost:2, atk:2, hp:2, art:"👺", name:"Gobelin pyromane", text:"Éveil : 2 dégâts au héros adverse.", eveil:p=>damage(opp(p),2)}),
-  C({id:"loup",       el:"feu", t:"c", cost:3, atk:3, hp:2, art:"🐺", name:"Loup de braise", kw:["celerite"]}),
-  C({id:"phenix",     el:"feu", t:"c", cost:4, atk:3, hp:3, art:"🦅", name:"Phénix naissant", text:"Éveil : 3 dégâts à une créature ennemie au hasard.", eveil:p=>dmgRandom(p,3)}),
-  C({id:"golem",      el:"feu", t:"c", cost:5, atk:5, hp:6, art:"🗿", name:"Golem de magma", kw:["garde"]}),
-  C({id:"dragon",     el:"feu", t:"c", cost:7, atk:7, hp:6, art:"🐉", name:"Dragon écarlate", kw:["celerite"]}),
-  C({id:"trait",      el:"feu", t:"s", cost:1, art:"🔥", name:"Trait de feu", target:"any", text:"Inflige 2 dégâts.", fx:(p,t)=>damage(t,2)}),
-  C({id:"rage",       el:"feu", t:"s", cost:1, art:"💢", name:"Rage", target:"allyC", text:"Une créature alliée gagne +3 ATQ.", fx:(p,t)=>buff(t,3,0)}),
-  C({id:"cendres",    el:"feu", t:"s", cost:3, art:"🌋", name:"Pluie de cendres", text:"2 dégâts à toutes les créatures ennemies.", fx:p=>dmgAll(p,2)}),
-  C({id:"bouledefeu", el:"feu", t:"s", cost:4, art:"☄️", name:"Boule de feu", target:"any", text:"Inflige 6 dégâts.", fx:(p,t)=>damage(t,6)}),
-  // —— Marée ——
-  C({id:"crabe",     el:"eau", t:"c", cost:1, atk:1, hp:3, art:"🦀", name:"Crabe des récifs", kw:["garde"]}),
-  C({id:"ondine",    el:"eau", t:"c", cost:2, atk:2, hp:2, art:"🧜", name:"Ondine", text:"Éveil : soigne 3 PV à votre héros.", eveil:p=>heal(p,3)}),
-  C({id:"calmar",    el:"eau", t:"c", cost:2, atk:1, hp:2, art:"🦑", name:"Calmar des abysses", kw:["venin"]}),
-  C({id:"pieuvre",   el:"eau", t:"c", cost:3, atk:2, hp:3, art:"🐙", name:"Pieuvre érudite", text:"Éveil : piochez une carte.", eveil:p=>draw(p)}),
-  C({id:"tortue",    el:"eau", t:"c", cost:3, atk:2, hp:5, art:"🐢", name:"Tortue ancienne", kw:["garde"]}),
-  C({id:"requin",    el:"eau", t:"c", cost:4, atk:4, hp:3, art:"🦈", name:"Requin sanguin", kw:["drain"]}),
-  C({id:"leviathan", el:"eau", t:"c", cost:8, atk:6, hp:9, art:"🐋", name:"Léviathan", kw:["garde","drain"]}),
-  C({id:"vague",     el:"eau", t:"s", cost:2, art:"🌊", name:"Vague glacée", target:"enemyC", text:"2 dégâts à une créature ennemie et la gèle.", fx:(p,t)=>{freeze(t);damage(t,2);}}),
-  C({id:"bulle",     el:"eau", t:"s", cost:1, art:"🔮", name:"Bulle protectrice", target:"allyC", text:"Donne Bouclier et +1 PV à une créature alliée.", fx:(p,t)=>{t.shield=true;buff(t,0,1);}}),
-  C({id:"maree",     el:"eau", t:"s", cost:3, art:"💧", name:"Marée montante", text:"Soigne 5 PV à votre héros et piochez une carte.", fx:p=>{heal(p,5);draw(p);}}),
-  C({id:"raz",       el:"eau", t:"s", cost:6, art:"🌀", name:"Raz-de-marée", text:"4 dégâts à toutes les créatures ennemies.", fx:p=>dmgAll(p,4)}),
-  // —— Sylve ——
-  C({id:"lapin",     el:"sylve", t:"c", cost:1, atk:1, hp:2, art:"🐇", name:"Lapin des mousses", text:"Éveil : soigne 2 PV à votre héros.", eveil:p=>heal(p,2)}),
-  C({id:"araignee",  el:"sylve", t:"c", cost:2, atk:1, hp:2, art:"🕷️", name:"Tisseuse des bois", kw:["venin"]}),
-  C({id:"sanglier",  el:"sylve", t:"c", cost:2, atk:3, hp:2, art:"🐗", name:"Sanglier furieux"}),
-  C({id:"fee",       el:"sylve", t:"c", cost:2, atk:1, hp:1, art:"🧚", name:"Fée des clairières", text:"Éveil : vos autres créatures gagnent +1/+1.", eveil:(p,self)=>p.board.forEach(c=>{if(c!==self)buff(c,1,1);})}),
-  C({id:"cerf",      el:"sylve", t:"c", cost:3, atk:2, hp:4, art:"🦌", name:"Cerf sacré", text:"Éveil : invoque un Lapin des mousses.", eveil:p=>summon(p,"lapin",false)}),
-  C({id:"ours",      el:"sylve", t:"c", cost:4, atk:5, hp:4, art:"🐻", name:"Ours des cimes"}),
-  C({id:"treant",    el:"sylve", t:"c", cost:5, atk:4, hp:7, art:"🌳", name:"Tréant millénaire", kw:["garde"]}),
-  C({id:"hydre",     el:"sylve", t:"c", cost:6, atk:4, hp:6, art:"🐲", name:"Hydre verdoyante", kw:["furie"]}),
-  C({id:"croissance",el:"sylve", t:"s", cost:2, art:"🌱", name:"Croissance", target:"allyC", text:"Une créature alliée gagne +2/+2.", fx:(p,t)=>buff(t,2,2)}),
-  C({id:"lianes",    el:"sylve", t:"s", cost:1, art:"🌿", name:"Lianes", target:"enemyC", text:"Gèle une créature ennemie : elle n'attaquera pas au prochain tour.", fx:(p,t)=>freeze(t)}),
-  C({id:"colere",    el:"sylve", t:"s", cost:4, art:"🍃", name:"Chant de la forêt", text:"Vos créatures gagnent +2/+2.", fx:p=>p.board.forEach(c=>buff(c,2,2))}),
-  // —— Ombre ——
-  C({id:"chauvesouris", el:"ombre", t:"c", cost:1, atk:1, hp:2, art:"🦇", name:"Chauve-souris", kw:["drain"]}),
-  C({id:"squelette",    el:"ombre", t:"c", cost:1, atk:2, hp:1, art:"💀", name:"Squelette"}),
-  C({id:"spectre",      el:"ombre", t:"c", cost:3, atk:3, hp:2, art:"👻", name:"Spectre errant", kw:["bouclier"]}),
-  C({id:"assassin",     el:"ombre", t:"c", cost:3, atk:2, hp:2, art:"🗡️", name:"Lame nocturne", kw:["celerite","venin"]}),
-  C({id:"necro",        el:"ombre", t:"c", cost:4, atk:3, hp:3, art:"🧙", name:"Nécromancien", text:"Éveil : invoque deux Squelettes.", eveil:p=>{summon(p,"squelette",false);summon(p,"squelette",false);}}),
-  C({id:"vampire",      el:"ombre", t:"c", cost:5, atk:4, hp:5, art:"🧛", name:"Comtesse vampire", kw:["drain"]}),
-  C({id:"liche",        el:"ombre", t:"c", cost:7, atk:6, hp:6, art:"👑", name:"Seigneur liche", text:"Éveil : 2 dégâts à toutes les créatures ennemies.", eveil:p=>dmgAll(p,2)}),
-  C({id:"drainame",     el:"ombre", t:"s", cost:3, art:"🌑", name:"Drain d'âme", target:"any", text:"Inflige 3 dégâts et soigne 3 PV à votre héros.", fx:(p,t)=>{damage(t,3);heal(p,3);}}),
-  C({id:"malediction",  el:"ombre", t:"s", cost:5, art:"🕯️", name:"Malédiction", target:"enemyC", text:"Détruit une créature ennemie.", fx:(p,t)=>{t.hp=0;t.shield=false;fx(keyOf(t),"Détruite","info");}}),
-  C({id:"pacte",        el:"ombre", t:"s", cost:1, art:"📜", name:"Pacte obscur", text:"Piochez deux cartes. Votre héros perd 3 PV.", fx:p=>{draw(p);draw(p);damage(p,3);}})
-].forEach(c => CARDS[c.id] = c);
+for (const s of SERIES) {
+  const rows = s.list.trim().split("\n").map(l => {
+    const [r, el, em, name, type, flavor] = l.split("|").map(x => x.trim());
+    return {r, el, em, name, type, flavor};
+  });
+  rows.sort((a, b) => RAR[a.r].ord - RAR[b.r].ord || EL_ORDER.indexOf(a.el) - EL_ORDER.indexOf(b.el));
+  s.cards = [];
+  s.main = rows.filter(r => r.r !== "M").length;
+  rows.forEach((c, i) => {
+    c.no = i + 1; c.series = s.code; c.id = s.code + String(c.no).padStart(3, "0");
+    const R = rng(hash(c.id + c.name)); const [lo, hi] = STAT_BASE[c.r];
+    c.atk = lo + Math.round(R() * (hi - lo)); c.def = lo + Math.round(R() * (hi - lo));
+    c.art = {sx: 15 + R() * 70 | 0, sy: 14 + R() * 22 | 0, ss: 5 + R() * 6 | 0, st1: `${R() * 13 | 0}cqw ${R() * 11 | 0}cqw`, st2: `${R() * 19 | 0}cqw ${R() * 17 | 0}cqw`, h1: 10 + R() * 40 | 0, h2: 55 + R() * 40 | 0};
+    CARDS[c.id] = c; s.cards.push(c);
+  });
+}
+const SER = Object.fromEntries(SERIES.map(s => [s.code, s]));
+const ALL = Object.values(CARDS);
 
-const DECKS = {
-  feu:   {salamandre:2, diablotin:2, gobelin:2, loup:2, phenix:2, golem:2, dragon:1, trait:2, rage:1, cendres:2, bouledefeu:2},
-  eau:   {crabe:2, ondine:2, calmar:2, pieuvre:2, tortue:2, requin:2, leviathan:1, vague:2, bulle:1, maree:2, raz:2},
-  sylve: {lapin:2, araignee:2, sanglier:2, fee:2, cerf:2, ours:2, treant:2, hydre:1, croissance:2, lianes:1, colere:2},
-  ombre: {chauvesouris:2, squelette:3, spectre:2, assassin:2, necro:2, vampire:2, liche:1, drainame:2, malediction:2, pacte:2}
-};
+/* ============================ Sauvegarde ============================ */
+const LS_KEY = "ombrelune-collection-v1";
+function fresh() { return {v: 1, rev: 0, coins: START_COINS, owned: {}, packs: 0, pity: 0, nextFree: 0, lastDaily: "", bonus: {}, best: "", made: Date.now()}; }
+function normalize(x) { const f = fresh(); if (!x || typeof x !== "object") return f; return Object.assign(f, x, {owned: Object.assign({}, x.owned || {}), bonus: Object.assign({}, x.bonus || {})}); }
+let S = (() => { try { return normalize(JSON.parse(localStorage.getItem(LS_KEY))); } catch { return fresh(); } })();
+let dbDoc = null, writing = false, pending = false, saveTimer = 0, syncMode = "local";
 
-/* ===================== Outils ===================== */
-const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const sleep = ms => new Promise(r => setTimeout(r, reduced ? ms * 0.4 : ms));
-const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const pick = a => a[Math.random() * a.length | 0];
+function setSync(m) { syncMode = m; const el = document.getElementById("sync"); el.className = "sync " + m;
+  el.title = m === "cloud" ? "Collection sauvegardée en ligne" : m === "saving" ? "Sauvegarde…" : "Sauvegarde sur cet appareil uniquement"; }
+function save() {
+  S.rev = (S.rev || 0) + 1; S.updated = Date.now();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch {}
+  if (dbDoc) { clearTimeout(saveTimer); saveTimer = setTimeout(pushRemote, 1200); }
+}
+async function pushRemote() {
+  if (!dbDoc) return;
+  if (writing) { pending = true; return; }
+  writing = true; setSync("saving");
+  const body = {state: JSON.parse(JSON.stringify(S))};
+  try { await dbDoc.set(body); setSync("cloud"); }
+  catch (e) {
+    if (e && e.code === "unavailable") { await new Promise(r => setTimeout(r, 1500 + Math.random() * 1500)); try { await dbDoc.set(body); setSync("cloud"); } catch { setSync("local"); } }
+    else setSync("local");
+  }
+  writing = false;
+  if (pending) { pending = false; pushRemote(); }
+}
+async function connectCloud() {
+  if (!window.claude || !window.claude.use) return;
+  try {
+    const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    if (!db || !user) return;
+    const id = await user.id(); if (!id) return;
+    const ref = db.doc("data/users/" + id + "/save");
+    let done = false;
+    const timer = setTimeout(() => { if (!done) setSync("local"); }, 10000);
+    const snap = await ref.get(); done = true; clearTimeout(timer);
+    dbDoc = ref;
+    const remote = snap.exists ? (snap.data() || {}).state : null;
+    if (remote && (remote.rev || 0) > (S.rev || 0)) {
+      S = normalize(JSON.parse(JSON.stringify(remote)));
+      try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch {}
+      setSync("cloud"); renderAll(); toast("Collection récupérée depuis votre compte");
+    } else if (!remote || (S.rev || 0) > (remote.rev || 0)) { await pushRemote(); }
+    else setSync("cloud");
+  } catch { setSync("local"); }
+}
+
+/* ============================ Logique ============================ */
+const own = id => S.owned[id] || [0, 0];
+const ownedAny = id => { const o = own(id); return o[0] + o[1] > 0; };
+const fmt = n => n.toLocaleString("fr-FR");
+const today = () => { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
+const pickFrom = a => a[Math.random() * a.length | 0];
+function addCard(id, foil) { const o = own(id).slice(); o[foil ? 1 : 0]++; S.owned[id] = o; }
+function seriesProgress(code) {
+  const s = SER[code]; let have = 0, foils = 0;
+  for (const c of s.cards) { const o = own(c.id); if (o[0] + o[1] > 0) have++; if (o[1] > 0) foils++; }
+  return {have, foils, total: s.cards.length};
+}
+function checkSeriesBonus() {
+  for (const s of SERIES) {
+    const p = seriesProgress(s.code);
+    if (p.have === p.total && !S.bonus[s.code]) {
+      S.bonus[s.code] = Date.now(); S.coins += SERIES_BONUS;
+      toast(`Série ${s.name} complète ! +${fmt(SERIES_BONUS)} 🌙`);
+    }
+  }
+}
+function rollTop(forceHigh) {
+  const x = Math.random() * 100;
+  if (forceHigh) return x < 6 ? "M" : x < 28 ? "L" : "E";
+  return x < 1.5 ? "M" : x < 7.5 ? "L" : x < 25 ? "E" : "R";
+}
+function openPackData(code) {
+  const s = SER[code];
+  const slots = ["C", "C", "C", Math.random() < .12 ? "R" : "P", Math.random() < .12 ? "R" : "P"];
+  const top = rollTop(S.pity >= 9);
+  slots.push(top);
+  S.pity = "ELM".includes(top) ? 0 : S.pity + 1;
+  const used = new Set(), out = [];
+  slots.forEach((r, i) => {
+    let pool = s.cards.filter(c => c.r === r && !used.has(c.id));
+    if (!pool.length) pool = s.cards.filter(c => c.r === r);
+    const c = pickFrom(pool); used.add(c.id);
+    const foil = Math.random() < (i === 5 ? .12 : .07);
+    const o = own(c.id);
+    const isNew = o[0] + o[1] === 0, newFoil = foil && o[1] === 0 && !isNew;
+    addCard(c.id, foil);
+    out.push({id: c.id, foil, isNew, newFoil});
+  });
+  S.packs++;
+  if (RAR[top].ord > (S.best ? RAR[CARDS[S.best].r].ord : -1)) S.best = out[5].id;
+  checkSeriesBonus();
+  save();
+  return out;
+}
+function claimDaily() {
+  if (S.lastDaily !== today()) {
+    const first = !S.lastDaily;
+    S.lastDaily = today();
+    if (!first) { S.coins += DAILY; toast(`Bonus du jour : +${DAILY} 🌙`); }
+    save();
+  }
+}
+
+/* ============================ Rendu des cartes ============================ */
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
-
-let G = null, uidc = 1;
-const uid = () => uidc++;
-const opp = p => G.p[1 - p.idx];
-const ownerOf = c => G.p[c.owner];
-const has = (c, k) => !c.isHero && c.kw.includes(k);
-const keyOf = t => t.isHero ? "h" + t.idx : "c" + t.uid;
-const maxAtt = c => has(c, "furie") ? 2 : 1;
-const value = c => c.atk + c.hp + c.kw.length * 1.5 + (c.shield ? 1 : 0);
-const allCreatures = () => [...G.p[0].board, ...G.p[1].board];
-
-function loadStats() { try { return JSON.parse(localStorage.getItem("ombrelune-stats")) || {w:0, l:0}; } catch { return {w:0, l:0}; } }
-function saveStats(s) { try { localStorage.setItem("ombrelune-stats", JSON.stringify(s)); } catch {} }
-
-/* ===================== Effets visuels ===================== */
-let fxQ = [];
-const fx = (k, text, cls) => fxQ.push({k, text, cls});
-const hits = new Set();
-function flushFx() {
-  const per = {};
-  for (const f of fxQ) {
-    const el = document.querySelector(`[data-k="${f.k}"]`);
-    if (!el) continue;
-    const r = el.getBoundingClientRect();
-    const n = per[f.k] = (per[f.k] || 0) + 1;
-    const d = document.createElement("div");
-    d.className = "float " + f.cls;
-    d.textContent = f.text;
-    d.style.left = (r.left + r.width / 2) + "px";
-    d.style.top = (r.top + r.height / 2 - (n - 1) * 20) + "px";
-    $fx.appendChild(d);
-    setTimeout(() => d.remove(), 1000);
-  }
-  fxQ = [];
-  for (const k of hits) {
-    const el = document.querySelector(`[data-k="${k}"]`);
-    if (el) { el.classList.remove("hit"); void el.offsetWidth; el.classList.add("hit"); }
-  }
-  hits.clear();
+function cardHTML(c, o = {}) {
+  const E = ELEM[c.el], a = c.art;
+  const missing = o.missing;
+  const st = `--ea:${E.ea};--eb:${E.eb};--sky1:${E.sky1};--sky2:${E.sky2};--glow:${E.glow};--sx:${a.sx}%;--sy:${a.sy}%;--ss:${a.ss}cqw;--st1:${a.st1};--st2:${a.st2};--h1:${a.h1}%;--h2:${a.h2}%`;
+  const cls = ["tc", "r-" + c.r, o.foil && !missing ? "foil" : "", missing ? "missing" : "", o.live ? "live" : ""].join(" ");
+  const s = SER[c.series];
+  const num = c.r === "M" ? `${String(c.no).padStart(3, "0")}/${String(s.main).padStart(3, "0")}` : `${String(c.no).padStart(3, "0")}/${String(s.main).padStart(3, "0")}`;
+  return `<div class="${cls}" style="${st}"><div class="face"><div class="inner">
+    <div class="hd"><span class="nm ${c.name.length > 19 ? "long" : ""}">${missing ? "???" : esc(c.name)}</span><span class="es">${E.s}</span></div>
+    <div class="art">${"LM".includes(c.r) ? `<div class="rays"></div>` : ""}<div class="halo"></div><div class="ground"></div><div class="em">${c.em}</div></div>
+    <div class="typ"><span>${esc(c.type)} · ${E.n}</span><span class="gem g-${c.r}" title="${RAR[c.r].n}">${RAR[c.r].g}</span></div>
+    <div class="flv">${missing ? "Carte non découverte. Ouvrez des boosters " + esc(s.name) + " pour la trouver." : esc(c.flavor)}</div>
+    <div class="ft"><span class="st"><span>⚔ ${c.atk}</span><span>🛡 ${c.def}</span></span><span class="no">${c.series} ${num}</span></div>
+  </div></div></div>`;
 }
-async function banner(text) {
-  const b = document.createElement("div");
-  b.className = "banner"; b.textContent = text;
-  document.body.appendChild(b);
-  await sleep(900);
-  b.remove();
-}
-async function showcase(d, who) {
-  const s = document.createElement("div");
-  s.className = "showcase";
-  s.innerHTML = `<div class="who">${esc(who)} joue</div>${cardHTML(d, {big:true})}`;
-  document.body.appendChild(s);
-  await sleep(1000);
-  s.remove();
+function backHTML(aura) { return `<div class="tc"><div class="back ${aura ? "aura-" + aura : ""}"><span class="mo">🌙</span><span class="wd">Ombrelune</span></div></div>`; }
+function packHTML(s, w) {
+  return `<div class="pk" style="${w ? `--pw:${w};` : ""}--p1:${s.p1};--p2:${s.p2};--pa:${s.pa}"><div class="pack"><span class="tear"></span>
+    <span class="logo">Ombrelune</span><span class="emb">${s.emblem}</span><span class="pn">${esc(s.name)}</span><span class="six">6 cartes</span></div></div>`;
 }
 
-/* ===================== Règles ===================== */
-function damage(t, n, src) {
-  if (!t || n <= 0) return 0;
-  if (!t.isHero && t.shield) { t.shield = false; fx(keyOf(t), "Bouclier !", "shield"); return 0; }
-  t.hp -= n;
-  fx(keyOf(t), "−" + n, "dmg"); hits.add(keyOf(t));
-  if (src && !src.isHero) {
-    if (has(src, "venin") && !t.isHero && t.hp > 0) t.hp = 0;
-    if (has(src, "drain")) heal(ownerOf(src), n);
-  }
-  return n;
-}
-function heal(t, n) {
-  const before = t.hp;
-  t.hp = Math.min(t.maxHp, t.hp + n);
-  if (t.hp > before) fx(keyOf(t), "+" + (t.hp - before), "heal");
-}
-function buff(c, a, h) { c.atk += a; c.hp += h; c.maxHp += h; fx(keyOf(c), `+${a}/+${h}`, "heal"); }
-function freeze(c) { c.frozen = true; fx(keyOf(c), "Gelé", "info"); }
-function dmgAll(p, n) { opp(p).board.slice().forEach(c => damage(c, n)); }
-function dmgRandom(p, n) { const e = opp(p).board.filter(c => c.hp > 0); if (e.length) damage(pick(e), n); }
+/* ============================ Vues ============================ */
+const $view = document.getElementById("view"), $layer = document.getElementById("layer");
+const VIEWS = ["boutique", "collection", "profil"];
+let view = "boutique";
+const ui = {series: "EP", filter: "all", rar: "all"};
+try { Object.assign(ui, JSON.parse(localStorage.getItem("ombrelune-ui")) || {}); } catch {}
+const saveUi = () => { try { localStorage.setItem("ombrelune-ui", JSON.stringify(ui)); } catch {} };
 
-function summon(p, id, withEveil = true) {
-  if (p.board.length >= 5) return null;
-  const d = CARDS[id];
-  const kw = d.kw ? d.kw.slice() : [];
-  const c = {uid: uid(), id, owner: p.idx, name: d.name, art: d.art, el: d.el, atk: d.atk, hp: d.hp, maxHp: d.hp, baseAtk: d.atk,
-             kw, shield: kw.includes("bouclier"), frozen: false, attacks: 0};
-  c.attacks = kw.includes("celerite") ? maxAtt(c) : 0;
-  p.board.push(c);
-  G.enter.push(c.uid);
-  if (withEveil && d.eveil) d.eveil(p, c);
-  return c;
+function renderCoins() { document.getElementById("coinval").textContent = fmt(S.coins); }
+function renderAll() {
+  renderCoins();
+  document.querySelectorAll("nav.tabs a").forEach(a => a.setAttribute("aria-current", a.dataset.tab === view ? "page" : "false"));
+  if (view === "boutique") renderShop(); else if (view === "collection") renderCollection(); else renderProfile();
 }
-function draw(p) {
-  if (!p.deck.length) {
-    p.fatigue++;
-    G.log = `${heroName(p)} n'a plus de cartes : ${p.fatigue} dégât${p.fatigue > 1 ? "s" : ""} de fatigue.`;
-    damage(p, p.fatigue);
+function freeLeft() { return Math.max(0, (S.nextFree || 0) - Date.now()); }
+function fmtDur(ms) { const m = Math.ceil(ms / 60000); const h = Math.floor(m / 60); return h ? `${h} h ${String(m % 60).padStart(2, "0")}` : `${m} min`; }
+
+function renderShop() {
+  const fl = freeLeft();
+  const totalHave = ALL.filter(c => ownedAny(c.id)).length;
+  $view.innerHTML = `
+    <div><div class="eyebrow">Boutique des portails</div><h1>Ouvrez des boosters</h1>
+      <p class="lead">Chaque booster contient 6 cartes, dont au moins une Rare ou mieux. ${fmt(ALL.length)} cartes à collectionner, chacune existe aussi en version brillante.</p></div>
+    <div class="banner"><span style="font-size:28px">🎁</span><div class="t">${fl ? `<b>Booster gratuit dans ${fmtDur(fl)}</b><small>Un booster offert toutes les 4 heures.</small>` : `<b>Un booster gratuit vous attend</b><small>Choisissez sa série ci-dessous.</small>`}</div></div>
+    <div class="shop">${SERIES.map(s => {
+      const p = seriesProgress(s.code);
+      return `<div class="offer">
+        ${packHTML(s, "min(150px, 42vw)")}
+        <div><h2 style="font-size:22px">${esc(s.name)}</h2><div class="meta">${esc(s.blurb)}</div></div>
+        <div class="bar" title="Progression"><i style="width:${p.have / p.total * 100}%"></i></div>
+        <div class="meta"><b>${p.have}</b>/${p.total} cartes · <b>${p.foils}</b> brillantes</div>
+        <div class="acts">
+          ${fl ? "" : `<button class="btn free" data-act="open" data-s="${s.code}" data-free="1">Ouvrir gratuitement</button>`}
+          <button class="btn" data-act="open" data-s="${s.code}" ${S.coins < PACK_PRICE ? "disabled" : ""}>Ouvrir · ${PACK_PRICE} 🌙</button>
+        </div></div>`;
+    }).join("")}</div>
+    <details class="odds"><summary>Contenu et probabilités</summary>
+      <table class="oddtable"><tbody>
+        <tr><td>3 cartes</td><td><span class="gem g-C">●</span> Communes</td></tr>
+        <tr><td>2 cartes</td><td><span class="gem g-P">◆</span> Peu communes (12 % de chance de Rare)</td></tr>
+        <tr><td>1 carte rare</td><td></td></tr>
+        <tr><td>&nbsp;&nbsp;<span class="gem g-R">◆</span> Rare</td><td>75 %</td></tr>
+        <tr><td>&nbsp;&nbsp;<span class="gem g-E">◆</span> Épique</td><td>17,5 %</td></tr>
+        <tr><td>&nbsp;&nbsp;<span class="gem g-L">★</span> Légendaire</td><td>6 %</td></tr>
+        <tr><td>&nbsp;&nbsp;<span class="gem g-M">✦</span> Mythique</td><td>1,5 %</td></tr>
+        <tr><td>Version brillante</td><td>7 % par carte, 12 % pour la rare</td></tr>
+      </tbody></table>
+      <p class="note">Garantie : au moins une Épique tous les 10 boosters. Compteur actuel : ${S.pity}/9 sans Épique.</p>
+      <p class="note">Vous avez découvert ${totalHave} cartes sur ${ALL.length}. Compléter une série rapporte ${fmt(SERIES_BONUS)} 🌙.</p>
+    </details>`;
+}
+
+let listCache = [];
+function renderCollection() {
+  const s = SER[ui.series] || SERIES[0];
+  const p = seriesProgress(s.code);
+  let list = s.cards.slice();
+  if (ui.rar !== "all") list = list.filter(c => c.r === ui.rar);
+  if (ui.filter === "own") list = list.filter(c => ownedAny(c.id));
+  if (ui.filter === "miss") list = list.filter(c => !ownedAny(c.id));
+  if (ui.filter === "foil") list = list.filter(c => own(c.id)[1] > 0);
+  if (ui.filter === "dup") list = list.filter(c => own(c.id)[0] > 1 || own(c.id)[1] > 1);
+  listCache = list.map(c => c.id);
+  const dupVal = dupValue();
+  $view.innerHTML = `
+    <div><div class="eyebrow">Classeur</div><h1>Collection</h1></div>
+    <div class="chips" role="group" aria-label="Série">${SERIES.map(x => `<button class="chip" data-act="series" data-s="${x.code}" aria-pressed="${x.code === s.code}">${x.emblem} ${esc(x.name)}</button>`).join("")}</div>
+    <div class="prog">
+      <div class="row"><span>Cartes découvertes</span><span><b>${p.have}</b> / ${p.total}</span></div>
+      <div class="bar"><i style="width:${p.have / p.total * 100}%"></i></div>
+      <div class="row"><span>Brillantes</span><span><b>${p.foils}</b> / ${p.total}</span></div>
+      <div class="bar"><i style="width:${p.foils / p.total * 100}%;background:linear-gradient(90deg,#ff7ad9,#7ef0c0,#7ec8ff)"></i></div>
+      ${S.bonus[s.code] ? `<div class="note">Série complète. Bonus de ${fmt(SERIES_BONUS)} 🌙 reçu.</div>` : `<div class="note">Complétez la série pour gagner ${fmt(SERIES_BONUS)} 🌙.</div>`}
+    </div>
+    <div class="chips" role="group" aria-label="Filtre">${[["all","Toutes"],["own","Possédées"],["miss","Manquantes"],["foil","Brillantes"],["dup","Doubles"]].map(([k, n]) => `<button class="chip" data-act="filter" data-v="${k}" aria-pressed="${ui.filter === k}">${n}</button>`).join("")}</div>
+    <div class="chips" role="group" aria-label="Rareté"><button class="chip" data-act="rar" data-v="all" aria-pressed="${ui.rar === "all"}">Toutes raretés</button>${Object.entries(RAR).map(([k, r]) => `<button class="chip" data-act="rar" data-v="${k}" aria-pressed="${ui.rar === k}"><span class="gem g-${k}">${r.g}</span> ${r.n}</button>`).join("")}</div>
+    <div class="tools"><span class="note">${list.length} carte${list.length > 1 ? "s" : ""}</span><span class="sp"></span>
+      <button class="btn sm ghost" data-act="sellall" ${dupVal ? "" : "disabled"}>Recycler les doubles · +${fmt(dupVal)} 🌙</button></div>
+    ${list.length ? `<div class="grid">${list.map(c => {
+      const o = own(c.id), have = o[0] + o[1] > 0;
+      return `<button class="slot" data-act="card" data-id="${c.id}" aria-label="${have ? esc(c.name) : "Carte manquante"} ${c.series} ${c.no}">
+        ${cardHTML(c, {missing: !have, foil: o[1] > 0})}
+        ${o[0] + o[1] > 1 ? `<span class="badge cnt">×${o[0] + o[1]}</span>` : ""}${o[1] > 0 ? `<span class="badge fo">✦ ${o[1]}</span>` : ""}
+      </button>`;
+    }).join("")}</div>` : `<div class="empty">Aucune carte ne correspond à ce filtre.</div>`}`;
+}
+function dupValue() {
+  let v = 0;
+  for (const [id, o] of Object.entries(S.owned)) { const c = CARDS[id]; if (!c) continue; v += Math.max(0, o[0] - 1) * RAR[c.r].sell + Math.max(0, o[1] - 1) * RAR[c.r].sell * 3; }
+  return v;
+}
+function renderProfile() {
+  const uniq = ALL.filter(c => ownedAny(c.id)).length;
+  let total = 0, foils = 0;
+  for (const o of Object.values(S.owned)) { total += o[0] + o[1]; foils += o[1]; }
+  const byR = Object.keys(RAR).map(k => { const cs = ALL.filter(c => c.r === k); return [k, cs.filter(c => ownedAny(c.id)).length, cs.length]; });
+  const best = S.best && CARDS[S.best];
+  $view.innerHTML = `
+    <div><div class="eyebrow">Invocateur</div><h1>Profil</h1></div>
+    <div class="stats">
+      <div class="stat"><b>${fmt(S.packs)}</b><span>boosters ouverts</span></div>
+      <div class="stat"><b>${uniq}/${ALL.length}</b><span>cartes découvertes</span></div>
+      <div class="stat"><b>${fmt(total)}</b><span>cartes au total</span></div>
+      <div class="stat"><b>${fmt(foils)}</b><span>brillantes</span></div>
+    </div>
+    ${best ? `<div class="prog"><div class="row"><span>Plus belle trouvaille</span><span class="gem g-${best.r}">${RAR[best.r].g} ${RAR[best.r].n}</span></div>
+      <button class="slot" data-act="card" data-id="${best.id}" style="width:130px;margin:6px auto 0">${cardHTML(best, {foil: own(best.id)[1] > 0})}</button></div>` : ""}
+    <h2>Par rareté</h2>
+    <div class="rows">${byR.map(([k, h, t]) => `<div class="r"><span class="gem g-${k}">${RAR[k].g} ${RAR[k].n}</span><div class="bar"><i style="width:${h / t * 100}%;background:${RAR[k].col}"></i></div><span>${h}/${t}</span></div>`).join("")}</div>
+    <h2>Par série</h2>
+    <div class="rows">${SERIES.map(s => { const p = seriesProgress(s.code); return `<div class="r"><span>${s.emblem} ${s.code}</span><div class="bar"><i style="width:${p.have / p.total * 100}%"></i></div><span>${p.have}/${p.total}</span></div>`; }).join("")}</div>
+    <h2>Sauvegarde</h2>
+    <p class="note">${syncMode === "local" ? "Votre collection est enregistrée sur cet appareil. Connectez-vous à votre compte Claude pour la retrouver sur tous vos appareils." : "Votre collection est enregistrée sur votre compte : ouvrez ce lien sur n'importe quel appareil pour la retrouver."}</p>
+    <h2>Gagner des éclats de lune</h2>
+    <p class="note">Bonus du jour : +${DAILY} 🌙 à la première visite de chaque jour. Booster gratuit toutes les 4 heures. Recyclez vos doubles, ou complétez une série pour +${fmt(SERIES_BONUS)} 🌙.</p>
+    <div><button class="btn ghost sm" data-act="reset">Recommencer une collection</button></div>`;
+}
+
+/* ============================ Ouverture de booster ============================ */
+let OPEN = null;
+async function startOpen(code, free) {
+  if (OPEN) return;
+  if (free) { if (freeLeft()) return; S.nextFree = Date.now() + FREE_EVERY; }
+  else { if (S.coins < PACK_PRICE) return toast("Pas assez d'éclats de lune"); S.coins -= PACK_PRICE; }
+  const cards = openPackData(code);
+  renderAll();
+  OPEN = {code, cards, i: 0, stage: "pack"};
+  $layer.innerHTML = `<div class="ov" id="ov"></div>`;
+  drawOpen();
+}
+function drawOpen() {
+  const ov = document.getElementById("ov"); if (!ov || !OPEN) return;
+  const s = SER[OPEN.code];
+  if (OPEN.stage === "pack") {
+    ov.innerHTML = `<div class="bar2"><span class="ttl">${esc(s.name)}</span><span class="coins">🌙 ${fmt(S.coins)}</span></div>
+      <div class="stage"><div class="packstage" data-act="tear" role="button" tabindex="0" aria-label="Ouvrir le booster">${packHTML(s, "")}</div></div>
+      <div class="hint">Touchez le booster pour le déchirer</div><div class="foot"></div>`;
+    ov.querySelector(".pk").classList.add("wiggle");
     return;
   }
-  const id = p.deck.pop();
-  if (p.hand.length >= 8) { G.log = `Main pleine : ${CARDS[id].name} est brûlée.`; return; }
-  p.hand.push({hid: uid(), id});
-}
-const heroName = p => ELS[p.el].hero;
-
-function newPlayer(el, isAI, idx) {
-  const deck = [];
-  for (const [id, n] of Object.entries(DECKS[el])) for (let i = 0; i < n; i++) deck.push(id);
-  return {idx, el, isAI, isHero: true, hp: 25, maxHp: 25, mana: 0, maxMana: 0, deck: shuffle(deck), hand: [], board: [], fatigue: 0};
-}
-function startTurnState(i) {
-  G.cur = i;
-  const p = G.p[i];
-  p.maxMana = Math.min(10, p.maxMana + 1);
-  p.mana = p.maxMana;
-  p.board.forEach(c => { c.attacks = c.frozen ? 0 : maxAtt(c); c.frozen = false; });
-  draw(p);
-}
-function attackTargets(p) {
-  const e = opp(p);
-  const guards = e.board.filter(c => has(c, "garde"));
-  return guards.length ? guards : [...e.board, e];
-}
-function spellTargets(p, d) {
-  const e = opp(p);
-  switch (d.target) {
-    case "any": return [...e.board, e, ...p.board, p];
-    case "enemyC": return [...e.board];
-    case "allyC": return [...p.board];
-    default: return [];
-  }
-}
-function canPlay(p, d) {
-  if (G.cur !== p.idx || d.cost > p.mana) return false;
-  if (d.t === "c") return p.board.length < 5;
-  if (d.target) return spellTargets(p, d).length > 0;
-  return true;
-}
-
-/* ===================== Actions ===================== */
-async function settle() {
-  render(); flushFx();
-  const dead = allCreatures().filter(c => c.hp <= 0);
-  if (dead.length) {
-    await sleep(380);
-    dead.forEach(c => { const el = document.querySelector(`[data-k="c${c.uid}"]`); if (el) el.classList.add("dying"); });
-    await sleep(430);
-    G.p.forEach(p => p.board = p.board.filter(c => c.hp > 0));
-    render();
-  }
-  checkEnd();
-}
-async function playCard(p, hid, target) {
-  const i = p.hand.findIndex(h => h.hid === hid);
-  if (i < 0) return false;
-  const d = CARDS[p.hand[i].id];
-  if (!canPlay(p, d)) return false;
-  if (d.target && !target) return false;
-  p.mana -= d.cost;
-  p.hand.splice(i, 1);
-  G.sel = null;
-  G.log = `${heroName(p)} ${d.t === "c" ? "invoque" : "lance"} ${d.name}.`;
-  if (d.t === "c") summon(p, d.id); else d.fx(p, target);
-  await settle();
-  return true;
-}
-async function attack(c, t) {
-  c.attacks--;
-  G.sel = null;
-  G.log = `${c.name} attaque ${t.isHero ? heroName(t) : t.name}.`;
-  render();
-  const a = document.querySelector(`[data-k="${keyOf(c)}"]`), b = document.querySelector(`[data-k="${keyOf(t)}"]`);
-  if (a && b && a.animate && !reduced) {
-    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-    const dx = (rb.left + rb.width / 2) - (ra.left + ra.width / 2), dy = (rb.top + rb.height / 2) - (ra.top + ra.height / 2);
-    a.style.zIndex = 5;
-    a.animate([{transform: "none"}, {transform: `translate(${dx * .75}px,${dy * .75}px) scale(1.1)`, offset: .55}, {transform: "none"}], {duration: 420, easing: "ease-in-out"});
-    await sleep(230);
-  }
-  const atkVal = c.atk, back = t.isHero ? 0 : t.atk;
-  damage(t, atkVal, c);
-  if (!t.isHero) damage(c, back, t);
-  await settle();
-}
-function checkEnd() {
-  if (G.over) return;
-  const [me, ai] = G.p;
-  if (me.hp > 0 && ai.hp > 0) return;
-  G.over = true;
-  const st = loadStats();
-  let res;
-  if (ai.hp <= 0 && me.hp > 0) { res = "win"; st.w++; } else if (me.hp <= 0 && ai.hp > 0) { res = "lose"; st.l++; } else res = "draw";
-  saveStats(st);
-  setTimeout(() => showEnd(res), 700);
-}
-
-async function endPlayerTurn() {
-  if (G.busy || G.over || G.cur !== 0) return;
-  G.sel = null;
-  await aiTurn();
-}
-async function beginPlayerTurn() {
-  startTurnState(0);
-  G.log = "À vous ! Touchez une carte de votre main ou une créature prête (bordure verte).";
-  await settle();
-  if (!G.over) await banner("À vous de jouer");
-}
-
-/* ===================== IA ===================== */
-function aiPlan(p, d) {
-  if (d.t === "c") return p.board.length < 5 ? {t: null} : null;
-  const e = opp(p), ec = e.board.filter(c => c.hp > 0);
-  const byVal = (a, b) => value(b) - value(a);
-  const dmgSpell = {trait: 2, bouledefeu: 6, drainame: 3}[d.id];
-  if (dmgSpell) {
-    if (e.hp <= dmgSpell) return {t: e};
-    const k = ec.filter(c => c.hp <= dmgSpell && !c.shield).sort(byVal);
-    if (k.length && value(k[0]) >= dmgSpell + 1) return {t: k[0]};
-    return {t: k[0] || e};
-  }
-  switch (d.id) {
-    case "vague": { const t = ec.sort((a, b) => b.atk - a.atk)[0]; return t ? {t} : null; }
-    case "malediction": { const t = ec.sort(byVal)[0]; return t && value(t) >= 6 ? {t} : null; }
-    case "lianes": { const t = ec.sort((a, b) => b.atk - a.atk)[0]; return t && t.atk >= 3 ? {t} : null; }
-    case "rage": case "croissance": case "bulle": {
-      const al = p.board.slice().sort((a, b) => (b.attacks > 0) - (a.attacks > 0) || value(b) - value(a));
-      return al[0] ? {t: al[0]} : null;
-    }
-    case "cendres": return ec.length >= 2 || ec.some(c => c.hp <= 2) ? {t: null} : null;
-    case "raz": return ec.length >= 2 || ec.some(c => value(c) >= 8) ? {t: null} : null;
-    case "maree": return p.hp <= p.maxHp - 4 || p.hand.length <= 2 ? {t: null} : null;
-    case "pacte": return p.hp > 12 && p.hand.length <= 5 ? {t: null} : null;
-    case "colere": return p.board.length >= 2 ? {t: null} : null;
-  }
-  return d.target ? null : {t: null};
-}
-function aiChooseTarget(p, att) {
-  const e = opp(p);
-  const targets = attackTargets(p);
-  const faceOk = targets.includes(e);
-  if (faceOk) {
-    const total = p.board.reduce((s, c) => s + c.atk * c.attacks, 0);
-    if (total >= e.hp) return e;
-  }
-  const kills = c => !c.shield && (has(att, "venin") || att.atk >= c.hp);
-  const survives = c => att.shield || c.atk === 0 || (c.atk < att.hp && !has(c, "venin"));
-  let best = null, bs = -Infinity;
-  for (const c of targets) {
-    if (c.isHero) continue;
-    let s = 0;
-    if (kills(c)) s += value(c) + 2;
-    if (survives(c)) s += 3; else s -= value(att);
-    if (!faceOk || (kills(c) && (survives(c) || value(c) >= value(att)))) {
-      if (s > bs) { bs = s; best = c; }
-    }
-  }
-  if (!faceOk) return best;
-  // Menace : si le joueur a beaucoup d'attaque, l'IA nettoie un peu plus
-  return best || e;
-}
-async function aiTurn() {
-  G.busy = true;
-  const p = G.p[1];
-  startTurnState(1);
-  G.log = `Tour de ${heroName(p)}…`;
-  render(); flushFx();
-  await banner("Tour adverse");
-  await settle();
-  let guard = 0;
-  while (!G.over && guard++ < 25) {
-    const opts = p.hand.map(h => ({h, d: CARDS[h.id]})).filter(o => canPlay(p, o.d)).sort((a, b) => b.d.cost - a.d.cost);
-    let played = false;
-    for (const o of opts) {
-      const plan = aiPlan(p, o.d);
-      if (!plan || (o.d.target && !plan.t)) continue;
-      await showcase(o.d, heroName(p));
-      await playCard(p, o.h.hid, plan.t);
-      await sleep(250);
-      played = true;
-      break;
-    }
-    if (!played) break;
-  }
-  guard = 0;
-  while (!G.over && guard++ < 25) {
-    const att = p.board.find(c => c.attacks > 0 && c.atk > 0 && c.hp > 0);
-    if (!att) break;
-    const t = aiChooseTarget(p, att);
-    if (!t) { att.attacks = 0; continue; }
-    await attack(att, t);
-    await sleep(300);
-  }
-  if (!G.over) await beginPlayerTurn();
-  G.busy = false;
-  render();
-}
-
-/* ===================== Rendu ===================== */
-const $app = document.getElementById("app"), $fx = document.getElementById("fx"), $menu = document.getElementById("menu");
-
-function kwText(kw) { return kw.map(k => `<b>${KW[k].n}</b>`).join(". ") + (kw.length ? ". " : ""); }
-function cardHTML(d, o = {}) {
-  const cls = ["card", "el-" + d.el, o.big ? "big" : "", o.sel ? "sel" : "", o.playable ? "playable" : "", o.dim ? "dim" : ""].join(" ");
-  const stats = d.t === "c" ? `<span class="stat a">${d.atk}</span><span class="stat h">${d.hp}</span>` : `<span class="spell">Sort</span>`;
-  return `<div class="${cls}" ${o.hid ? `data-hid="${o.hid}" role="button" tabindex="0" aria-label="${esc(d.name)}, coût ${d.cost}"` : ""}>
-    <span class="cost">${d.cost}</span><div class="art">${d.art}</div><div class="nm">${esc(d.name)}</div>
-    <div class="tx">${kwText(d.kw || [])}${esc(d.text || "")}</div>${stats}</div>`;
-}
-function heroHTML(p) {
-  const me = !p.isAI;
-  const tg = targetSet();
-  const isT = tg.has(keyOf(p));
-  const friendly = isT && me ? "friendly" : "";
-  const pips = Array.from({length: p.maxMana}, (_, i) => `<span class="pip ${i < p.mana ? "on" : ""}"></span>`).join("");
-  return `<div class="hero el-${p.el} ${isT ? "target" : ""} ${friendly}" data-k="${keyOf(p)}" role="button" tabindex="0">
-    <div class="sigil">${ELS[p.el].sigil}</div>
-    <div class="who"><div class="hname">${heroName(p)}</div>
-      <div class="sub">${me ? "Vous" : "Adversaire"} · Pioche ${p.deck.length} · Main ${p.hand.length}</div>
-      <div class="pips" aria-hidden="true">${pips}</div></div>
-    <span class="pill mn" title="Mana">💎 ${p.mana}/${p.maxMana}</span>
-    <span class="pill hp" title="Points de vie">❤ ${Math.max(0, p.hp)}</span>
-    ${me ? "" : `<button class="quit" data-act="quit" aria-label="Abandonner la partie">✕</button>`}
-  </div>`;
-}
-function selCard() { return G.sel && G.sel.kind === "hand" ? G.p[0].hand.find(h => h.hid === G.sel.hid) : null; }
-function selCreature() { return G.sel && G.sel.kind === "board" ? G.p[0].board.find(c => c.uid === G.sel.uid) : null; }
-function targetSet() {
-  const s = new Set();
-  if (!G.sel || G.cur !== 0 || G.busy) return s;
-  if (G.sel.kind === "hand") {
-    const h = selCard(); if (!h) return s;
-    const d = CARDS[h.id];
-    if (d.target && canPlay(G.p[0], d)) spellTargets(G.p[0], d).forEach(t => s.add(keyOf(t)));
-  } else if (G.sel.kind === "board") {
-    const c = selCreature();
-    if (c && c.attacks > 0) attackTargets(G.p[0]).forEach(t => s.add(keyOf(t)));
-  }
-  return s;
-}
-function creatureHTML(c, tg) {
-  const mine = c.owner === 0;
-  const ready = mine && G.cur === 0 && !G.busy && c.attacks > 0;
-  const cls = ["cr", "el-" + c.el,
-    ready ? "ready" : "", G.sel && G.sel.kind === "board" && G.sel.uid === c.uid ? "sel" : "",
-    tg.has("c" + c.uid) ? "target" : "", tg.has("c" + c.uid) && mine ? "friendly" : "",
-    has(c, "garde") ? "guard" : "", c.shield ? "shield" : "", c.frozen ? "frozen" : "",
-    mine && G.cur === 0 && c.attacks === 0 ? "sleep" : "", G.enter.includes(c.uid) ? "enter" : ""].join(" ");
-  const kw = c.kw.filter(k => k !== "bouclier").map(k => KW[k].ic).join("");
-  const zz = mine && G.cur === 0 && c.attacks === 0 && !c.frozen ? `<span class="zz">z</span>` : "";
-  return `<div class="${cls}" data-k="c${c.uid}" role="button" tabindex="0" aria-label="${esc(c.name)} ${c.atk} attaque ${c.hp} vie">
-    <div class="kw">${kw}</div>${zz}<div class="art">${c.art}</div>
-    <span class="stat a ${c.atk > c.baseAtk ? "up" : ""}">${c.atk}</span><span class="stat h ${c.hp < c.maxHp ? "hurt" : ""}">${Math.max(0, c.hp)}</span></div>`;
-}
-function boardHTML(p, tg) {
-  let h = p.board.map(c => creatureHTML(c, tg)).join("");
-  for (let i = p.board.length; i < 5; i++) h += `<div class="slot"></div>`;
-  return `<div class="board" data-side="${p.idx}">${h}</div>`;
-}
-function infoHTML() {
-  const me = G.p[0];
-  const myTurn = G.cur === 0 && !G.busy && !G.over;
-  if (G.sel && G.sel.kind === "hand") {
-    const h = selCard(); if (!h) return logHTML();
-    const d = CARDS[h.id];
-    let act = "";
-    if (myTurn) {
-      if (d.cost > me.mana) act = `<button class="act" disabled>Mana insuffisant (${d.cost})</button>`;
-      else if (d.t === "c" && me.board.length >= 5) act = `<button class="act" disabled>Plateau plein</button>`;
-      else if (d.target) act = spellTargets(me, d).length ? `<div class="hint">👉 Touchez une cible en surbrillance.</div>` : `<button class="act" disabled>Aucune cible</button>`;
-      else act = `<button class="act" data-act="play">${d.t === "c" ? "Invoquer" : "Lancer"} · ${d.cost} 💎</button>`;
-    }
-    return `<div class="t">${d.art} ${esc(d.name)} <small>${d.t === "c" ? `Créature ${d.atk}/${d.hp}` : "Sort"} · ${ELS[d.el].name}</small></div>
-      <div class="d">${kwDesc(d.kw || [])}${esc(d.text || "")}</div>${act}`;
-  }
-  if (G.sel && (G.sel.kind === "board" || G.sel.kind === "info")) {
-    const o = G.sel.kind === "board" ? selCreature() : resolve(G.sel.k);
-    if (!o) return logHTML();
-    if (o.isHero) return `<div class="t">${ELS[o.el].sigil} ${heroName(o)} <small>${ELS[o.el].name}</small></div>
-      <div class="d">${o.hp}/${o.maxHp} PV · ${o.deck.length} cartes en pioche · ${o.hand.length} en main.</div>`;
-    let st = "";
-    if (o.owner === 0 && G.cur === 0) st = o.frozen ? "Gelée." : o.attacks > 0 ? (G.sel.kind === "board" ? "👉 Touchez une cible ennemie en surbrillance." : "Prête à attaquer.") : "Ne peut pas attaquer ce tour-ci.";
-    else if (o.frozen) st = "Gelée : n'attaquera pas au prochain tour.";
-    const d = CARDS[o.id];
-    return `<div class="t">${o.art} ${esc(o.name)} <small>${o.atk}/${Math.max(0, o.hp)} · ${o.owner === 0 ? "Alliée" : "Ennemie"}</small></div>
-      <div class="d">${kwDesc(o.kw)}${o.shield && !o.kw.includes("bouclier") ? "<b>Bouclier</b> actif. " : ""}${esc(d.text || "")}</div>
-      ${st ? `<div class="hint">${st}</div>` : ""}`;
-  }
-  return logHTML();
-}
-function logHTML() {
-  return `<div class="d">${esc(G.log || "")}</div>`;
-}
-function kwDesc(kw) { return kw.map(k => `<b>${KW[k].n}</b> : ${KW[k].d} `).join(""); }
-function resolve(k) {
-  if (!k) return null;
-  if (k[0] === "h") return G.p[+k.slice(1)];
-  const u = +k.slice(1);
-  return allCreatures().find(c => c.uid === u) || null;
-}
-function render() {
-  if (!G) return;
-  const [me, ai] = G.p;
-  const tg = targetSet();
-  const myTurn = G.cur === 0 && !G.busy && !G.over;
-  const anyMove = myTurn && (me.hand.some(h => canPlay(me, CARDS[h.id])) || me.board.some(c => c.attacks > 0 && attackTargets(me).length));
-  const hand = me.hand.length ? me.hand.map(h => {
-    const d = CARDS[h.id];
-    return cardHTML(d, {hid: h.hid, sel: G.sel && G.sel.hid === h.hid, playable: myTurn && canPlay(me, d), dim: !myTurn || d.cost > me.mana});
-  }).join("") : `<div class="empty">Votre main est vide.</div>`;
-  const oldHand = $app.querySelector(".hand"), scroll = oldHand ? oldHand.scrollLeft : 0;
-  $app.innerHTML = `${heroHTML(ai)}${boardHTML(ai, tg)}
-    <div class="mid"><div class="info" aria-live="polite">${infoHTML()}</div>
-      <button class="endbtn ${myTurn && !anyMove ? "glow" : ""}" data-act="end" ${myTurn ? "" : "disabled"}>${myTurn ? "Fin du tour" : "Tour adverse"}</button></div>
-    ${boardHTML(me, tg)}${heroHTML(me)}<div class="hand">${hand}</div>`;
-  G.enter = [];
-  $app.querySelector(".hand").scrollLeft = scroll;
-  // Garder la carte sélectionnée visible
-  if (G.sel && G.sel.kind === "hand") {
-    const el = $app.querySelector(`[data-hid="${G.sel.hid}"]`);
-    if (el) el.scrollIntoView({block: "nearest", inline: "nearest"});
-  }
-}
-
-/* ===================== Entrées ===================== */
-$app.addEventListener("click", async e => {
-  if (!G || G.over) return;
-  const actEl = e.target.closest("[data-act]");
-  if (actEl) {
-    const a = actEl.dataset.act;
-    if (a === "end") return endPlayerTurn();
-    if (a === "quit") return G.busy ? null : confirmQuit();
-    if (a === "play" && !G.busy) {
-      const h = selCard(); if (!h) return;
-      G.busy = true; await playCard(G.p[0], h.hid, null); G.busy = false; render();
-    }
+  if (OPEN.stage === "reveal") {
+    const cur = OPEN.cards[OPEN.i], c = CARDS[cur.id];
+    const left = OPEN.cards.length - OPEN.i - 1;
+    const aura = OPEN.i === OPEN.cards.length - 1 || RAR[c.r].ord >= 2 ? c.r : "";
+    ov.innerHTML = `<div class="bar2"><span class="counter">Carte ${OPEN.i + 1} / ${OPEN.cards.length}</span><button class="btn sm ghost" data-act="skip">Tout révéler</button></div>
+      <div class="stage">
+        <div class="stack">${Array.from({length: Math.min(left, 3)}, (_, k) => `<div class="pile" style="transform:translate(${(k + 1) * 6}px,${(k + 1) * 5}px) rotate(${(k + 1) * 1.5}deg);z-index:${-k - 1}">${backHTML("")}</div>`).join("")}</div>
+        <div class="flipper enter" data-act="flip" role="button" tabindex="0" aria-label="Retourner la carte">
+          <div class="fl-in"><div class="fl-back">${backHTML(aura === "C" || aura === "P" ? "" : aura)}</div><div class="fl-front">${cardHTML(c, {foil: cur.foil})}
+            ${cur.isNew ? `<span class="badge new">Nouveau</span>` : cur.newFoil ? `<span class="badge new">Nouvelle brillante</span>` : ""}</div></div>
+          <div class="reveal-label gem g-${c.r}">${RAR[c.r].g} ${RAR[c.r].n}${cur.foil ? " · Brillante" : ""}</div>
+        </div></div>
+      <div class="hint" id="hint">Touchez pour retourner</div><div class="foot"></div>`;
     return;
   }
-  const cardEl = e.target.closest("[data-hid]");
-  if (cardEl) {
-    const hid = +cardEl.dataset.hid;
-    G.sel = G.sel && G.sel.kind === "hand" && G.sel.hid === hid ? null : {kind: "hand", hid};
-    return render();
+  // résumé
+  ov.innerHTML = `<div class="bar2"><span class="ttl">Votre booster</span><span class="coins">🌙 ${fmt(S.coins)}</span></div>
+    <div class="stage" style="place-items:start center;overflow:auto"><div class="summary">${OPEN.cards.map(x => `<button class="slot" data-act="card" data-id="${x.id}">${cardHTML(CARDS[x.id], {foil: x.foil})}${x.isNew ? `<span class="badge new">Nouveau</span>` : x.newFoil ? `<span class="badge new">Brillante</span>` : ""}</button>`).join("")}</div></div>
+    <div class="hint">${OPEN.cards.filter(x => x.isNew).length} nouvelle${OPEN.cards.filter(x => x.isNew).length > 1 ? "s" : ""} carte${OPEN.cards.filter(x => x.isNew).length > 1 ? "s" : ""} ajoutée${OPEN.cards.filter(x => x.isNew).length > 1 ? "s" : ""} à votre collection</div>
+    <div class="foot">
+      ${freeLeft() ? "" : `<button class="btn free" data-act="again" data-free="1">Booster gratuit</button>`}
+      <button class="btn" data-act="again" ${S.coins < PACK_PRICE ? "disabled" : ""}>Encore un · ${PACK_PRICE} 🌙</button>
+      <button class="btn ghost" data-act="closeopen">Terminer</button></div>`;
+}
+let anim = false;
+async function tear() {
+  if (anim || OPEN.stage !== "pack") return; anim = true;
+  const pk = document.querySelector("#ov .pk");
+  pk.classList.remove("wiggle"); pk.classList.add("torn");
+  await wait(480); pk.classList.add("out"); await wait(420);
+  OPEN.stage = "reveal"; OPEN.i = 0; OPEN.flipped = false; anim = false; drawOpen();
+}
+async function flip() {
+  if (anim) return;
+  const f = document.querySelector("#ov .flipper"); if (!f) return;
+  if (!OPEN.flipped) {
+    anim = true; OPEN.flipped = true; f.classList.remove("enter"); f.classList.add("flipped");
+    const cur = OPEN.cards[OPEN.i], c = CARDS[cur.id];
+    const h = document.getElementById("hint"); if (h) h.textContent = OPEN.i < OPEN.cards.length - 1 ? "Touchez pour la carte suivante" : "Touchez pour voir votre booster";
+    await wait(380);
+    celebrate(c.r, cur.foil);
+    anim = false;
+  } else {
+    anim = true; f.classList.add("leave"); await wait(300);
+    OPEN.i++; OPEN.flipped = false; anim = false;
+    if (OPEN.i >= OPEN.cards.length) OPEN.stage = "summary";
+    drawOpen();
   }
-  const kEl = e.target.closest("[data-k]");
-  if (kEl) return tapTarget(kEl.dataset.k);
-  if (G.sel) { G.sel = null; render(); }
-});
-$app.addEventListener("keydown", e => {
-  if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-hid],[data-k]")) { e.preventDefault(); e.target.click(); }
-});
-async function tapTarget(k) {
-  const obj = resolve(k); if (!obj) return;
-  const me = G.p[0];
-  const myTurn = G.cur === 0 && !G.busy;
-  if (myTurn && G.sel) {
-    const tg = targetSet();
-    if (tg.has(k)) {
-      G.busy = true;
-      if (G.sel.kind === "hand") await playCard(me, G.sel.hid, obj);
-      else { const c = selCreature(); if (c) await attack(c, obj); }
-      G.busy = false; render();
+}
+function celebrate(r, foil) {
+  const o = RAR[r].ord;
+  if (o < 3 && !foil) return;
+  const colors = {E: ["#c58bff", "#f0d9ff"], L: ["#ffcf5a", "#fff3c4", "#ff9b5e"], M: ["#ff7ad9", "#ffd66b", "#7ef0c0", "#7ec8ff", "#c58bff"]}[r] || ["#ffffff", "#7ec8ff", "#ff7ad9"];
+  const f = document.querySelector("#ov .flipper"); if (!f) return;
+  const rc = f.getBoundingClientRect(), cx = rc.left + rc.width / 2, cy = rc.top + rc.height / 2;
+  const n = o >= 4 ? 46 : o === 3 ? 26 : 16;
+  for (let i = 0; i < n; i++) {
+    const sp = document.createElement("span"); sp.className = "spark";
+    const ang = Math.random() * Math.PI * 2, dist = 90 + Math.random() * (o >= 4 ? 220 : 140);
+    sp.style.cssText = `left:${cx}px;top:${cy}px;background:${pickFrom(colors)};--dx:${Math.cos(ang) * dist}px;--dy:${Math.sin(ang) * dist}px;box-shadow:0 0 8px currentColor`;
+    document.body.appendChild(sp); setTimeout(() => sp.remove(), 1200);
+  }
+  if (o >= 4) {
+    const fl = document.createElement("div"); fl.className = "flash";
+    fl.style.background = r === "M" ? "radial-gradient(circle, #fff, rgba(255,122,217,.6) 40%, rgba(126,200,255,.3) 70%, transparent)" : "radial-gradient(circle, #fff8dc, rgba(255,207,90,.55) 45%, transparent 80%)";
+    document.body.appendChild(fl); setTimeout(() => fl.remove(), 900);
+    const ov = document.getElementById("ov"); ov.classList.remove("shake"); void ov.offsetWidth; ov.classList.add("shake");
+    try { navigator.vibrate && navigator.vibrate(r === "M" ? [60, 40, 120] : 80); } catch {}
+  }
+}
+function skipAll() { if (!OPEN || anim) return; OPEN.stage = "summary"; drawOpen(); }
+function closeOpen() { OPEN = null; $layer.innerHTML = ""; renderAll(); }
+
+/* ============================ Détail d'une carte ============================ */
+let DET = null;
+function openDetail(id, list) {
+  DET = {id, list: list && list.includes(id) ? list : [id], showFoil: own(id)[1] > 0 && own(id)[0] === 0};
+  drawDetail();
+}
+function drawDetail() {
+  const c = CARDS[DET.id], o = own(c.id), have = o[0] + o[1] > 0, s = SER[c.series];
+  const idx = DET.list.indexOf(c.id);
+  const showFoil = have && o[1] > 0 && (DET.showFoil || o[0] === 0);
+  const sellN = o[0] > 1 ? RAR[c.r].sell : 0, sellF = o[1] > 1 ? RAR[c.r].sell * 3 : 0;
+  let m = document.getElementById("modal");
+  if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-modal", "true"); document.body.appendChild(m); }
+  m.innerHTML = `<div class="mtop"><span class="eyebrow">${esc(s.name)} · ${c.series} ${String(c.no).padStart(3, "0")}</span><button class="iconbtn" data-act="closedet" aria-label="Fermer">✕</button></div>
+    <div class="detail">
+      <div class="tiltzone" id="tilt">
+        <button class="iconbtn" data-act="prev" aria-label="Carte précédente" ${idx > 0 ? "" : "disabled style='visibility:hidden'"}>‹</button>
+        ${cardHTML(c, {missing: !have, foil: showFoil, live: true})}
+        <button class="iconbtn" data-act="next" aria-label="Carte suivante" ${idx >= 0 && idx < DET.list.length - 1 ? "" : "disabled style='visibility:hidden'"}>›</button>
+      </div>
+      <div class="dinfo">
+        <h2>${have ? esc(c.name) : "Carte inconnue"}</h2>
+        <div class="meta"><span class="gem g-${c.r}">${RAR[c.r].g} ${RAR[c.r].n}</span><span>${ELEM[c.el].s} ${ELEM[c.el].n}</span>${have ? `<span>${esc(c.type)}</span><span>⚔ ${c.atk} · 🛡 ${c.def}</span>` : ""}</div>
+        ${have ? `<div class="own"><span>Normale ×${o[0]}</span><span>✦ Brillante ×${o[1]}</span></div>` : `<p class="note">Vous ne possédez pas encore cette carte. Trouvez-la dans un booster ${esc(s.name)} ou fabriquez-la.</p>`}
+        <div class="acts">
+          ${have && o[0] > 0 && o[1] > 0 ? `<button class="btn sm ghost" data-act="togglefoil">${showFoil ? "Voir la version normale" : "Voir la version brillante"}</button>` : ""}
+          ${!have ? `<button class="btn sm" data-act="craft" ${S.coins < RAR[c.r].craft ? "disabled" : ""}>Fabriquer · ${fmt(RAR[c.r].craft)} 🌙</button>` : ""}
+          ${sellN ? `<button class="btn sm ghost" data-act="sell" data-f="0">Recycler un double · +${sellN} 🌙</button>` : ""}
+          ${sellF ? `<button class="btn sm ghost" data-act="sell" data-f="1">Recycler une brillante en double · +${sellF} 🌙</button>` : ""}
+        </div>
+        ${have ? `<p class="note">Faites glisser votre doigt sur la carte pour la faire pivoter.</p>` : ""}
+      </div></div>`;
+  bindTilt();
+}
+function bindTilt() {
+  const z = document.getElementById("tilt"); if (!z) return;
+  const card = z.querySelector(".tc");
+  const move = e => {
+    const r = card.getBoundingClientRect();
+    const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    card.style.setProperty("--ry", ((x - .5) * 28) + "deg"); card.style.setProperty("--rx", ((.5 - y) * 28) + "deg");
+    card.style.setProperty("--fx", (x * 100) + "%"); card.style.setProperty("--fy", (y * 100) + "%");
+    card.style.setProperty("--gx", (x * 100) + "%"); card.style.setProperty("--gy", (y * 100) + "%");
+  };
+  const reset = () => { card.style.setProperty("--rx", "0deg"); card.style.setProperty("--ry", "0deg"); };
+  card.addEventListener("pointermove", move); card.addEventListener("pointerdown", move);
+  card.addEventListener("pointerleave", reset); card.addEventListener("pointerup", reset); card.addEventListener("pointercancel", reset);
+}
+function closeDetail() { DET = null; const m = document.getElementById("modal"); if (m) m.remove(); renderAll(); }
+
+/* ============================ Petits outils d'interface ============================ */
+const wait = ms => new Promise(r => setTimeout(r, matchMedia("(prefers-reduced-motion: reduce)").matches ? 10 : ms));
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2700); }
+function ask(title, text, ok) {
+  return new Promise(res => {
+    const d = document.createElement("div"); d.className = "sheet";
+    d.innerHTML = `<div class="box" role="dialog" aria-modal="true"><h2 style="font-size:24px">${esc(title)}</h2><p>${esc(text)}</p>
+      <div class="acts"><button class="btn ghost sm" data-r="0">Annuler</button><button class="btn sm" data-r="1">${esc(ok)}</button></div></div>`;
+    d.addEventListener("click", e => { const b = e.target.closest("[data-r]"); if (b || e.target === d) { d.remove(); res(!!(b && b.dataset.r === "1")); } });
+    document.body.appendChild(d);
+  });
+}
+
+/* ============================ Événements ============================ */
+document.addEventListener("click", async e => {
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const act = a.dataset.act;
+  switch (act) {
+    case "open": return startOpen(a.dataset.s, !!a.dataset.free);
+    case "tear": return tear();
+    case "flip": return flip();
+    case "skip": return skipAll();
+    case "again": { const code = OPEN.code; OPEN = null; return startOpen(code, !!a.dataset.free); }
+    case "closeopen": return closeOpen();
+    case "series": ui.series = a.dataset.s; saveUi(); return renderCollection();
+    case "filter": ui.filter = a.dataset.v; saveUi(); return renderCollection();
+    case "rar": ui.rar = a.dataset.v; saveUi(); return renderCollection();
+    case "card": return openDetail(a.dataset.id, OPEN ? OPEN.cards.map(x => x.id) : view === "collection" ? listCache : null);
+    case "closedet": return closeDetail();
+    case "prev": case "next": {
+      const i = DET.list.indexOf(DET.id) + (act === "next" ? 1 : -1);
+      if (i >= 0 && i < DET.list.length) { DET.id = DET.list[i]; DET.showFoil = own(DET.id)[1] > 0 && own(DET.id)[0] === 0; drawDetail(); }
       return;
     }
-  }
-  if (!obj.isHero && obj.owner === 0) {
-    const same = G.sel && G.sel.kind === "board" && G.sel.uid === obj.uid;
-    if (same) G.sel = null;
-    else if (myTurn && obj.attacks > 0) {
-      G.sel = {kind: "board", uid: obj.uid};
-      const t = attackTargets(me);
-      if (!t.length) G.sel = {kind: "info", k};
-    } else G.sel = {kind: "info", k};
-  } else {
-    G.sel = G.sel && G.sel.kind === "info" && G.sel.k === k ? null : {kind: "info", k};
-  }
-  render();
-}
-
-/* ===================== Écrans ===================== */
-function showMenu() {
-  G = null;
-  $app.innerHTML = "";
-  const st = loadStats();
-  $menu.hidden = false;
-  $menu.innerHTML = `<div class="inner">
-    <div class="logo">Invocateurs d'Ombrelune</div>
-    <div class="tag">Choisissez votre grimoire, invoquez vos créatures et réduisez à zéro les 25 points de vie de l'invocateur adverse.</div>
-    <div class="record">Victoires <b>${st.w}</b> · Défaites <b>${st.l}</b></div>
-    <div class="h2">Votre grimoire</div>
-    <div class="decks">${Object.entries(ELS).map(([k, e]) => `
-      <button class="deck el-${k}" data-el="${k}">
-        <span class="s">${e.sigil}</span><span class="n">${e.name}</span><span class="h">Héros : ${e.hero}</span><span class="d">${e.desc}</span>
-      </button>`).join("")}
-      <button class="deck" data-el="random" style="--elc:var(--gold);grid-column:1/-1">
-        <span class="n">Au hasard</span><span class="d">Laissez la lune choisir pour vous.</span></button>
-    </div>
-    <details class="rules" open>
-      <summary>Comment jouer</summary>
-      <ul>
-        <li>Chaque tour, vous gagnez <b>1 cristal de mana</b> de plus (max 10) et piochez une carte.</li>
-        <li>Touchez une carte de votre main pour la voir, puis <b>Invoquer</b> ou <b>Lancer</b>. Les sorts ciblés : touchez la cible qui clignote.</li>
-        <li>Une créature attaque au tour suivant son invocation. Touchez-la (bordure verte), puis touchez sa cible : créature ou héros adverse.</li>
-        <li>En combat, les deux créatures s'infligent leurs dégâts. <b>Garde</b> protège les autres créatures et le héros.</li>
-        <li>Pioche vide : vous subissez des dégâts de fatigue croissants.</li>
-      </ul>
-    </details>
-  </div>`;
-}
-$menu.addEventListener("click", e => {
-  const d = e.target.closest("[data-el]");
-  if (d) {
-    let el = d.dataset.el;
-    if (el === "random") el = pick(Object.keys(ELS));
-    return newGame(el);
-  }
-  const a = e.target.closest("[data-act]");
-  if (!a) return;
-  if (a.dataset.act === "again") return newGame(G ? G.p[0].el : "feu");
-  if (a.dataset.act === "menu") return showMenu();
-  if (a.dataset.act === "resume") { $menu.hidden = true; return; }
-  if (a.dataset.act === "forfeit") {
-    const st = loadStats(); st.l++; saveStats(st);
-    G.over = true; return showMenu();
+    case "togglefoil": DET.showFoil = !DET.showFoil; return drawDetail();
+    case "craft": {
+      const c = CARDS[DET.id], cost = RAR[c.r].craft;
+      if (S.coins < cost || ownedAny(c.id)) return;
+      if (!(await ask("Fabriquer cette carte ?", `${c.name} (${RAR[c.r].n}) coûte ${fmt(cost)} éclats de lune.`, "Fabriquer"))) return;
+      S.coins -= cost; addCard(c.id, false); checkSeriesBonus(); save(); renderCoins(); drawDetail();
+      celebrateSoft(); return toast(`${c.name} rejoint votre collection`);
+    }
+    case "sell": {
+      const c = CARDS[DET.id], f = a.dataset.f === "1", o = own(c.id).slice();
+      if (o[f ? 1 : 0] < 2) return;
+      o[f ? 1 : 0]--; S.owned[c.id] = o; const v = RAR[c.r].sell * (f ? 3 : 1); S.coins += v; save(); renderCoins(); drawDetail();
+      return toast(`+${v} 🌙`);
+    }
+    case "sellall": {
+      const v = dupValue(); if (!v) return;
+      if (!(await ask("Recycler tous les doubles ?", `Vous gardez un exemplaire de chaque carte (normale et brillante) et recevez ${fmt(v)} éclats de lune.`, "Recycler"))) return;
+      for (const [id, o] of Object.entries(S.owned)) S.owned[id] = [Math.min(o[0], 1), Math.min(o[1], 1)];
+      S.coins += v; save(); renderAll(); return toast(`+${fmt(v)} 🌙`);
+    }
+    case "reset": {
+      if (!(await ask("Recommencer à zéro ?", "Toute votre collection et vos éclats de lune seront effacés, sur tous vos appareils.", "Tout effacer"))) return;
+      const rev = S.rev; S = fresh(); S.rev = rev; S.lastDaily = today(); save(); renderAll(); return toast("Nouvelle collection commencée");
+    }
   }
 });
-function confirmQuit() {
-  $menu.hidden = false;
-  $menu.innerHTML = `<div class="inner end"><div class="big" style="font-size:44px">Abandonner ?</div>
-    <div class="tag">La partie comptera comme une défaite.</div>
-    <button class="btn" data-act="resume">Continuer la partie</button>
-    <button class="btn ghost" data-act="forfeit">Abandonner</button></div>`;
-}
-function showEnd(res) {
-  const st = loadStats();
-  const t = {win: ["Victoire", `${heroName(G.p[1])} est vaincu·e. Les portails d'Ombrelune s'inclinent devant vous.`],
-             lose: ["Défaite", `${heroName(G.p[1])} l'emporte cette fois-ci. Reprenez votre grimoire.`],
-             draw: ["Égalité", "Les deux invocateurs tombent en même temps."]}[res];
-  $menu.hidden = false;
-  $menu.innerHTML = `<div class="inner end">
-    <div class="big" style="color:${res === "win" ? "var(--gold)" : "var(--muted)"}">${t[0]}</div>
-    <div class="tag">${t[1]}</div>
-    <div class="record">Victoires <b>${st.w}</b> · Défaites <b>${st.l}</b></div>
-    <button class="btn" data-act="again">Rejouer avec ${ELS[G.p[0].el].name}</button>
-    <button class="btn ghost" data-act="menu">Changer de grimoire</button></div>`;
-}
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("[role=button][data-act]")) { e.preventDefault(); e.target.click(); }
+  if (e.key === "Escape") { if (DET) closeDetail(); }
+});
+function celebrateSoft() { try { navigator.vibrate && navigator.vibrate(30); } catch {} }
 
-async function newGame(el) {
-  $menu.hidden = true;
-  const aiEl = pick(Object.keys(ELS).filter(e => e !== el));
-  G = {p: [newPlayer(el, false, 0), newPlayer(aiEl, true, 1)], cur: 0, over: false, busy: true, sel: null, log: "", enter: []};
-  for (let i = 0; i < 3; i++) draw(G.p[0]);
-  for (let i = 0; i < 4; i++) draw(G.p[1]);
-  render();
-  await beginPlayerTurn();
-  G.busy = false;
-  render();
+function route() {
+  const h = location.hash.replace("#", "");
+  view = VIEWS.includes(h) ? h : "boutique";
+  renderAll(); window.scrollTo(0, 0);
 }
+addEventListener("hashchange", route);
+setInterval(() => { if (view === "boutique" && !OPEN && !DET) renderShop(); }, 30000);
 
-/* ===================== Démarrage ===================== */
-window.claude?.hot?.snapshot?.(() => (G && !G.over ? {G: JSON.parse(JSON.stringify(G)), uidc} : {}));
-function start(data) {
-  if (data && data.G) {
-    G = data.G; uidc = data.uidc || 1000; G.busy = false; G.enter = [];
-    $menu.hidden = true;
-    render();
-    if (G.cur === 1) aiTurnResume();
-  } else showMenu();
-}
-async function aiTurnResume() {
-  // Reprise après mise à jour : on termine simplement le tour adverse
-  G.busy = true;
-  await beginPlayerTurn();
-  G.busy = false; render();
-}
-window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+claimDaily();
+route();
+connectCloud();
 })();
 </script>
 </body></html>
