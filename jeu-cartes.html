@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head><body>
+<title>Invocateurs d'Ombrelune</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+<style>
+/* Layout : une table de jeu verticale qui tient sur un écran de téléphone — adversaire en haut, vous en bas, main en éventail défilant. */
+:root{
+  --table:#15121e; --table2:#1d1829; --panel:#251f35; --line:#3b3252;
+  --ink:#f0e7d4; --muted:#a99fbd; --gold:#e3b14b; --gold-ink:#2a1d05;
+  --hp:#e5484d; --mana:#4ea6ff; --ok:#62d784; --frost:#9fdcff;
+  --feu:#e8643c; --eau:#3d9ee0; --sylve:#5fb35a; --ombre:#a374db;
+  --f-display:"Grenze Gotisch", "Palatino Linotype", Georgia, serif;
+  --f-body:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  background:radial-gradient(120% 70% at 50% 50%, var(--table2), var(--table) 70%) fixed, var(--table);
+  color:var(--ink); font-family:var(--f-body); font-size:14px;
+  -webkit-user-select:none; user-select:none; touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+#app{
+  height:100%; max-width:540px; margin:0 auto;
+  padding-left:max(12px, env(safe-area-inset-left, 0px));
+  padding-right:max(12px, env(safe-area-inset-right, 0px));
+  padding-block:8px;
+  display:flex; flex-direction:column; gap:6px;
+}
+
+/* ——— Héros ——— */
+.hero{
+  display:flex; align-items:center; gap:10px; padding:6px 10px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  position:relative; flex:none; transition:box-shadow .2s, border-color .2s;
+}
+.hero .sigil{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;
+  background:color-mix(in srgb, var(--elc) 30%, var(--table)); border:2px solid var(--elc); flex:none;
+}
+.hero .who{min-width:0;flex:1}
+.hero .hname{font-family:var(--f-display);font-size:19px;line-height:1;letter-spacing:.02em}
+.hero .sub{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-weight:800;font-variant-numeric:tabular-nums;font-size:15px}
+.pill.hp{background:color-mix(in srgb,var(--hp) 22%,transparent);color:#ffb3b5;border:1px solid color-mix(in srgb,var(--hp) 55%,transparent)}
+.pill.mn{background:color-mix(in srgb,var(--mana) 18%,transparent);color:#bfe0ff;border:1px solid color-mix(in srgb,var(--mana) 50%,transparent)}
+.hero.target{border-color:var(--hp);box-shadow:0 0 0 2px var(--hp),0 0 18px color-mix(in srgb,var(--hp) 60%,transparent);animation:pulse 1s ease-in-out infinite}
+.hero.target.friendly{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
+.pips{display:flex;gap:2px;margin-top:3px}
+.pip{width:7px;height:7px;border-radius:2px;transform:rotate(45deg);background:var(--line)}
+.pip.on{background:var(--mana);box-shadow:0 0 5px var(--mana)}
+
+/* ——— Plateaux ——— */
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;flex:none;padding:4px 0}
+.slot{aspect-ratio:3/4;max-width:100%;border-radius:10px;border:1px dashed color-mix(in srgb,var(--line) 80%,transparent);background:color-mix(in srgb,var(--table) 60%,transparent)}
+.cr{
+  aspect-ratio:3/4;max-width:100%;border-radius:10px;position:relative;
+  background:linear-gradient(170deg, color-mix(in srgb,var(--elc) 35%,var(--panel)), var(--panel) 75%);
+  border:2px solid color-mix(in srgb,var(--elc) 70%,var(--line));
+  display:grid;place-items:center;transition:transform .15s, box-shadow .2s;
+}
+.cr .art{font-size:clamp(24px,8vw,34px);line-height:1;margin-top:-6px}
+.cr .kw{position:absolute;top:2px;left:0;right:0;display:flex;justify-content:center;gap:1px;font-size:11px;line-height:1}
+.stat{position:absolute;bottom:-6px;min-width:22px;height:22px;padding:0 4px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;border:2px solid var(--table)}
+.stat.a{left:-4px;background:var(--gold);color:var(--gold-ink)}
+.stat.h{right:-4px;background:var(--hp);color:#fff}
+.stat.h.hurt{background:#8d1c20;color:#ffd0d0}
+.stat.a.up{background:#ffd76e}
+.cr.ready{box-shadow:0 0 0 2px var(--ok),0 0 14px color-mix(in srgb,var(--ok) 50%,transparent)}
+.cr.sel{transform:translateY(-6px) scale(1.06);box-shadow:0 0 0 3px var(--gold),0 0 22px color-mix(in srgb,var(--gold) 70%,transparent);z-index:2}
+.cr.target{box-shadow:0 0 0 2px var(--hp),0 0 16px color-mix(in srgb,var(--hp) 65%,transparent);animation:pulse 1s ease-in-out infinite}
+.cr.target.friendly{box-shadow:0 0 0 2px var(--ok),0 0 16px color-mix(in srgb,var(--ok) 65%,transparent)}
+.cr.guard{border-style:double;border-width:4px}
+.cr.shield::after{content:"";position:absolute;inset:-5px;border-radius:13px;border:2px solid #fff6c9;box-shadow:0 0 10px #fff3a8, inset 0 0 8px #fff3a8;pointer-events:none}
+.cr.frozen{filter:saturate(.4) brightness(1.1)}
+.cr.frozen::before{content:"❄️";position:absolute;right:2px;top:14px;font-size:12px}
+.cr.sleep .art{opacity:.75}
+.cr .zz{position:absolute;right:3px;top:13px;font-size:10px;color:var(--muted);font-weight:700}
+.cr.enter{animation:enter .45s cubic-bezier(.2,1.4,.4,1)}
+.cr.dying{animation:die .45s ease-in forwards}
+.hit{animation:shake .35s}
+
+/* ——— Bande centrale ——— */
+.mid{flex:1 1 auto;min-height:64px;display:flex;align-items:stretch;gap:8px}
+.info{
+  flex:1;min-width:0;background:color-mix(in srgb,var(--panel) 75%,transparent);border:1px solid var(--line);
+  border-radius:12px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:auto;
+}
+.info .t{font-weight:800;font-size:14px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.info .t small{font-weight:500;color:var(--muted);font-size:11.5px}
+.info .d{font-size:12.5px;color:#d9cfe6;line-height:1.3}
+.info .d b{color:var(--gold)}
+.info .hint{font-size:12px;color:var(--muted)}
+.info .act{margin-top:3px;align-self:flex-start;background:var(--gold);color:var(--gold-ink);border:0;border-radius:8px;padding:6px 14px;font-weight:800}
+.info .act[disabled]{background:var(--line);color:var(--muted)}
+.endbtn{
+  flex:none;width:84px;border-radius:12px;border:2px solid var(--gold);
+  background:linear-gradient(180deg,#3b2d14,#22190a);color:var(--gold);font-family:var(--f-display);font-size:17px;line-height:1.05;padding:4px;
+}
+.endbtn.glow{animation:pulseGold 1.4s ease-in-out infinite}
+.endbtn[disabled]{border-color:var(--line);color:var(--muted);background:var(--panel)}
+
+/* ——— Main ——— */
+.hand{flex:none;display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;padding:14px 8px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.hand::-webkit-scrollbar{display:none}
+.hand .empty{color:var(--muted);font-size:12px;padding:20px 4px;height:132px}
+.card{
+  flex:none;width:94px;height:132px;border-radius:10px;position:relative;scroll-snap-align:start;
+  background:linear-gradient(175deg, color-mix(in srgb,var(--elc) 40%,var(--panel)), var(--panel) 60%);
+  border:2px solid color-mix(in srgb,var(--elc) 75%,var(--line));
+  display:flex;flex-direction:column;align-items:center;padding:4px 5px 5px;text-align:center;
+  transition:transform .18s, box-shadow .2s, opacity .2s;
+}
+.card .cost{position:absolute;top:-7px;left:-7px;width:24px;height:24px;border-radius:50%;background:var(--mana);color:#04213d;font-weight:800;display:grid;place-items:center;font-size:14px;border:2px solid var(--table)}
+.card .art{font-size:30px;line-height:1;margin-top:6px}
+.card .nm{font-weight:800;font-size:11.5px;line-height:1.1;margin-top:4px;min-height:25px;display:flex;align-items:center}
+.card .tx{font-size:9.5px;line-height:1.2;color:#d5cbe2;overflow:hidden;flex:1}
+.card .tx b{color:var(--gold)}
+.card .stat{bottom:-6px}
+.card .spell{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.12em;text-transform:uppercase;background:var(--table);border:1px solid var(--line);padding:1px 6px;border-radius:6px;color:var(--muted)}
+.card.dim{opacity:.55}
+.card.playable{box-shadow:0 0 0 2px var(--ok)}
+.card.sel{transform:translateY(-6px);box-shadow:0 0 0 3px var(--gold),0 6px 18px rgba(0,0,0,.5)}
+.card.big{width:150px;height:212px;padding:8px}
+.card.big .art{font-size:54px;margin-top:12px}
+.card.big .nm{font-size:16px;min-height:38px}
+.card.big .tx{font-size:12.5px}
+.card.big .cost{width:34px;height:34px;font-size:19px}
+.card.big .stat{height:30px;min-width:30px;font-size:17px;border-radius:15px}
+
+.el-feu{--elc:var(--feu)} .el-eau{--elc:var(--eau)} .el-sylve{--elc:var(--sylve)} .el-ombre{--elc:var(--ombre)}
+
+/* ——— Superpositions ——— */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:30}
+.float{position:fixed;transform:translate(-50%,-50%);font-weight:800;font-size:22px;text-shadow:0 2px 0 #000,0 0 8px #000;animation:floatUp .95s ease-out forwards}
+.float.dmg{color:#ff6b6f}.float.heal{color:var(--ok)}.float.shield{color:#fff3a8;font-size:15px}.float.info{color:var(--frost);font-size:15px}
+.banner{position:fixed;left:0;right:0;top:42%;text-align:center;font-family:var(--f-display);font-size:40px;color:var(--gold);text-shadow:0 3px 0 #000,0 0 24px rgba(227,177,75,.6);animation:banner 1s ease forwards;pointer-events:none;z-index:31}
+.showcase{position:fixed;inset:0;display:grid;place-items:center;z-index:29;pointer-events:none;background:rgba(10,8,16,.45);animation:fadeIO 1s ease forwards}
+.showcase .who{position:absolute;top:22%;width:100%;text-align:center;color:var(--muted);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+
+.screen{position:fixed;inset:0;z-index:40;overflow:auto;background:radial-gradient(120% 80% at 50% 0%, #2a2140, var(--table) 70%), var(--table);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-top:calc(env(safe-area-inset-top, 0px) + 22px);padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 22px)}
+.screen .inner{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.logo{font-family:var(--f-display);font-size:clamp(40px,12vw,58px);line-height:.92;text-align:center;color:var(--gold);text-wrap:balance;text-shadow:0 3px 0 #000}
+.tag{text-align:center;color:var(--muted);font-size:14px;line-height:1.4;text-wrap:balance}
+.record{text-align:center;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.record b{color:var(--ink)}
+.h2{font-family:var(--f-display);font-size:24px;margin-top:4px}
+.decks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.deck{
+  text-align:left;border-radius:14px;border:2px solid color-mix(in srgb,var(--elc) 70%,var(--line));
+  background:linear-gradient(160deg,color-mix(in srgb,var(--elc) 30%,var(--panel)),var(--panel) 70%);
+  padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0;
+}
+.deck .s{font-size:28px}
+.deck .n{font-family:var(--f-display);font-size:22px;line-height:1}
+.deck .h{font-size:12px;color:var(--muted)}
+.deck .d{font-size:12.5px;line-height:1.3;color:#d9cfe6}
+.rules{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45}
+.rules summary{font-weight:800;cursor:pointer}
+.rules ul{margin:8px 0 0;padding-left:18px;display:grid;gap:5px}
+.rules b{color:var(--gold)}
+.end{text-align:center;display:grid;gap:14px;margin-top:12vh}
+.end .big{font-family:var(--f-display);font-size:64px;line-height:1}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:800;font-size:16px;background:var(--gold);color:var(--gold-ink)}
+.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.quit{flex:none;background:none;border:0;color:var(--muted);font-size:16px;padding:4px 2px 4px 4px;margin-right:-4px}
+
+@keyframes pulse{50%{filter:brightness(1.25)}}
+@keyframes pulseGold{50%{box-shadow:0 0 16px color-mix(in srgb,var(--gold) 70%,transparent)}}
+@keyframes enter{from{transform:scale(.3) translateY(20px);opacity:0}}
+@keyframes die{to{transform:scale(.4) rotate(-12deg);opacity:0;filter:grayscale(1)}}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes floatUp{from{opacity:1;margin-top:0}to{opacity:0;margin-top:-46px}}
+@keyframes banner{0%{opacity:0;transform:scale(.7)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+@keyframes fadeIO{0%{opacity:0}15%{opacity:1}85%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition:none!important}}
+@media (max-height:640px){
+  .card{height:118px;width:86px}.card .art{font-size:25px;margin-top:4px}.card .tx{font-size:9px}
+  .hero{padding:4px 8px}.hero .sigil{width:32px;height:32px;font-size:17px}
+  .board{padding:2px 0}
+}
+</style>
+
+<div id="app"></div>
+<div id="fx"></div>
+<div id="menu" class="screen"></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ===================== Données ===================== */
+const ELS = {
+  feu:   {name:"Braise", hero:"Ignara",  sigil:"🔥", desc:"Agressif : créatures rapides et sorts de dégâts directs."},
+  eau:   {name:"Marée",  hero:"Maëlis",  sigil:"🌊", desc:"Défensif : gardes solides, soins et gel."},
+  sylve: {name:"Sylve",  hero:"Sylvan",  sigil:"🌿", desc:"Croissance : créatures robustes et renforts."},
+  ombre: {name:"Ombre",  hero:"Morvane", sigil:"🌑", desc:"Ténèbres : vol de vie, venin et invocations."}
+};
+const KW = {
+  garde:    {ic:"🛡️", n:"Garde",     d:"Les ennemis doivent l'attaquer en premier."},
+  celerite: {ic:"⚡", n:"Célérité",  d:"Peut attaquer dès son invocation."},
+  drain:    {ic:"🩸", n:"Drain",     d:"Les dégâts qu'elle inflige soignent votre héros."},
+  bouclier: {ic:"✨", n:"Bouclier",  d:"Ignore la première source de dégâts."},
+  venin:    {ic:"🧪", n:"Venin",     d:"Détruit toute créature qu'elle blesse."},
+  furie:    {ic:"⚔️", n:"Furie",     d:"Peut attaquer deux fois par tour."}
+};
+
+const C = (o) => o;
+const CARDS = {};
+[
+  // —— Braise ——
+  C({id:"salamandre", el:"feu", t:"c", cost:1, atk:2, hp:1, art:"🦎", name:"Salamandre cendrée"}),
+  C({id:"diablotin",  el:"feu", t:"c", cost:1, atk:1, hp:1, art:"😈", name:"Diablotin rieur", kw:["furie"]}),
+  C({id:"gobelin",    el:"feu", t:"c", cost:2, atk:2, hp:2, art:"👺", name:"Gobelin pyromane", text:"Éveil : 2 dégâts au héros adverse.", eveil:p=>damage(opp(p),2)}),
+  C({id:"loup",       el:"feu", t:"c", cost:3, atk:3, hp:2, art:"🐺", name:"Loup de braise", kw:["celerite"]}),
+  C({id:"phenix",     el:"feu", t:"c", cost:4, atk:3, hp:3, art:"🦅", name:"Phénix naissant", text:"Éveil : 3 dégâts à une créature ennemie au hasard.", eveil:p=>dmgRandom(p,3)}),
+  C({id:"golem",      el:"feu", t:"c", cost:5, atk:5, hp:6, art:"🗿", name:"Golem de magma", kw:["garde"]}),
+  C({id:"dragon",     el:"feu", t:"c", cost:7, atk:7, hp:6, art:"🐉", name:"Dragon écarlate", kw:["celerite"]}),
+  C({id:"trait",      el:"feu", t:"s", cost:1, art:"🔥", name:"Trait de feu", target:"any", text:"Inflige 2 dégâts.", fx:(p,t)=>damage(t,2)}),
+  C({id:"rage",       el:"feu", t:"s", cost:1, art:"💢", name:"Rage", target:"allyC", text:"Une créature alliée gagne +3 ATQ.", fx:(p,t)=>buff(t,3,0)}),
+  C({id:"cendres",    el:"feu", t:"s", cost:3, art:"🌋", name:"Pluie de cendres", text:"2 dégâts à toutes les créatures ennemies.", fx:p=>dmgAll(p,2)}),
+  C({id:"bouledefeu", el:"feu", t:"s", cost:4, art:"☄️", name:"Boule de feu", target:"any", text:"Inflige 6 dégâts.", fx:(p,t)=>damage(t,6)}),
+  // —— Marée ——
+  C({id:"crabe",     el:"eau", t:"c", cost:1, atk:1, hp:3, art:"🦀", name:"Crabe des récifs", kw:["garde"]}),
+  C({id:"ondine",    el:"eau", t:"c", cost:2, atk:2, hp:2, art:"🧜", name:"Ondine", text:"Éveil : soigne 3 PV à votre héros.", eveil:p=>heal(p,3)}),
+  C({id:"calmar",    el:"eau", t:"c", cost:2, atk:1, hp:2, art:"🦑", name:"Calmar des abysses", kw:["venin"]}),
+  C({id:"pieuvre",   el:"eau", t:"c", cost:3, atk:2, hp:3, art:"🐙", name:"Pieuvre érudite", text:"Éveil : piochez une carte.", eveil:p=>draw(p)}),
+  C({id:"tortue",    el:"eau", t:"c", cost:3, atk:2, hp:5, art:"🐢", name:"Tortue ancienne", kw:["garde"]}),
+  C({id:"requin",    el:"eau", t:"c", cost:4, atk:4, hp:3, art:"🦈", name:"Requin sanguin", kw:["drain"]}),
+  C({id:"leviathan", el:"eau", t:"c", cost:8, atk:6, hp:9, art:"🐋", name:"Léviathan", kw:["garde","drain"]}),
+  C({id:"vague",     el:"eau", t:"s", cost:2, art:"🌊", name:"Vague glacée", target:"enemyC", text:"2 dégâts à une créature ennemie et la gèle.", fx:(p,t)=>{freeze(t);damage(t,2);}}),
+  C({id:"bulle",     el:"eau", t:"s", cost:1, art:"🔮", name:"Bulle protectrice", target:"allyC", text:"Donne Bouclier et +1 PV à une créature alliée.", fx:(p,t)=>{t.shield=true;buff(t,0,1);}}),
+  C({id:"maree",     el:"eau", t:"s", cost:3, art:"💧", name:"Marée montante", text:"Soigne 5 PV à votre héros et piochez une carte.", fx:p=>{heal(p,5);draw(p);}}),
+  C({id:"raz",       el:"eau", t:"s", cost:6, art:"🌀", name:"Raz-de-marée", text:"4 dégâts à toutes les créatures ennemies.", fx:p=>dmgAll(p,4)}),
+  // —— Sylve ——
+  C({id:"lapin",     el:"sylve", t:"c", cost:1, atk:1, hp:2, art:"🐇", name:"Lapin des mousses", text:"Éveil : soigne 2 PV à votre héros.", eveil:p=>heal(p,2)}),
+  C({id:"araignee",  el:"sylve", t:"c", cost:2, atk:1, hp:2, art:"🕷️", name:"Tisseuse des bois", kw:["venin"]}),
+  C({id:"sanglier",  el:"sylve", t:"c", cost:2, atk:3, hp:2, art:"🐗", name:"Sanglier furieux"}),
+  C({id:"fee",       el:"sylve", t:"c", cost:2, atk:1, hp:1, art:"🧚", name:"Fée des clairières", text:"Éveil : vos autres créatures gagnent +1/+1.", eveil:(p,self)=>p.board.forEach(c=>{if(c!==self)buff(c,1,1);})}),
+  C({id:"cerf",      el:"sylve", t:"c", cost:3, atk:2, hp:4, art:"🦌", name:"Cerf sacré", text:"Éveil : invoque un Lapin des mousses.", eveil:p=>summon(p,"lapin",false)}),
+  C({id:"ours",      el:"sylve", t:"c", cost:4, atk:5, hp:4, art:"🐻", name:"Ours des cimes"}),
+  C({id:"treant",    el:"sylve", t:"c", cost:5, atk:4, hp:7, art:"🌳", name:"Tréant millénaire", kw:["garde"]}),
+  C({id:"hydre",     el:"sylve", t:"c", cost:6, atk:4, hp:6, art:"🐲", name:"Hydre verdoyante", kw:["furie"]}),
+  C({id:"croissance",el:"sylve", t:"s", cost:2, art:"🌱", name:"Croissance", target:"allyC", text:"Une créature alliée gagne +2/+2.", fx:(p,t)=>buff(t,2,2)}),
+  C({id:"lianes",    el:"sylve", t:"s", cost:1, art:"🌿", name:"Lianes", target:"enemyC", text:"Gèle une créature ennemie : elle n'attaquera pas au prochain tour.", fx:(p,t)=>freeze(t)}),
+  C({id:"colere",    el:"sylve", t:"s", cost:4, art:"🍃", name:"Chant de la forêt", text:"Vos créatures gagnent +2/+2.", fx:p=>p.board.forEach(c=>buff(c,2,2))}),
+  // —— Ombre ——
+  C({id:"chauvesouris", el:"ombre", t:"c", cost:1, atk:1, hp:2, art:"🦇", name:"Chauve-souris", kw:["drain"]}),
+  C({id:"squelette",    el:"ombre", t:"c", cost:1, atk:2, hp:1, art:"💀", name:"Squelette"}),
+  C({id:"spectre",      el:"ombre", t:"c", cost:3, atk:3, hp:2, art:"👻", name:"Spectre errant", kw:["bouclier"]}),
+  C({id:"assassin",     el:"ombre", t:"c", cost:3, atk:2, hp:2, art:"🗡️", name:"Lame nocturne", kw:["celerite","venin"]}),
+  C({id:"necro",        el:"ombre", t:"c", cost:4, atk:3, hp:3, art:"🧙", name:"Nécromancien", text:"Éveil : invoque deux Squelettes.", eveil:p=>{summon(p,"squelette",false);summon(p,"squelette",false);}}),
+  C({id:"vampire",      el:"ombre", t:"c", cost:5, atk:4, hp:5, art:"🧛", name:"Comtesse vampire", kw:["drain"]}),
+  C({id:"liche",        el:"ombre", t:"c", cost:7, atk:6, hp:6, art:"👑", name:"Seigneur liche", text:"Éveil : 2 dégâts à toutes les créatures ennemies.", eveil:p=>dmgAll(p,2)}),
+  C({id:"drainame",     el:"ombre", t:"s", cost:3, art:"🌑", name:"Drain d'âme", target:"any", text:"Inflige 3 dégâts et soigne 3 PV à votre héros.", fx:(p,t)=>{damage(t,3);heal(p,3);}}),
+  C({id:"malediction",  el:"ombre", t:"s", cost:5, art:"🕯️", name:"Malédiction", target:"enemyC", text:"Détruit une créature ennemie.", fx:(p,t)=>{t.hp=0;t.shield=false;fx(keyOf(t),"Détruite","info");}}),
+  C({id:"pacte",        el:"ombre", t:"s", cost:1, art:"📜", name:"Pacte obscur", text:"Piochez deux cartes. Votre héros perd 3 PV.", fx:p=>{draw(p);draw(p);damage(p,3);}})
+].forEach(c => CARDS[c.id] = c);
+
+const DECKS = {
+  feu:   {salamandre:2, diablotin:2, gobelin:2, loup:2, phenix:2, golem:2, dragon:1, trait:2, rage:1, cendres:2, bouledefeu:2},
+  eau:   {crabe:2, ondine:2, calmar:2, pieuvre:2, tortue:2, requin:2, leviathan:1, vague:2, bulle:1, maree:2, raz:2},
+  sylve: {lapin:2, araignee:2, sanglier:2, fee:2, cerf:2, ours:2, treant:2, hydre:1, croissance:2, lianes:1, colere:2},
+  ombre: {chauvesouris:2, squelette:3, spectre:2, assassin:2, necro:2, vampire:2, liche:1, drainame:2, malediction:2, pacte:2}
+};
+
+/* ===================== Outils ===================== */
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? ms * 0.4 : ms));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.random() * a.length | 0];
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+
+let G = null, uidc = 1;
+const uid = () => uidc++;
+const opp = p => G.p[1 - p.idx];
+const ownerOf = c => G.p[c.owner];
+const has = (c, k) => !c.isHero && c.kw.includes(k);
+const keyOf = t => t.isHero ? "h" + t.idx : "c" + t.uid;
+const maxAtt = c => has(c, "furie") ? 2 : 1;
+const value = c => c.atk + c.hp + c.kw.length * 1.5 + (c.shield ? 1 : 0);
+const allCreatures = () => [...G.p[0].board, ...G.p[1].board];
+
+function loadStats() { try { return JSON.parse(localStorage.getItem("ombrelune-stats")) || {w:0, l:0}; } catch { return {w:0, l:0}; } }
+function saveStats(s) { try { localStorage.setItem("ombrelune-stats", JSON.stringify(s)); } catch {} }
+
+/* ===================== Effets visuels ===================== */
+let fxQ = [];
+const fx = (k, text, cls) => fxQ.push({k, text, cls});
+const hits = new Set();
+function flushFx() {
+  const per = {};
+  for (const f of fxQ) {
+    const el = document.querySelector(`[data-k="${f.k}"]`);
+    if (!el) continue;
+    const r = el.getBoundingClientRect();
+    const n = per[f.k] = (per[f.k] || 0) + 1;
+    const d = document.createElement("div");
+    d.className = "float " + f.cls;
+    d.textContent = f.text;
+    d.style.left = (r.left + r.width / 2) + "px";
+    d.style.top = (r.top + r.height / 2 - (n - 1) * 20) + "px";
+    $fx.appendChild(d);
+    setTimeout(() => d.remove(), 1000);
+  }
+  fxQ = [];
+  for (const k of hits) {
+    const el = document.querySelector(`[data-k="${k}"]`);
+    if (el) { el.classList.remove("hit"); void el.offsetWidth; el.classList.add("hit"); }
+  }
+  hits.clear();
+}
+async function banner(text) {
+  const b = document.createElement("div");
+  b.className = "banner"; b.textContent = text;
+  document.body.appendChild(b);
+  await sleep(900);
+  b.remove();
+}
+async function showcase(d, who) {
+  const s = document.createElement("div");
+  s.className = "showcase";
+  s.innerHTML = `<div class="who">${esc(who)} joue</div>${cardHTML(d, {big:true})}`;
+  document.body.appendChild(s);
+  await sleep(1000);
+  s.remove();
+}
+
+/* ===================== Règles ===================== */
+function damage(t, n, src) {
+  if (!t || n <= 0) return 0;
+  if (!t.isHero && t.shield) { t.shield = false; fx(keyOf(t), "Bouclier !", "shield"); return 0; }
+  t.hp -= n;
+  fx(keyOf(t), "−" + n, "dmg"); hits.add(keyOf(t));
+  if (src && !src.isHero) {
+    if (has(src, "venin") && !t.isHero && t.hp > 0) t.hp = 0;
+    if (has(src, "drain")) heal(ownerOf(src), n);
+  }
+  return n;
+}
+function heal(t, n) {
+  const before = t.hp;
+  t.hp = Math.min(t.maxHp, t.hp + n);
+  if (t.hp > before) fx(keyOf(t), "+" + (t.hp - before), "heal");
+}
+function buff(c, a, h) { c.atk += a; c.hp += h; c.maxHp += h; fx(keyOf(c), `+${a}/+${h}`, "heal"); }
+function freeze(c) { c.frozen = true; fx(keyOf(c), "Gelé", "info"); }
+function dmgAll(p, n) { opp(p).board.slice().forEach(c => damage(c, n)); }
+function dmgRandom(p, n) { const e = opp(p).board.filter(c => c.hp > 0); if (e.length) damage(pick(e), n); }
+
+function summon(p, id, withEveil = true) {
+  if (p.board.length >= 5) return null;
+  const d = CARDS[id];
+  const kw = d.kw ? d.kw.slice() : [];
+  const c = {uid: uid(), id, owner: p.idx, name: d.name, art: d.art, el: d.el, atk: d.atk, hp: d.hp, maxHp: d.hp, baseAtk: d.atk,
+             kw, shield: kw.includes("bouclier"), frozen: false, attacks: 0};
+  c.attacks = kw.includes("celerite") ? maxAtt(c) : 0;
+  p.board.push(c);
+  G.enter.push(c.uid);
+  if (withEveil && d.eveil) d.eveil(p, c);
+  return c;
+}
+function draw(p) {
+  if (!p.deck.length) {
+    p.fatigue++;
+    G.log = `${heroName(p)} n'a plus de cartes : ${p.fatigue} dégât${p.fatigue > 1 ? "s" : ""} de fatigue.`;
+    damage(p, p.fatigue);
+    return;
+  }
+  const id = p.deck.pop();
+  if (p.hand.length >= 8) { G.log = `Main pleine : ${CARDS[id].name} est brûlée.`; return; }
+  p.hand.push({hid: uid(), id});
+}
+const heroName = p => ELS[p.el].hero;
+
+function newPlayer(el, isAI, idx) {
+  const deck = [];
+  for (const [id, n] of Object.entries(DECKS[el])) for (let i = 0; i < n; i++) deck.push(id);
+  return {idx, el, isAI, isHero: true, hp: 25, maxHp: 25, mana: 0, maxMana: 0, deck: shuffle(deck), hand: [], board: [], fatigue: 0};
+}
+function startTurnState(i) {
+  G.cur = i;
+  const p = G.p[i];
+  p.maxMana = Math.min(10, p.maxMana + 1);
+  p.mana = p.maxMana;
+  p.board.forEach(c => { c.attacks = c.frozen ? 0 : maxAtt(c); c.frozen = false; });
+  draw(p);
+}
+function attackTargets(p) {
+  const e = opp(p);
+  const guards = e.board.filter(c => has(c, "garde"));
+  return guards.length ? guards : [...e.board, e];
+}
+function spellTargets(p, d) {
+  const e = opp(p);
+  switch (d.target) {
+    case "any": return [...e.board, e, ...p.board, p];
+    case "enemyC": return [...e.board];
+    case "allyC": return [...p.board];
+    default: return [];
+  }
+}
+function canPlay(p, d) {
+  if (G.cur !== p.idx || d.cost > p.mana) return false;
+  if (d.t === "c") return p.board.length < 5;
+  if (d.target) return spellTargets(p, d).length > 0;
+  return true;
+}
+
+/* ===================== Actions ===================== */
+async function settle() {
+  render(); flushFx();
+  const dead = allCreatures().filter(c => c.hp <= 0);
+  if (dead.length) {
+    await sleep(380);
+    dead.forEach(c => { const el = document.querySelector(`[data-k="c${c.uid}"]`); if (el) el.classList.add("dying"); });
+    await sleep(430);
+    G.p.forEach(p => p.board = p.board.filter(c => c.hp > 0));
+    render();
+  }
+  checkEnd();
+}
+async function playCard(p, hid, target) {
+  const i = p.hand.findIndex(h => h.hid === hid);
+  if (i < 0) return false;
+  const d = CARDS[p.hand[i].id];
+  if (!canPlay(p, d)) return false;
+  if (d.target && !target) return false;
+  p.mana -= d.cost;
+  p.hand.splice(i, 1);
+  G.sel = null;
+  G.log = `${heroName(p)} ${d.t === "c" ? "invoque" : "lance"} ${d.name}.`;
+  if (d.t === "c") summon(p, d.id); else d.fx(p, target);
+  await settle();
+  return true;
+}
+async function attack(c, t) {
+  c.attacks--;
+  G.sel = null;
+  G.log = `${c.name} attaque ${t.isHero ? heroName(t) : t.name}.`;
+  render();
+  const a = document.querySelector(`[data-k="${keyOf(c)}"]`), b = document.querySelector(`[data-k="${keyOf(t)}"]`);
+  if (a && b && a.animate && !reduced) {
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    const dx = (rb.left + rb.width / 2) - (ra.left + ra.width / 2), dy = (rb.top + rb.height / 2) - (ra.top + ra.height / 2);
+    a.style.zIndex = 5;
+    a.animate([{transform: "none"}, {transform: `translate(${dx * .75}px,${dy * .75}px) scale(1.1)`, offset: .55}, {transform: "none"}], {duration: 420, easing: "ease-in-out"});
+    await sleep(230);
+  }
+  const atkVal = c.atk, back = t.isHero ? 0 : t.atk;
+  damage(t, atkVal, c);
+  if (!t.isHero) damage(c, back, t);
+  await settle();
+}
+function checkEnd() {
+  if (G.over) return;
+  const [me, ai] = G.p;
+  if (me.hp > 0 && ai.hp > 0) return;
+  G.over = true;
+  const st = loadStats();
+  let res;
+  if (ai.hp <= 0 && me.hp > 0) { res = "win"; st.w++; } else if (me.hp <= 0 && ai.hp > 0) { res = "lose"; st.l++; } else res = "draw";
+  saveStats(st);
+  setTimeout(() => showEnd(res), 700);
+}
+
+async function endPlayerTurn() {
+  if (G.busy || G.over || G.cur !== 0) return;
+  G.sel = null;
+  await aiTurn();
+}
+async function beginPlayerTurn() {
+  startTurnState(0);
+  G.log = "À vous ! Touchez une carte de votre main ou une créature prête (bordure verte).";
+  await settle();
+  if (!G.over) await banner("À vous de jouer");
+}
+
+/* ===================== IA ===================== */
+function aiPlan(p, d) {
+  if (d.t === "c") return p.board.length < 5 ? {t: null} : null;
+  const e = opp(p), ec = e.board.filter(c => c.hp > 0);
+  const byVal = (a, b) => value(b) - value(a);
+  const dmgSpell = {trait: 2, bouledefeu: 6, drainame: 3}[d.id];
+  if (dmgSpell) {
+    if (e.hp <= dmgSpell) return {t: e};
+    const k = ec.filter(c => c.hp <= dmgSpell && !c.shield).sort(byVal);
+    if (k.length && value(k[0]) >= dmgSpell + 1) return {t: k[0]};
+    return {t: k[0] || e};
+  }
+  switch (d.id) {
+    case "vague": { const t = ec.sort((a, b) => b.atk - a.atk)[0]; return t ? {t} : null; }
+    case "malediction": { const t = ec.sort(byVal)[0]; return t && value(t) >= 6 ? {t} : null; }
+    case "lianes": { const t = ec.sort((a, b) => b.atk - a.atk)[0]; return t && t.atk >= 3 ? {t} : null; }
+    case "rage": case "croissance": case "bulle": {
+      const al = p.board.slice().sort((a, b) => (b.attacks > 0) - (a.attacks > 0) || value(b) - value(a));
+      return al[0] ? {t: al[0]} : null;
+    }
+    case "cendres": return ec.length >= 2 || ec.some(c => c.hp <= 2) ? {t: null} : null;
+    case "raz": return ec.length >= 2 || ec.some(c => value(c) >= 8) ? {t: null} : null;
+    case "maree": return p.hp <= p.maxHp - 4 || p.hand.length <= 2 ? {t: null} : null;
+    case "pacte": return p.hp > 12 && p.hand.length <= 5 ? {t: null} : null;
+    case "colere": return p.board.length >= 2 ? {t: null} : null;
+  }
+  return d.target ? null : {t: null};
+}
+function aiChooseTarget(p, att) {
+  const e = opp(p);
+  const targets = attackTargets(p);
+  const faceOk = targets.includes(e);
+  if (faceOk) {
+    const total = p.board.reduce((s, c) => s + c.atk * c.attacks, 0);
+    if (total >= e.hp) return e;
+  }
+  const kills = c => !c.shield && (has(att, "venin") || att.atk >= c.hp);
+  const survives = c => att.shield || c.atk === 0 || (c.atk < att.hp && !has(c, "venin"));
+  let best = null, bs = -Infinity;
+  for (const c of targets) {
+    if (c.isHero) continue;
+    let s = 0;
+    if (kills(c)) s += value(c) + 2;
+    if (survives(c)) s += 3; else s -= value(att);
+    if (!faceOk || (kills(c) && (survives(c) || value(c) >= value(att)))) {
+      if (s > bs) { bs = s; best = c; }
+    }
+  }
+  if (!faceOk) return best;
+  // Menace : si le joueur a beaucoup d'attaque, l'IA nettoie un peu plus
+  return best || e;
+}
+async function aiTurn() {
+  G.busy = true;
+  const p = G.p[1];
+  startTurnState(1);
+  G.log = `Tour de ${heroName(p)}…`;
+  render(); flushFx();
+  await banner("Tour adverse");
+  await settle();
+  let guard = 0;
+  while (!G.over && guard++ < 25) {
+    const opts = p.hand.map(h => ({h, d: CARDS[h.id]})).filter(o => canPlay(p, o.d)).sort((a, b) => b.d.cost - a.d.cost);
+    let played = false;
+    for (const o of opts) {
+      const plan = aiPlan(p, o.d);
+      if (!plan || (o.d.target && !plan.t)) continue;
+      await showcase(o.d, heroName(p));
+      await playCard(p, o.h.hid, plan.t);
+      await sleep(250);
+      played = true;
+      break;
+    }
+    if (!played) break;
+  }
+  guard = 0;
+  while (!G.over && guard++ < 25) {
+    const att = p.board.find(c => c.attacks > 0 && c.atk > 0 && c.hp > 0);
+    if (!att) break;
+    const t = aiChooseTarget(p, att);
+    if (!t) { att.attacks = 0; continue; }
+    await attack(att, t);
+    await sleep(300);
+  }
+  if (!G.over) await beginPlayerTurn();
+  G.busy = false;
+  render();
+}
+
+/* ===================== Rendu ===================== */
+const $app = document.getElementById("app"), $fx = document.getElementById("fx"), $menu = document.getElementById("menu");
+
+function kwText(kw) { return kw.map(k => `<b>${KW[k].n}</b>`).join(". ") + (kw.length ? ". " : ""); }
+function cardHTML(d, o = {}) {
+  const cls = ["card", "el-" + d.el, o.big ? "big" : "", o.sel ? "sel" : "", o.playable ? "playable" : "", o.dim ? "dim" : ""].join(" ");
+  const stats = d.t === "c" ? `<span class="stat a">${d.atk}</span><span class="stat h">${d.hp}</span>` : `<span class="spell">Sort</span>`;
+  return `<div class="${cls}" ${o.hid ? `data-hid="${o.hid}" role="button" tabindex="0" aria-label="${esc(d.name)}, coût ${d.cost}"` : ""}>
+    <span class="cost">${d.cost}</span><div class="art">${d.art}</div><div class="nm">${esc(d.name)}</div>
+    <div class="tx">${kwText(d.kw || [])}${esc(d.text || "")}</div>${stats}</div>`;
+}
+function heroHTML(p) {
+  const me = !p.isAI;
+  const tg = targetSet();
+  const isT = tg.has(keyOf(p));
+  const friendly = isT && me ? "friendly" : "";
+  const pips = Array.from({length: p.maxMana}, (_, i) => `<span class="pip ${i < p.mana ? "on" : ""}"></span>`).join("");
+  return `<div class="hero el-${p.el} ${isT ? "target" : ""} ${friendly}" data-k="${keyOf(p)}" role="button" tabindex="0">
+    <div class="sigil">${ELS[p.el].sigil}</div>
+    <div class="who"><div class="hname">${heroName(p)}</div>
+      <div class="sub">${me ? "Vous" : "Adversaire"} · Pioche ${p.deck.length} · Main ${p.hand.length}</div>
+      <div class="pips" aria-hidden="true">${pips}</div></div>
+    <span class="pill mn" title="Mana">💎 ${p.mana}/${p.maxMana}</span>
+    <span class="pill hp" title="Points de vie">❤ ${Math.max(0, p.hp)}</span>
+    ${me ? "" : `<button class="quit" data-act="quit" aria-label="Abandonner la partie">✕</button>`}
+  </div>`;
+}
+function selCard() { return G.sel && G.sel.kind === "hand" ? G.p[0].hand.find(h => h.hid === G.sel.hid) : null; }
+function selCreature() { return G.sel && G.sel.kind === "board" ? G.p[0].board.find(c => c.uid === G.sel.uid) : null; }
+function targetSet() {
+  const s = new Set();
+  if (!G.sel || G.cur !== 0 || G.busy) return s;
+  if (G.sel.kind === "hand") {
+    const h = selCard(); if (!h) return s;
+    const d = CARDS[h.id];
+    if (d.target && canPlay(G.p[0], d)) spellTargets(G.p[0], d).forEach(t => s.add(keyOf(t)));
+  } else if (G.sel.kind === "board") {
+    const c = selCreature();
+    if (c && c.attacks > 0) attackTargets(G.p[0]).forEach(t => s.add(keyOf(t)));
+  }
+  return s;
+}
+function creatureHTML(c, tg) {
+  const mine = c.owner === 0;
+  const ready = mine && G.cur === 0 && !G.busy && c.attacks > 0;
+  const cls = ["cr", "el-" + c.el,
+    ready ? "ready" : "", G.sel && G.sel.kind === "board" && G.sel.uid === c.uid ? "sel" : "",
+    tg.has("c" + c.uid) ? "target" : "", tg.has("c" + c.uid) && mine ? "friendly" : "",
+    has(c, "garde") ? "guard" : "", c.shield ? "shield" : "", c.frozen ? "frozen" : "",
+    mine && G.cur === 0 && c.attacks === 0 ? "sleep" : "", G.enter.includes(c.uid) ? "enter" : ""].join(" ");
+  const kw = c.kw.filter(k => k !== "bouclier").map(k => KW[k].ic).join("");
+  const zz = mine && G.cur === 0 && c.attacks === 0 && !c.frozen ? `<span class="zz">z</span>` : "";
+  return `<div class="${cls}" data-k="c${c.uid}" role="button" tabindex="0" aria-label="${esc(c.name)} ${c.atk} attaque ${c.hp} vie">
+    <div class="kw">${kw}</div>${zz}<div class="art">${c.art}</div>
+    <span class="stat a ${c.atk > c.baseAtk ? "up" : ""}">${c.atk}</span><span class="stat h ${c.hp < c.maxHp ? "hurt" : ""}">${Math.max(0, c.hp)}</span></div>`;
+}
+function boardHTML(p, tg) {
+  let h = p.board.map(c => creatureHTML(c, tg)).join("");
+  for (let i = p.board.length; i < 5; i++) h += `<div class="slot"></div>`;
+  return `<div class="board" data-side="${p.idx}">${h}</div>`;
+}
+function infoHTML() {
+  const me = G.p[0];
+  const myTurn = G.cur === 0 && !G.busy && !G.over;
+  if (G.sel && G.sel.kind === "hand") {
+    const h = selCard(); if (!h) return logHTML();
+    const d = CARDS[h.id];
+    let act = "";
+    if (myTurn) {
+      if (d.cost > me.mana) act = `<button class="act" disabled>Mana insuffisant (${d.cost})</button>`;
+      else if (d.t === "c" && me.board.length >= 5) act = `<button class="act" disabled>Plateau plein</button>`;
+      else if (d.target) act = spellTargets(me, d).length ? `<div class="hint">👉 Touchez une cible en surbrillance.</div>` : `<button class="act" disabled>Aucune cible</button>`;
+      else act = `<button class="act" data-act="play">${d.t === "c" ? "Invoquer" : "Lancer"} · ${d.cost} 💎</button>`;
+    }
+    return `<div class="t">${d.art} ${esc(d.name)} <small>${d.t === "c" ? `Créature ${d.atk}/${d.hp}` : "Sort"} · ${ELS[d.el].name}</small></div>
+      <div class="d">${kwDesc(d.kw || [])}${esc(d.text || "")}</div>${act}`;
+  }
+  if (G.sel && (G.sel.kind === "board" || G.sel.kind === "info")) {
+    const o = G.sel.kind === "board" ? selCreature() : resolve(G.sel.k);
+    if (!o) return logHTML();
+    if (o.isHero) return `<div class="t">${ELS[o.el].sigil} ${heroName(o)} <small>${ELS[o.el].name}</small></div>
+      <div class="d">${o.hp}/${o.maxHp} PV · ${o.deck.length} cartes en pioche · ${o.hand.length} en main.</div>`;
+    let st = "";
+    if (o.owner === 0 && G.cur === 0) st = o.frozen ? "Gelée." : o.attacks > 0 ? (G.sel.kind === "board" ? "👉 Touchez une cible ennemie en surbrillance." : "Prête à attaquer.") : "Ne peut pas attaquer ce tour-ci.";
+    else if (o.frozen) st = "Gelée : n'attaquera pas au prochain tour.";
+    const d = CARDS[o.id];
+    return `<div class="t">${o.art} ${esc(o.name)} <small>${o.atk}/${Math.max(0, o.hp)} · ${o.owner === 0 ? "Alliée" : "Ennemie"}</small></div>
+      <div class="d">${kwDesc(o.kw)}${o.shield && !o.kw.includes("bouclier") ? "<b>Bouclier</b> actif. " : ""}${esc(d.text || "")}</div>
+      ${st ? `<div class="hint">${st}</div>` : ""}`;
+  }
+  return logHTML();
+}
+function logHTML() {
+  return `<div class="d">${esc(G.log || "")}</div>`;
+}
+function kwDesc(kw) { return kw.map(k => `<b>${KW[k].n}</b> : ${KW[k].d} `).join(""); }
+function resolve(k) {
+  if (!k) return null;
+  if (k[0] === "h") return G.p[+k.slice(1)];
+  const u = +k.slice(1);
+  return allCreatures().find(c => c.uid === u) || null;
+}
+function render() {
+  if (!G) return;
+  const [me, ai] = G.p;
+  const tg = targetSet();
+  const myTurn = G.cur === 0 && !G.busy && !G.over;
+  const anyMove = myTurn && (me.hand.some(h => canPlay(me, CARDS[h.id])) || me.board.some(c => c.attacks > 0 && attackTargets(me).length));
+  const hand = me.hand.length ? me.hand.map(h => {
+    const d = CARDS[h.id];
+    return cardHTML(d, {hid: h.hid, sel: G.sel && G.sel.hid === h.hid, playable: myTurn && canPlay(me, d), dim: !myTurn || d.cost > me.mana});
+  }).join("") : `<div class="empty">Votre main est vide.</div>`;
+  const oldHand = $app.querySelector(".hand"), scroll = oldHand ? oldHand.scrollLeft : 0;
+  $app.innerHTML = `${heroHTML(ai)}${boardHTML(ai, tg)}
+    <div class="mid"><div class="info" aria-live="polite">${infoHTML()}</div>
+      <button class="endbtn ${myTurn && !anyMove ? "glow" : ""}" data-act="end" ${myTurn ? "" : "disabled"}>${myTurn ? "Fin du tour" : "Tour adverse"}</button></div>
+    ${boardHTML(me, tg)}${heroHTML(me)}<div class="hand">${hand}</div>`;
+  G.enter = [];
+  $app.querySelector(".hand").scrollLeft = scroll;
+  // Garder la carte sélectionnée visible
+  if (G.sel && G.sel.kind === "hand") {
+    const el = $app.querySelector(`[data-hid="${G.sel.hid}"]`);
+    if (el) el.scrollIntoView({block: "nearest", inline: "nearest"});
+  }
+}
+
+/* ===================== Entrées ===================== */
+$app.addEventListener("click", async e => {
+  if (!G || G.over) return;
+  const actEl = e.target.closest("[data-act]");
+  if (actEl) {
+    const a = actEl.dataset.act;
+    if (a === "end") return endPlayerTurn();
+    if (a === "quit") return G.busy ? null : confirmQuit();
+    if (a === "play" && !G.busy) {
+      const h = selCard(); if (!h) return;
+      G.busy = true; await playCard(G.p[0], h.hid, null); G.busy = false; render();
+    }
+    return;
+  }
+  const cardEl = e.target.closest("[data-hid]");
+  if (cardEl) {
+    const hid = +cardEl.dataset.hid;
+    G.sel = G.sel && G.sel.kind === "hand" && G.sel.hid === hid ? null : {kind: "hand", hid};
+    return render();
+  }
+  const kEl = e.target.closest("[data-k]");
+  if (kEl) return tapTarget(kEl.dataset.k);
+  if (G.sel) { G.sel = null; render(); }
+});
+$app.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-hid],[data-k]")) { e.preventDefault(); e.target.click(); }
+});
+async function tapTarget(k) {
+  const obj = resolve(k); if (!obj) return;
+  const me = G.p[0];
+  const myTurn = G.cur === 0 && !G.busy;
+  if (myTurn && G.sel) {
+    const tg = targetSet();
+    if (tg.has(k)) {
+      G.busy = true;
+      if (G.sel.kind === "hand") await playCard(me, G.sel.hid, obj);
+      else { const c = selCreature(); if (c) await attack(c, obj); }
+      G.busy = false; render();
+      return;
+    }
+  }
+  if (!obj.isHero && obj.owner === 0) {
+    const same = G.sel && G.sel.kind === "board" && G.sel.uid === obj.uid;
+    if (same) G.sel = null;
+    else if (myTurn && obj.attacks > 0) {
+      G.sel = {kind: "board", uid: obj.uid};
+      const t = attackTargets(me);
+      if (!t.length) G.sel = {kind: "info", k};
+    } else G.sel = {kind: "info", k};
+  } else {
+    G.sel = G.sel && G.sel.kind === "info" && G.sel.k === k ? null : {kind: "info", k};
+  }
+  render();
+}
+
+/* ===================== Écrans ===================== */
+function showMenu() {
+  G = null;
+  $app.innerHTML = "";
+  const st = loadStats();
+  $menu.hidden = false;
+  $menu.innerHTML = `<div class="inner">
+    <div class="logo">Invocateurs d'Ombrelune</div>
+    <div class="tag">Choisissez votre grimoire, invoquez vos créatures et réduisez à zéro les 25 points de vie de l'invocateur adverse.</div>
+    <div class="record">Victoires <b>${st.w}</b> · Défaites <b>${st.l}</b></div>
+    <div class="h2">Votre grimoire</div>
+    <div class="decks">${Object.entries(ELS).map(([k, e]) => `
+      <button class="deck el-${k}" data-el="${k}">
+        <span class="s">${e.sigil}</span><span class="n">${e.name}</span><span class="h">Héros : ${e.hero}</span><span class="d">${e.desc}</span>
+      </button>`).join("")}
+      <button class="deck" data-el="random" style="--elc:var(--gold);grid-column:1/-1">
+        <span class="n">Au hasard</span><span class="d">Laissez la lune choisir pour vous.</span></button>
+    </div>
+    <details class="rules" open>
+      <summary>Comment jouer</summary>
+      <ul>
+        <li>Chaque tour, vous gagnez <b>1 cristal de mana</b> de plus (max 10) et piochez une carte.</li>
+        <li>Touchez une carte de votre main pour la voir, puis <b>Invoquer</b> ou <b>Lancer</b>. Les sorts ciblés : touchez la cible qui clignote.</li>
+        <li>Une créature attaque au tour suivant son invocation. Touchez-la (bordure verte), puis touchez sa cible : créature ou héros adverse.</li>
+        <li>En combat, les deux créatures s'infligent leurs dégâts. <b>Garde</b> protège les autres créatures et le héros.</li>
+        <li>Pioche vide : vous subissez des dégâts de fatigue croissants.</li>
+      </ul>
+    </details>
+  </div>`;
+}
+$menu.addEventListener("click", e => {
+  const d = e.target.closest("[data-el]");
+  if (d) {
+    let el = d.dataset.el;
+    if (el === "random") el = pick(Object.keys(ELS));
+    return newGame(el);
+  }
+  const a = e.target.closest("[data-act]");
+  if (!a) return;
+  if (a.dataset.act === "again") return newGame(G ? G.p[0].el : "feu");
+  if (a.dataset.act === "menu") return showMenu();
+  if (a.dataset.act === "resume") { $menu.hidden = true; return; }
+  if (a.dataset.act === "forfeit") {
+    const st = loadStats(); st.l++; saveStats(st);
+    G.over = true; return showMenu();
+  }
+});
+function confirmQuit() {
+  $menu.hidden = false;
+  $menu.innerHTML = `<div class="inner end"><div class="big" style="font-size:44px">Abandonner ?</div>
+    <div class="tag">La partie comptera comme une défaite.</div>
+    <button class="btn" data-act="resume">Continuer la partie</button>
+    <button class="btn ghost" data-act="forfeit">Abandonner</button></div>`;
+}
+function showEnd(res) {
+  const st = loadStats();
+  const t = {win: ["Victoire", `${heroName(G.p[1])} est vaincu·e. Les portails d'Ombrelune s'inclinent devant vous.`],
+             lose: ["Défaite", `${heroName(G.p[1])} l'emporte cette fois-ci. Reprenez votre grimoire.`],
+             draw: ["Égalité", "Les deux invocateurs tombent en même temps."]}[res];
+  $menu.hidden = false;
+  $menu.innerHTML = `<div class="inner end">
+    <div class="big" style="color:${res === "win" ? "var(--gold)" : "var(--muted)"}">${t[0]}</div>
+    <div class="tag">${t[1]}</div>
+    <div class="record">Victoires <b>${st.w}</b> · Défaites <b>${st.l}</b></div>
+    <button class="btn" data-act="again">Rejouer avec ${ELS[G.p[0].el].name}</button>
+    <button class="btn ghost" data-act="menu">Changer de grimoire</button></div>`;
+}
+
+async function newGame(el) {
+  $menu.hidden = true;
+  const aiEl = pick(Object.keys(ELS).filter(e => e !== el));
+  G = {p: [newPlayer(el, false, 0), newPlayer(aiEl, true, 1)], cur: 0, over: false, busy: true, sel: null, log: "", enter: []};
+  for (let i = 0; i < 3; i++) draw(G.p[0]);
+  for (let i = 0; i < 4; i++) draw(G.p[1]);
+  render();
+  await beginPlayerTurn();
+  G.busy = false;
+  render();
+}
+
+/* ===================== Démarrage ===================== */
+window.claude?.hot?.snapshot?.(() => (G && !G.over ? {G: JSON.parse(JSON.stringify(G)), uidc} : {}));
+function start(data) {
+  if (data && data.G) {
+    G = data.G; uidc = data.uidc || 1000; G.busy = false; G.enter = [];
+    $menu.hidden = true;
+    render();
+    if (G.cur === 1) aiTurnResume();
+  } else showMenu();
+}
+async function aiTurnResume() {
+  // Reprise après mise à jour : on termine simplement le tour adverse
+  G.busy = true;
+  await beginPlayerTurn();
+  G.busy = false; render();
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+</body></html>
