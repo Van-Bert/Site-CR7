@@ -108,8 +108,9 @@ details.odds summary{font-weight:800;cursor:pointer}
 .pack::before{bottom:0}
 .pack .tear{top:0;transition:transform .5s cubic-bezier(.5,-.3,.6,1), opacity .5s}
 .pack::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.38) 50%,transparent 62%);background-size:300% 100%;animation:sheen 3.6s ease-in-out infinite;pointer-events:none}
-.pack .emb{font-size:34cqw;line-height:1;filter:drop-shadow(0 0 6cqw var(--pa))}
-.pack .pn{font-family:var(--f-display);font-size:11.5cqw;line-height:.95;text-align:center;padding:0 8cqw;text-shadow:0 1cqw 0 rgba(0,0,0,.5);text-wrap:balance}
+.pack .win{position:relative;width:74cqw;aspect-ratio:1;border-radius:37cqw 37cqw 6cqw 6cqw;overflow:hidden;border:1.4cqw solid rgba(255,255,255,.75);box-shadow:0 0 8cqw var(--pa), inset 0 0 6cqw rgba(0,0,0,.4);margin-top:6cqw}
+.pack .win svg{position:absolute;inset:0;width:100%;height:100%}
+.pack .pn{font-family:var(--f-display);font-size:10.5cqw;line-height:.95;text-align:center;padding:0 8cqw;text-shadow:0 1cqw 0 rgba(0,0,0,.5);text-wrap:balance}
 .pack .pc{font-size:6cqw;letter-spacing:.2em;text-transform:uppercase;opacity:.85;font-weight:800}
 .pack .logo{position:absolute;top:11%;font-family:var(--f-display);font-size:7.5cqw;letter-spacing:.06em;color:var(--moon);opacity:.95}
 .pack .six{position:absolute;bottom:11%;font-size:5.2cqw;font-weight:800;padding:1cqw 4cqw;border-radius:99px;background:rgba(0,0,0,.35)}
@@ -132,24 +133,15 @@ details.odds summary{font-weight:800;cursor:pointer}
 .hd{display:flex;align-items:center;gap:2cqw}
 .hd .nm{flex:1;min-width:0;font-family:var(--f-display);font-size:6.6cqw;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 .6cqw 0 rgba(0,0,0,.5)}
 .hd .nm.long{font-size:5.4cqw}
-.hd .es{width:8.5cqw;height:8.5cqw;flex:none;border-radius:50%;display:grid;place-items:center;font-size:5cqw;background:rgba(0,0,0,.35);box-shadow:0 0 0 .5cqw color-mix(in srgb,var(--ea) 70%,#fff)}
-.art{position:relative;height:53cqw;flex:none;border-radius:2cqw;overflow:hidden;box-shadow:inset 0 0 0 .7cqw rgba(0,0,0,.45);
-  background:
-    radial-gradient(circle at var(--sx) var(--sy), var(--glow) 0 var(--ss), color-mix(in srgb,var(--glow) 30%,transparent) calc(var(--ss) + 1cqw), transparent calc(var(--ss) + 9cqw)),
-    radial-gradient(circle, rgba(255,255,255,.85) 0 .35cqw, transparent .6cqw) var(--st1) / 13cqw 11cqw,
-    radial-gradient(circle, rgba(255,255,255,.5) 0 .3cqw, transparent .5cqw) var(--st2) / 19cqw 17cqw,
-    linear-gradient(180deg, var(--sky1), var(--sky2));}
-.art .ground{position:absolute;inset:auto 0 0 0;height:45%;
-  background:
-    radial-gradient(ellipse 60% 70% at var(--h1) 100%, color-mix(in srgb,var(--eb) 85%,#000) 0 60%, transparent 61%),
-    radial-gradient(ellipse 70% 55% at var(--h2) 100%, color-mix(in srgb,var(--eb) 60%,#000) 0 60%, transparent 61%)}
-.art .rays{position:absolute;inset:-30%;background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.13) 0 6deg, transparent 6deg 18deg);animation:spin 24s linear infinite}
-.art .halo{position:absolute;left:50%;top:52%;width:44cqw;height:44cqw;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, color-mix(in srgb,var(--glow) 55%,transparent), transparent 68%)}
-.art .em{position:absolute;inset:0;display:grid;place-items:center;font-size:29cqw;line-height:1;filter:drop-shadow(0 1.5cqw 0 rgba(0,0,0,.35)) drop-shadow(0 0 4cqw color-mix(in srgb,var(--glow) 70%,transparent))}
+.hd .es{width:8.5cqw;height:8.5cqw;flex:none;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.4);color:var(--ea);box-shadow:0 0 0 .5cqw color-mix(in srgb,var(--ea) 70%,#fff)}
+.hd .es svg{width:5.4cqw;height:5.4cqw}
+.art{position:relative;height:62cqw;flex:none;border-radius:2cqw;overflow:hidden;box-shadow:inset 0 0 0 .7cqw rgba(0,0,0,.45);background:#151126}
+.art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.art::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .7cqw rgba(0,0,0,.45);pointer-events:none}
 .typ{display:flex;justify-content:space-between;align-items:center;gap:2cqw;font-size:3.9cqw;font-weight:700;padding:1cqw 2.2cqw;border-radius:1.6cqw;background:rgba(0,0,0,.38);white-space:nowrap}
 .typ span:first-child{overflow:hidden;text-overflow:ellipsis}
 .typ .gem{font-size:4.6cqw}
-.flv{flex:1;min-height:0;font-style:italic;font-size:4.9cqw;line-height:1.3;padding:2cqw 2.4cqw;border-radius:1.6cqw;background:rgba(255,255,255,.09);color:#efe6d6;overflow:hidden}
+.flv{flex:1;min-height:0;font-style:italic;font-size:4.4cqw;line-height:1.28;padding:2cqw 2.4cqw;border-radius:1.6cqw;background:rgba(255,255,255,.09);color:#efe6d6;overflow:hidden}
 .ft{display:flex;justify-content:space-between;align-items:center;font-size:3.5cqw;font-weight:800;font-variant-numeric:tabular-nums;padding:0 .6cqw}
 .ft .st{display:flex;gap:2.4cqw}
 .ft .no{opacity:.8;letter-spacing:.05em}
@@ -168,7 +160,6 @@ details.odds summary{font-weight:800;cursor:pointer}
 .tc.missing .face{--frame:linear-gradient(150deg,#2e2747,#1b1630);box-shadow:none;border:1px dashed var(--line)}
 .tc.missing .inner{background:linear-gradient(172deg,#211b36,#141022);box-shadow:none}
 .tc.missing .art{background:linear-gradient(180deg,#1d1830,#151125)}
-.tc.missing .em{filter:brightness(0) opacity(.55)}
 .tc.missing .nm,.tc.missing .flv,.tc.missing .typ span:first-child{color:var(--muted)}
 .tc.missing .ground,.tc.missing .halo,.tc.missing .rays{display:none}
 /* Dos de carte */
@@ -179,7 +170,8 @@ details.odds summary{font-weight:800;cursor:pointer}
     linear-gradient(160deg,#2b2160,#120d29);
   box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 2cqw 6cqw rgba(0,0,0,.5);
   display:grid;place-items:center}
-.back .mo{font-size:30cqw;filter:drop-shadow(0 0 5cqw var(--moon))}
+.back .mo{width:30cqw;height:30cqw;color:var(--moon);filter:drop-shadow(0 0 5cqw var(--moon))}
+.back .mo svg{width:100%;height:100%}
 .back .wd{position:absolute;bottom:13%;width:100%;text-align:center;font-family:var(--f-display);font-size:8cqw;color:var(--moon);letter-spacing:.08em}
 .back.aura-R{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 10cqw var(--r)}
 .back.aura-E{box-shadow:inset 0 0 0 3cqw #1a1438, inset 0 0 0 3.8cqw var(--moon), inset 0 0 0 6cqw #1a1438, 0 0 14cqw var(--e);animation:throb 1.2s ease-in-out infinite}
@@ -293,15 +285,13 @@ details.odds summary{font-weight:800;cursor:pointer}
 "use strict";
 
 /* ============================ Données du jeu ============================ */
-const ELEM = {
-  f:{n:"Feu",     s:"🔥", ea:"#ff7a45", eb:"#5c160a", sky1:"#ff9b5e", sky2:"#5a1612", glow:"#ffd27a"},
-  e:{n:"Eau",     s:"💧", ea:"#3fa9ff", eb:"#0a2a55", sky1:"#5fd0ff", sky2:"#0b2350", glow:"#c9f3ff"},
-  s:{n:"Sylve",   s:"🍃", ea:"#62c45a", eb:"#123b1a", sky1:"#a8e889", sky2:"#15402a", glow:"#f2ffb8"},
-  o:{n:"Ombre",   s:"🌙", ea:"#9b6bff", eb:"#1b0f36", sky1:"#5b3a9e", sky2:"#120a26", glow:"#e2d0ff"},
-  l:{n:"Lumière", s:"☀️", ea:"#ffd36b", eb:"#6b4a12", sky1:"#fff0b3", sky2:"#c78b2a", glow:"#ffffff"},
-  t:{n:"Foudre",  s:"⚡", ea:"#ffe94d", eb:"#1d2366", sky1:"#6c78d9", sky2:"#151a4a", glow:"#fff7a1"}
+const FAC = {
+  v:{n:"Veilleurs",       ea:"#d89a3a", eb:"#15101f"},
+  m:{n:"Masques d'encre", ea:"#c8344a", eb:"#13060c"},
+  l:{n:"Cour de la Lune", ea:"#9fb4ff", eb:"#131a3c"},
+  e:{n:"Éveillés",        ea:"#2fc4b2", eb:"#0f2129"}
 };
-const EL_ORDER = "fesolt";
+const FAC_ORDER = "velm";
 const RAR = {
   C:{n:"Commune",     g:"●", sell:5,   craft:40,   ord:0, col:"var(--c)"},
   P:{n:"Peu commune", g:"◆", sell:10,  craft:80,   ord:1, col:"var(--p)"},
@@ -311,194 +301,598 @@ const RAR = {
   M:{n:"Mythique",    g:"✦", sell:600, craft:4000, ord:5, col:"var(--m)"}
 };
 const PACK_PRICE = 100, FREE_EVERY = 4 * 3600e3, DAILY = 250, START_COINS = 1000, SERIES_BONUS = 1500;
+const LANTERNS = {"Ambre":"#f0a830","Jade":"#3fc28a","Cendre":"#a59a94","Azur":"#4aa3ff","Écarlate":"#e8443a","Ivoire":"#efe3c2","Givre":"#a8e6ff","Pourpre":"#b36cf0","Or":"#ffd24a"};
 
+/* Format : rareté | faction | genre (f/h/x) | nom | titre | citation | apparence (facultative) */
 const SERIES = [
-{code:"EP", name:"Éveil des Portails", emblem:"🌀", p1:"#4b2fa0", p2:"#0d5566", pa:"#8ef0ff",
- blurb:"La première nuit où les portails se sont ouverts.", list:`
-C|f|🦎|Salamandre des braises|Reptile|Elle dort dans les cheminées et ronronne quand on rajoute une bûche.
-C|f|🐓|Coq de cendre|Bête|Son chant allume les lanternes du village à l'aube.
-C|f|🐜|Fourmi de lave|Insecte|Une colonie entière peut traverser un volcan en une nuit.
-C|e|🐸|Grenouille des mares|Amphibien|Elle prédit la pluie avec une précision vexante.
-C|e|🐟|Poisson-lanterne|Poisson|Il guide les noyés vers la surface, quand il est de bonne humeur.
-C|e|🦐|Crevette des récifs|Crustacé|Minuscule, mais elle a vu le fond de l'océan.
-C|s|🐌|Escargot moussu|Bête|Lent, oui. Mais il arrive toujours.
-C|s|🐿️|Écureuil glaneur|Bête|Il oublie la moitié de ses noisettes. Une forêt entière lui doit la vie.
-C|s|🍄|Champignon bavard|Plante|Il raconte des ragots à toutes les racines du bois.
-C|o|🦇|Chauve-souris des cryptes|Bête|Elle ne craint pas la lumière. Elle la trouve juste vulgaire.
-C|o|🐀|Rat des catacombes|Bête|Il connaît chaque passage secret sous la ville.
-C|o|💀|Squelette apprenti|Mort-vivant|Il a encore du mal à garder sa mâchoire en place.
-C|l|🕊️|Colombe d'albâtre|Oiseau|Elle porte les traités de paix entre les royaumes.
-C|l|🐑|Agneau de l'aube|Bête|Sa laine brille faiblement les nuits sans lune.
-C|l|🕯️|Feu follet doux|Esprit|Il éclaire les chemins des voyageurs perdus.
-C|t|🐝|Abeille électrique|Insecte|Son miel picote la langue.
-C|t|🦔|Hérisson statique|Bête|Ne le caressez pas à rebrousse-poil.
-C|t|🐞|Coccinelle-étincelle|Insecte|Sept points, sept petites décharges.
-P|f|🦊|Renard flamboyant|Bête|Sa queue laisse une traînée d'étincelles dans la neige.
-P|f|👺|Gobelin pyromane|Gobelin|Il n'a jamais rien brûlé exprès. Enfin, presque jamais.
-P|e|🦦|Loutre des courants|Bête|Elle joue avec les galets que les rivières lui confient.
-P|e|🐢|Tortue corallienne|Reptile|Sur sa carapace pousse un jardin de corail.
-P|s|🦌|Cerf des mousses|Bête|Là où il marche, les fleurs repoussent.
-P|s|🐻|Ours des noisetiers|Bête|Il garde la forêt l'hiver, les yeux mi-clos.
-P|o|🕷️|Tisseuse de minuit|Arachnide|Ses toiles capturent les rêves égarés.
-P|o|🐈|Chat des ruelles noires|Bête|Il a neuf vies et en a déjà dépensé huit.
-P|l|🦢|Cygne nacré|Oiseau|Il ne nage que sur les lacs où se reflète la lune.
-P|l|🧚|Fée des lucioles|Fée|Elle allume les étoiles une à une, chaque soir.
-P|t|🐆|Guépard-éclair|Bête|On ne le voit jamais arriver. On entend seulement le tonnerre.
-P|t|🦅|Faucon d'orage|Oiseau|Il chasse au cœur des nuages noirs.
-R|f|🐺|Loup de braise|Bête|Sa meute hurle et la plaine s'embrase.
-R|f|🦂|Scorpion de magma|Arachnide|Son dard est plus chaud que le cœur du volcan.
-R|e|🐙|Pieuvre érudite|Céphalopode|Huit bras, huit livres ouverts à la fois.
-R|e|🦈|Requin des abysses|Poisson|Il sent une goutte de peur à trois lieues.
-R|s|🐗|Sanglier ancestral|Bête|Ses défenses sont faites de racines pétrifiées.
-R|o|👻|Spectre errant|Esprit|Il cherche encore la porte de sa maison.
-R|o|🧛|Comtesse vampire|Mort-vivant|Elle donne des bals d'où personne n'est jamais revenu.
-R|l|🦄|Licorne de l'aube|Bête mythique|Sa corne guérit tout, sauf l'orgueil.
-R|t|⚡|Élémentaire de foudre|Élémentaire|Né d'un éclair tombé deux fois au même endroit.
-E|f|🐦|Phénix naissant|Oiseau mythique|Chaque fois qu'il meurt, il renaît un peu plus brillant.
-E|e|🧜|Reine des ondines|Ondine|Les marins entendent sa voix bien avant de voir la côte.
-E|s|🌳|Tréant millénaire|Tréant|Il a vu naître la forêt, et il verra sa fin.
-E|o|🧙|Nécromancien du Seuil|Sorcier|Il appelle les morts par leur prénom.
-E|l|👼|Gardienne des portails|Ange|Aucune créature ne franchit le Seuil sans son accord.
-E|t|🌩️|Djinn de la tempête|Djinn|Faites un vœu. Mais pas par temps clair.
-L|f|🐉|Dragon écarlate|Dragon|Le ciel rougit quand il déploie ses ailes.
-L|e|🐋|Léviathan des marées|Titan marin|Quand il respire, la mer monte.
-L|o|👑|Seigneur liche|Mort-vivant|Il a vaincu la mort. Il lui manque désormais un adversaire.
-L|l|🌞|Avatar du soleil levant|Divinité|Chaque matin, il rappelle au monde qu'il existe.
-M|o|🌕|Ombrelune, la Lune qui veille|Divinité|Elle ouvre les portails une nuit sur mille. Cette nuit est arrivée.`},
-{code:"AB", name:"Abysses & Braises", emblem:"🌋", p1:"#a8320f", p2:"#0b3a7a", pa:"#ffb36b",
- blurb:"Les volcans sous-marins se réveillent, et la mer bout.", list:`
-C|f|🦗|Criquet des cendres|Insecte|Il ne chante qu'au-dessus des braises.
-C|f|🐛|Chenille fumante|Insecte|Un jour, elle sera un papillon de feu. Patience.
-C|f|🐐|Chèvre des volcans|Bête|Elle broute la pierre ponce et digère tout.
-C|f|🌶️|Piment animé|Plante|Ne le croquez pas. Lui, il vous croquera.
-C|e|🐚|Bernard-l'ermite|Crustacé|Il change de coquille comme on change d'avis.
-C|e|🐠|Poisson-clown des coraux|Poisson|Il fait rire même les requins.
-C|e|🦀|Crabe des récifs|Crustacé|Il pince d'abord, il pose les questions ensuite.
-C|e|🐡|Poisson-globe|Poisson|Gonflé de colère, il double de volume.
-C|e|🦑|Calmar des grottes|Céphalopode|Son encre brille dans le noir.
-C|s|🌵|Cactus errant|Plante|Il marche la nuit pour trouver l'ombre le jour.
-C|s|🐇|Lapin des dunes|Bête|Il creuse jusqu'aux sources cachées.
-C|o|🦉|Chouette des cendres|Oiseau|Elle voit à travers la fumée.
-C|o|🐍|Vipère des sables|Reptile|Un sifflement, et c'est déjà trop tard.
-C|l|🦩|Flamant solaire|Oiseau|Il se tient sur une patte pour moins toucher le sol brûlant.
-C|l|🌻|Tournesol gardien|Plante|Il suit le soleil et prévient quand il se couche.
-C|t|🐊|Crocodile des marais orageux|Reptile|La foudre l'attire. Il adore ça.
-C|t|🦟|Moustique ionisé|Insecte|Sa piqûre vous fait dresser les cheveux.
-C|t|🐁|Souris dynamo|Bête|Elle court dans sa roue et alimente tout le village.
-P|f|🦏|Rhinocéros de magma|Bête|Il fonce tête baissée et laisse de la lave dans ses traces.
-P|f|🐎|Destrier de feu|Bête|Sa crinière ne s'éteint jamais, même sous l'orage.
-P|e|🐧|Manchot des banquises|Oiseau|Il glisse plus vite qu'il ne nage. Et il nage vite.
-P|e|🐬|Dauphin messager|Bête|Il porte les nouvelles d'une côte à l'autre.
-P|e|🦞|Homard cuirassé|Crustacé|Sa carapace a arrêté une ancre.
-P|s|🦚|Paon des oasis|Oiseau|Mille yeux sur ses plumes, et aucun ne dort.
-P|s|🐫|Chameau des mirages|Bête|Il connaît le chemin vers toutes les oasis, même les fausses.
-P|o|👁️|Œil des profondeurs|Aberration|Il vous regarde depuis le fond du puits.
-P|o|🦴|Ossuaire marchant|Mort-vivant|Un tas d'os qui a décidé de se lever.
-P|l|🦁|Lion doré|Bête|Sa crinière capte les derniers rayons du jour.
-P|t|🦓|Zèbre de l'orage|Bête|Ses rayures sont des éclairs figés.
-P|t|🐲|Wyverne crépitante|Dragon|Une petite cousine des dragons, mais une grosse colère.
-R|f|😈|Diablotin des forges|Démon|Il souffle sur les braises des forgerons, contre un salaire.
-R|f|🦖|Tyran de lave|Reptile|Les volcans s'endorment quand il passe.
-R|e|🧊|Golem de glace|Élémentaire|Il fond chaque printemps et se reforme chaque hiver.
-R|e|🐳|Baleine chanteuse|Titan marin|Son chant traverse tous les océans du monde.
-R|e|🔱|Gardien du trident|Triton|Il défend la cité engloutie depuis mille ans.
-R|s|🦜|Perroquet prophète|Oiseau|Il répète ce qu'il entendra demain.
-R|o|🗡️|Lame nocturne|Assassin|Personne n'a jamais vu son visage. Personne n'a survécu pour essayer.
-R|l|☀️|Esprit du zénith|Esprit|À midi pile, il est partout à la fois.
-R|t|🌪️|Tornade vivante|Élémentaire|Elle danse, et les villages s'envolent.
-E|f|🌋|Cœur du volcan|Titan|Une montagne qui a décidé de se battre.
-E|e|🌊|Esprit du raz-de-marée|Élémentaire|Il emporte tout, puis rend la plage plus belle.
-E|s|🍃|Druide des sables|Druide|Il fait pousser des forêts dans le désert.
-E|o|🦑|Kraken des abysses|Titan marin|Les cartes marines s'arrêtent là où commence son territoire.
-E|l|🏺|Pharaon solaire|Roi|Son tombeau brille encore, trois mille ans après.
-E|t|⛈️|Roc du tonnerre|Oiseau mythique|Ses ailes battent et le ciel gronde.
-L|f|🔥|Ifrit, seigneur des braises|Démon|Il a signé un pacte avec le soleil, et il l'a trahi.
-L|e|🌀|Charybde, le gouffre|Titan marin|Les navires ne coulent pas. Ils tombent.
-L|s|🐘|Béhémoth des dunes|Titan|Le désert est son lit, les dunes ses couvertures.
-L|o|🕳️|La Fosse sans fond|Aberration|Ce qui y tombe n'atteint jamais le fond. On l'entend crier encore.
-M|e|💎|Perle des deux mondes|Relique|Mi-flamme, mi-écume. Qui la tient commande aux mers et aux volcans.`},
-{code:"CC", name:"Couronne Céleste", emblem:"👑", p1:"#b8862a", p2:"#26307a", pa:"#fff1b0",
- blurb:"Au-dessus des nuages, les astres choisissent leur souverain.", list:`
-C|l|🐤|Poussin solaire|Oiseau|Il piaille dès que le jour se lève. Très tôt.
-C|l|🐄|Vache des nuages|Bête|Son lait a le goût d'une pluie d'été.
-C|l|🌼|Pâquerette céleste|Plante|Elle s'ouvre quand une étoile filante passe.
-C|l|🦋|Papillon d'aurore|Insecte|Ses ailes changent de couleur avec le ciel.
-C|l|🐏|Bélier doré|Bête|Sa toison est tissée de rayons de soleil.
-C|t|🦆|Canard des orages|Oiseau|Il adore la pluie. Les éclairs, un peu moins.
-C|t|🐂|Taureau grondant|Bête|Il charge au rythme du tonnerre.
-C|t|🦘|Kangourou-ressort|Bête|Il saute si haut qu'il touche parfois les nuages chargés.
-C|t|🐩|Caniche statique|Bête|Sa coiffure ne retombe jamais. Jamais.
-C|f|🦃|Dindon des feux de joie|Oiseau|Il est invité à la fête, pas au repas.
-C|f|🧨|Lutin pétard|Lutin|Il explose de rire. Littéralement.
-C|e|☁️|Nuage-mouton|Élémentaire|Il pleut sur ceux qu'il n'aime pas.
-C|e|🌧️|Ondin de pluie|Esprit|Il s'amuse à tomber sur les chapeaux.
-C|s|🌸|Bourgeon de cerisier|Plante|Il fleurit une seule journée, et c'est assez.
-C|s|🐒|Singe des cimes|Bête|Il vole les fruits des dieux depuis la plus haute branche.
-C|s|🐼|Panda des bambous célestes|Bête|Il médite si fort qu'il lévite.
-C|o|🎭|Masque errant|Esprit|Il cherche un visage à porter.
-C|o|🐾|Ombre rôdeuse|Esprit|On ne la voit pas. On voit juste ses traces.
-P|l|🐴|Pégase d'argent|Bête mythique|Il galope sur les nuages comme sur une prairie.
-P|l|🎐|Carillon des vents|Esprit|Il chante quand un ange passe.
-P|t|🐅|Tigre fulgurant|Bête|Ses griffes laissent des traces brûlées.
-P|t|🧲|Golem aimanté|Golem|Toutes les épées du champ de bataille finissent collées à lui.
-P|f|🏮|Lanterne-esprit|Esprit|Elle flotte au-dessus des fêtes et veille sur les enfants.
-P|f|🎇|Danseuse d'étincelles|Esprit|Elle danse, et le ciel s'illumine.
-P|e|🌈|Serpent arc-en-ciel|Serpent|Il relie la pluie au soleil.
-P|e|❄️|Fée du givre|Fée|Elle dessine des fougères sur les vitres.
-P|s|🌺|Nymphe des jardins suspendus|Nymphe|Ses jardins flottent entre ciel et terre.
-P|s|🐨|Koala somnambule|Bête|Il dort vingt heures par jour. Mais quelles heures.
-P|o|🌑|Prêtresse de l'éclipse|Prêtresse|Elle prie pour que le soleil se cache, juste un instant.
-P|o|🗿|Statue hantée|Golem|Elle bouge quand personne ne regarde.
-R|l|🛡️|Paladin céleste|Chevalier|Son serment est gravé sur la voûte du ciel.
-R|l|🌟|Étoile déchue|Esprit|Elle est tombée du ciel et refuse d'y remonter.
-R|t|🔨|Forgeron du tonnerre|Géant|Chaque coup de marteau fait trembler les montagnes.
-R|t|💫|Comète vivante|Élémentaire|Elle passe tous les cent ans et ne s'arrête jamais.
-R|f|⚔️|Chevalier des cendres|Chevalier|Son armure fume encore de sa dernière bataille.
-R|e|🧝|Elfe des nuées|Elfe|Elle tire ses flèches dans les nuages pour faire pleuvoir.
-R|s|🦒|Girafe des cimes|Bête|Sa tête est déjà au paradis.
-R|o|🃏|Bouffon du roi maudit|Sorcier|Il rit encore de la blague qui a ruiné le royaume.
-R|o|🧟|Chevalier sans repos|Mort-vivant|Il garde le château. Le château n'existe plus.
-E|l|👸|Princesse de l'aurore|Reine|Le jour se lève parce qu'elle le lui demande.
-E|t|🧞|Génie des cieux chargés|Djinn|Trois vœux, trois éclairs.
-E|f|🌅|Gardien du crépuscule|Titan|Il veille entre le jour et la nuit.
-E|e|🏰|Citadelle des nuages|Lieu vivant|Une forteresse qui flotte, respire, et choisit ses habitants.
-E|s|🌲|Roi des forêts hautes|Tréant|Ses branches touchent les étoiles.
-E|o|🌒|Mage de la nuit polaire|Sorcier|Il vole six mois de lumière chaque année.
-L|l|😇|Séraphin aux six ailes|Ange|Quand il chante, même les démons se taisent.
-L|t|🐯|Raijū, la bête-éclair|Bête mythique|Il dort dans le nombril des orages.
-L|f|☄️|Météore incarné|Élémentaire|Il est tombé du ciel en criant son nom.
-L|o|🌌|Le Roi sans étoiles|Divinité|Il a éteint une constellation pour s'en faire une couronne.
-M|l|🪐|L'Astre-Couronne|Divinité|Les planètes tournent autour d'elle. Les dieux aussi.`}
+{code:"SA", name:"Le Seuil des Âmes", hero:"Shion Kazehaya", p1:"#3a2470", p2:"#b2552f", pa:"#ffb85a",
+ blurb:"Les Veilleurs gardent la frontière entre les vivants et les morts.", list:`
+C|v|h|Haru Kisaragi|Veilleur recrue|Premier jour de ronde. Il a déjà perdu sa lanterne.|e=smile
+C|v|f|Mio Tsukada|Veilleuse recrue|Elle salue chaque âme qu'elle guide, même les plus grincheuses.|e=smile
+C|v|h|Daigo Okabe|Veilleur des portes|Personne ne passe. Sauf avec un bon gâteau.|h=buzz;e=calm;a=bandage
+C|v|f|Sayo Minase|Veilleuse archiviste|Elle connaît le nom de chaque âme passée depuis cent ans.|a=glasses;h=bun
+C|v|h|Kenta Mibu|Veilleur de garde|Il dort debout, la main sur la garde.|e=closed
+C|v|f|Natsu Hiraga|Messagère du Seuil|Plus rapide qu'un papillon de nuit, et presque aussi silencieuse.|h=pony
+C|v|h|Shun Akabane|Veilleur cuisinier|Ses boulettes de riz ont ramené plus d'une âme à la raison.|a=headband;e=smile
+C|e|h|Yuto Sakamaki|Lycéen éveillé|Depuis l'accident, il voit des gens que personne d'autre ne voit.|o=uniform
+C|e|f|Aoi Shinoda|Lycéenne éveillée|Elle a commencé à entendre les murmures des lampadaires.|o=sailor
+C|e|h|Ren Tachibana|Livreur à vélo|Il livre des repas aux vivants et des messages aux morts.|o=hoodie
+C|e|f|Kana Moriguchi|Infirmière de nuit|Elle tient la main des patients jusqu'à ce qu'une lanterne vienne les chercher.|o=jacket;e=calm
+C|e|f|Rika Tōdō|Collégienne éveillée|Elle a un chat fantôme. Il s'appelle Biscotte.|o=sailor;h=twin;e=smile
+C|m|x|Masque-Grelot|Ombre masquée|On l'entend tinter juste avant qu'il ne soit trop tard.|m=round
+C|m|x|Masque-Lierre|Ombre masquée|Il pousse sur les murs des maisons abandonnées.|m=beast
+C|m|x|Masque-Pleureur|Ombre masquée|Il imite les sanglots pour attirer les curieux.|m=round
+C|m|x|Masque-Corbeau|Ombre masquée|Il collectionne les objets brillants des âmes perdues.|m=bird
+C|l|f|Élise de Varenne|Page de la Cour|Elle porte les messages de la Lune à ceux qui savent écouter.|o=coat
+C|l|h|Tristan Morvel|Écuyer d'argent|Son armure est trop grande. Il grandira.|o=armor;e=smile
+P|v|h|Kōji Arashiro|Veilleur éclaireur|Il court sur les toits, entre deux mondes.|h=shaggy;e=smirk
+P|v|f|Suzu Kagami|Veilleuse guérisseuse|Ses mains brillent d'une lumière tiède comme un thé du soir.|e=closed;w=none;h=long
+P|v|h|Tetsu Ōmine|Veilleur colosse|Il porte sa lame comme d'autres portent un parapluie.|h=buzz;w=naginata;a=scar
+P|v|f|Akane Yuzuriha|Veilleuse duelliste|Elle a perdu un seul duel. Elle s'en souvient tous les jours.|h=pony;e=fierce;hc=#b8323a
+P|e|h|Jun Takamori|Boxeur éveillé|Ses poings frappent aussi les choses invisibles.|o=hoodie;a=bandage;e=fierce
+P|e|f|Mei Ayanokōji|Musicienne de rue|Quand elle joue, les ombres s'arrêtent pour écouter.|o=jacket;w=notes;e=closed
+P|e|h|Taiga Mizuhara|Tatoueur éveillé|Ses tatouages bougent quand il se met en colère.|o=jacket;h=slick;a=marks,earring;e=smirk
+P|m|x|Masque-Lanterne|Ombre masquée|Il porte une lanterne volée pour tromper les âmes.|m=fox
+P|m|x|Masque-Araignée|Ombre masquée|Ses fils relient les cauchemars entre eux.|m=insect
+P|m|x|Masque-Chantant|Ombre masquée|Sa berceuse endort, et on ne se réveille plus.|m=bird
+P|l|f|Séverine d'Aubépine|Tisseuse de lune|Elle tisse les rayons de lune en fils d'argent.|o=coat;w=orbs;h=longwavy
+P|l|h|Gauvain Clairmont|Chevalier d'argent|Il a juré de ne jamais tirer l'épée la nuit. Il a menti.|o=armor;w=rapier
+R|v|f|Rin Asagiri|Lieutenante de la Lanterne d'Azur|Sa lame chante quand la pluie tombe.|h=long;hc=#1d2a55;e=cold
+R|v|h|Gōzan Kuroki|Lieutenant de la Lanterne de Cendre|Il a éteint un incendie d'âmes à mains nues.|h=wild;hc=#2a2328;a=scar;e=fierce
+R|v|f|Kotone Shirasagi|Lieutenante de la Lanterne de Jade|Elle soigne d'une main et combat de l'autre.|h=bun;hc=#e8e4ef;e=calm
+R|v|h|Yūgiri Tōno|Veilleur solitaire|Il patrouille seul depuis que sa lanterne s'est éteinte.|h=shaggy;hc=#5a5a6e;a=patch;e=cold
+R|e|h|Sora Kanzaki|Éveillé au sabre de bois|Son sabre est en bois. Ses adversaires ne s'en rendent compte qu'après.|o=uniform;w=bokken;h=spiky;hc=#3a6fd0;e=fierce
+R|e|f|Nanami Hōjō|Médium des ruelles|Elle lit l'avenir dans les flaques. Il est rarement beau.|o=hoodie;w=talismans;h=bob;hc=#6a4aa0
+R|m|x|Masque-Kitsune|Ombre masquée majeure|Neuf rubans, neuf mensonges, neuf vies dévorées.|m=fox;p=#e0412f
+R|m|x|Masque-Tambour|Ombre masquée majeure|Chaque battement fait trembler les murs du Seuil.|m=horned;p=#e2a33a
+R|l|f|Isaure de Montclair|Prêtresse des marées lunaires|Elle commande à la marée, une nuit par mois.|o=coat;w=moonstaff;hc=#cfe0ff;h=long
+E|v|f|Kaede Moriyama|Capitaine de la Lanterne d'Ambre|Quand elle allume sa lanterne, la nuit recule d'un pas.|h=longwavy;hc=#7a2f1f;e=calm;a=flower
+E|v|h|Sōma Haguro|Capitaine de la Lanterne Écarlate|Il sourit avant chaque combat. Ce n'est pas rassurant.|h=spiky;hc=#c9c9d6;e=smirk;w=katana
+E|e|h|Akira Kamishiro|L'Éveillé de la gare|Il a ouvert un portail par accident. Il ne l'a jamais refermé.|o=jacket;h=shaggy;hc=#e0752f;e=fierce;w=katana
+E|m|x|Masque-Shōgun|Seigneur masqué|Il commande une armée d'ombres sans jamais dire un mot.|m=horned;p=#c8344a
+E|m|x|Masque aux Mille Yeux|Ombre ancienne|Chaque œil a vu mourir une étoile.|m=insect;p=#7c4ddb
+E|l|h|Aurèle de Sombreval|Gardien de la porte d'argent|Il ne laisse passer que ceux qui ont le cœur clair.|o=armor;w=rapier;hc=#e8c46a;e=cold
+L|v|h|Tōkaku Amakusa|Doyen des Veilleurs|Il a allumé la première lanterne du Seuil, il y a mille ans.|h=slick;hc=#e9e7ee;e=closed;a=beard;k=#ffd24a
+L|v|f|Shion Kazehaya|Capitaine de la Lanterne de Givre|Quand sa lame se libère, même le temps a froid.|h=long;hc=#bfe8ff;e=cold;w=katana
+L|e|h|Itsuki Ranjō|Le Premier Éveillé|Il a franchi le Seuil vivant, et il en est revenu.|o=jacket;h=wild;hc=#1c1a24;e=fierce;w=katana;k=#ff6a3d
+L|m|x|Le Masque Sans Fond|Souverain des Ombres|Personne n'a jamais vu ce qu'il y a derrière.|m=void;p=#7c4ddb
+M|l|f|Ombrelune|Gardienne du Seuil|Elle a forgé la première lame-âme dans un rayon de lune.|o=coat;h=longwavy;hc=#f2f0ff;i=#ffd36b;a=tiara;w=orbs;k=#ffd36b;e=calm`},
+{code:"ME", name:"Masques d'Encre", hero:"La Mère des Masques", p1:"#5a0f22", p2:"#141024", pa:"#ff5a6e",
+ blurb:"L'encre déborde des vieux masques, et la ville s'éteint quartier par quartier.", list:`
+C|m|x|Masque-Sel|Ombre masquée|Il ronge les digues, grain par grain.|m=round
+C|m|x|Masque-Pluie|Ombre masquée|Il ne sort que les jours d'averse.|m=bird
+C|m|x|Masque-Hibou|Ombre masquée|Il pose toujours la même question. Personne ne connaît la bonne réponse.|m=bird
+C|m|x|Masque-Papillon|Ombre masquée|Ses ailes laissent une poudre qui fait oublier.|m=insect
+C|m|x|Masque-Scarabée|Ombre masquée|Il enterre les souvenirs qu'il vole.|m=insect
+C|m|x|Masque-Poupée|Ombre masquée|Elle était un jouet. Elle est devenue autre chose.|m=round
+C|m|x|Masque-Loup|Ombre masquée|Il chasse en meute, même quand il est seul.|m=fox
+C|m|x|Masque-Grenouille|Ombre masquée|Il coasse des prophéties fausses à chaque pleine lune.|m=beast
+C|e|h|Kōta Iwasaki|Étudiant éveillé|Il révise ses examens et ses exorcismes en même temps.|o=uniform;a=glasses
+C|e|f|Hana Sugimura|Fleuriste éveillée|Ses fleurs fanent quand une ombre approche.|o=jacket;a=flower;e=smile
+C|e|h|Shōta Kawabe|Skateur éveillé|Il glisse plus vite que les ombres qui le poursuivent.|o=hoodie;e=smirk
+C|e|f|Emi Tanabe|Photographe éveillée|Sur ses photos, il y a toujours quelqu'un de trop.|o=jacket;h=bob
+C|e|h|Daichi Nomura|Gardien de parking|Il a vu des ombres se garer. Il leur a fait payer.|o=jacket;h=buzz;e=cold
+C|v|h|Riku Saionji|Veilleur de nuit|Il connaît chaque ruelle où les ombres aiment se cacher.|e=calm
+C|v|f|Asuka Hōshō|Veilleuse traqueuse|Elle suit les traces d'encre jusqu'à leur source.|h=pony;e=fierce
+C|v|h|Yamato Senba|Veilleur porte-bouclier|Son bouclier de papier ne s'est jamais déchiré.|w=shield
+C|l|f|Lucile Verfeuille|Novice de la Lune|Elle apprend encore à ne pas regarder la lune en face.|o=coat;e=closed
+C|l|h|Bastien Corvel|Garde des remparts|Il veille depuis la plus haute tour, une lanterne d'argent à la main.|o=armor
+P|m|x|Masque-Mante|Ombre chasseresse|Elle prie avant de frapper. Pas pour vous.|m=insect
+P|m|x|Masque-Taureau|Ombre masquée|Il charge tout ce qui porte une lanterne.|m=horned
+P|m|x|Masque-Méduse|Ombre des profondeurs|Elle flotte au-dessus des égouts comme une lune noire.|m=round
+P|m|x|Masque-Serpent|Ombre masquée|Il change de masque comme il change de peau.|m=fox
+P|e|f|Mizuki Arakawa|Kendōka éveillée|Elle a tranché une ombre en deux avec un shinai.|o=uniform;w=bokken;h=pony;e=fierce
+P|e|h|Tōru Hayase|Hacker éveillé|Il traque les ombres sur les caméras de la ville.|o=hoodie;a=glasses;e=cold
+P|e|h|Kaito Funabashi|Pêcheur éveillé|Ce qu'il remonte dans ses filets la nuit n'a pas d'écailles.|o=jacket;a=headband;h=shaggy
+P|v|f|Chiyo Kaneda|Veilleuse sentinelle|Elle ne cligne jamais des yeux pendant sa garde.|h=bob;e=cold
+P|v|h|Hayato Mikumo|Veilleur lanceur de chaînes|Ses chaînes ramènent les âmes égarées, de gré ou de force.|w=chains;h=spiky;e=fierce
+P|v|f|Okiku Tsurumi|Veilleuse aux talismans|Ses talismans de papier valent mieux qu'une armure.|w=talismans;h=long
+P|l|f|Ysolde Mirecourt|Archiviste lunaire|Elle note tout ce que la lune voit.|o=coat;a=glasses;h=bun
+P|l|h|Edmond Faucheval|Héraut de la Cour|Sa voix porte jusqu'au fond du Seuil.|o=coat;e=smile
+R|m|x|Masque-Oni d'encre|Ombre majeure|Ses cornes ont percé le mur entre les mondes.|m=horned;p=#e0412f
+R|m|x|Masque-Marionnettiste|Ombre majeure|Il ne se bat jamais lui-même. Il a des fils pour ça.|m=round;p=#e2a33a
+R|m|x|Masque-Ruche|Ombre majeure|Mille petites ombres bourdonnent sous son masque.|m=insect;p=#e2a33a
+R|e|h|Ryōma Kiryū|Le Briseur de masques|Il garde chaque masque brisé dans une boîte à chaussures.|o=jacket;h=wild;hc=#b8323a;a=bandage;e=fierce
+R|e|f|Sakura Inugami|L'Éveillée au renard|Un esprit renard la suit partout. Elle ne l'a jamais nourri, pourtant.|o=sailor;h=long;hc=#e88aa8;e=smile;w=foxspirit
+R|e|f|Noa Kiritani|Exorciste de quartier|Ses tarifs sont raisonnables. Ses méthodes, beaucoup moins.|o=jacket;w=talismans;h=bob;hc=#2f8f8a;e=smirk
+R|v|h|Masato Kurenai|Lieutenant de la Lanterne Écarlate|Il est arrivé en retard à chaque bataille, et il les a toutes gagnées.|h=shaggy;hc=#d0602a;e=smirk
+R|v|f|Fubuki Yagami|Lieutenante de la Lanterne de Givre|Elle parle peu. Sa lame encore moins.|h=bob;hc=#cfe6ff;e=cold
+R|l|h|Clotaire Ombreval|Inquisiteur lunaire|Il traque les ombres jusque dans les rêves.|o=coat;hc=#1c1a24;h=slick;e=cold;w=rapier
+E|m|x|Masque-Dragon d'encre|Seigneur masqué|Il dort sous la ville et la ville rêve de lui.|m=horned;p=#2fb6a8
+E|m|x|Masque-Prêtresse|Seigneur masqué|Elle bénit les ombres et maudit les vivants.|m=fox;p=#e05fa8
+E|v|h|Raizen Kagura|Capitaine de la Lanterne Pourpre|Ses éclairs violets ont fendu un masque millénaire.|h=wild;hc=#2a2340;e=fierce;w=katana
+E|v|h|Kagerō Unryū|Capitaine de la Lanterne de Cendre|Ses flammes ne brûlent que les ombres.|h=long;hc=#3a3238;e=closed;a=beard;w=katana
+E|e|h|Hikaru Saeki|Le Chasseur d'encre|Il collectionne l'encre des ombres vaincues pour écrire leur histoire.|o=jacket;h=spiky;hc=#e8c46a;w=scythe;e=cold
+E|l|f|Mélusine de Brumeval|Dame des brumes|Elle marche sur la brume comme sur un parquet ciré.|o=coat;h=longwavy;hc=#a9b8d6;w=orbs;e=closed
+L|m|x|La Mère des Masques|Souveraine d'encre|Chaque ombre masquée est née de ses larmes.|m=round;p=#e05fa8
+L|m|x|Masque-Éclipse|Calamité|Quand il ouvre les yeux, la lune s'éteint.|m=void;p=#e0412f
+L|v|h|Shirogane Hibiki|Capitaine de la Lanterne d'Ivoire|Sa lame libérée sonne comme une cloche de temple.|h=long;hc=#f0eee8;e=cold;w=katana
+L|e|f|Yui Hanabusa|L'Éveillée aux mille lanternes|Elle a allumé assez de lanternes pour éclairer tout un quartier de morts.|o=jacket;h=twin;hc=#ff9a62;e=fierce;w=lanterns;k=#ffb85a
+M|m|x|Le Premier Masque|Origine des Ombres|Tous les masques sont des copies. Celui-ci est l'original.|m=fox;p=#ffd24a`},
+{code:"CL", name:"La Cour de la Lune", hero:"La Reine Séléné", p1:"#1c2a6e", p2:"#7a5ab8", pa:"#cfe0ff",
+ blurb:"Au-dessus des nuages, une cour d'argent veille sur les rêves des vivants.", list:`
+C|l|h|Anselme Roncière|Page d'argent|Il polit les armures de toute la Cour. Personne ne le remercie.|o=coat;e=smile
+C|l|f|Clémence Valombre|Servante des jardins|Elle arrose les fleurs qui ne poussent qu'au clair de lune.|o=coat;a=flower
+C|l|h|Hugo Brisemont|Garde de la Cour|Il n'a jamais vu le soleil. Il dit que ça ne lui manque pas.|o=armor;e=cold
+C|l|f|Margaux Sélenis|Apprentie tisseuse|Ses premiers fils d'argent se sont tous emmêlés.|o=coat;h=twin
+C|l|h|Théo Ferrand|Porte-étendard|Son étendard brille plus fort que lui.|o=armor;e=smile
+C|l|f|Agathe Lunel|Astronome de la Cour|Elle a nommé quatre étoiles d'après ses chats.|o=coat;a=glasses
+C|l|h|Rémi Argentan|Musicien de la Cour|Sa harpe n'a que trois cordes, mais elles suffisent.|o=coat;w=notes;e=closed
+C|l|f|Iris Montbrume|Dame de compagnie|Elle connaît tous les secrets de la Cour, et n'en dit aucun.|o=coat;h=bun;e=smirk
+C|v|f|Tama Kōno|Veilleuse diplomate|Elle apporte des gâteaux à chaque négociation.|e=smile;h=bob
+C|v|h|Gen Sawada|Veilleur porteur|Il porte la lanterne du capitaine. Et ses bagages.|h=buzz;e=calm
+C|v|f|Fumika Ōtsuki|Veilleuse cartographe|Elle dessine les chemins entre le Seuil et la Lune.|a=glasses;h=pony
+C|e|h|Haruto Ebisawa|Lycéen égaré|Il a pris le mauvais escalier, et il est arrivé sur la Lune.|o=uniform;e=calm
+C|e|f|Chika Mamiya|Pâtissière éveillée|Ses gâteaux en forme de lune font rêver les morts.|o=jacket;e=smile;h=bun
+C|e|h|Kenji Ōsugi|Chauffeur de taxi|Il emmène des passagers qui ne paient jamais, et qui n'ont pas d'ombre.|o=jacket;h=slick;a=beard
+C|m|x|Masque-Lucioles|Ombre masquée|Il se cache parmi les lumières des jardins.|m=insect
+C|m|x|Masque-Cygne|Ombre masquée|Il nage sur les reflets de la lune et les déchire.|m=bird
+C|m|x|Masque-Horloge|Ombre masquée|Il vole les minutes qu'on croyait avoir.|m=round
+C|m|x|Masque-Lapin|Ombre masquée|Il saute d'un rêve à l'autre en riant.|m=rabbit
+P|l|h|Roland Hautepierre|Chevalier de la Lune|Son armure reflète la lune. Ses ennemis s'aveuglent eux-mêmes.|o=armor;w=rapier;e=fierce
+P|l|f|Ophélie Clairval|Tisseuse de rêves|Elle tisse des rêves pour ceux qui n'en font plus.|o=coat;w=orbs;h=longwavy;e=closed
+P|l|h|Victor Noirelune|Alchimiste lunaire|Il transforme la lumière de lune en potion. Elle a un goût de menthe.|o=coat;a=glasses;h=shaggy
+P|l|f|Bérénice d'Argentel|Duelliste de la Cour|Elle se bat en dansant, et danse en se battant.|o=armor;w=rapier;h=pony;e=smirk
+P|l|h|Lancelin Gris-Faucon|Fauconnier de la Cour|Ses faucons d'argent rapportent des étoiles filantes.|o=coat;h=long
+P|l|f|Pénélope Saint-Astre|Gardienne des archives|Elle a lu tous les livres de la Cour. Deux fois.|o=coat;a=glasses;h=long
+P|v|h|Sōta Kirishima|Veilleur ambassadeur|Il porte deux lanternes : une pour le Seuil, une pour la Lune.|w=lanterns;e=smile
+P|v|f|Yae Hanazono|Veilleuse aux éventails|Ses éventails tranchent le vent et le reste.|w=fan;h=bun;a=flower
+P|e|f|Mana Okumura|Violoniste éveillée|Son archet a ouvert une porte vers la Lune.|o=jacket;w=notes;h=long;e=closed
+P|e|h|Takeru Ōba|Alpiniste éveillé|Il a escaladé le ciel. Littéralement.|o=hoodie;a=headband;e=smile
+P|m|x|Masque-Licorne noire|Ombre masquée|Sa corne pointe toujours vers la lune.|m=unicorn
+P|m|x|Masque-Miroir|Ombre masquée|Il montre votre pire visage, puis il le porte.|m=round
+R|l|f|Guenièvre Orlune|Commandante de la garde|Ses ordres sont doux, ses coups beaucoup moins.|o=armor;w=rapier;h=pony;hc=#e8c46a;e=cold
+R|l|h|Aymeric de Lunebrise|Tisseur de lames|Il tisse des épées avec de la lumière.|o=coat;w=orbs;hc=#d9dbe6;h=shaggy
+R|l|f|Solène Vifargent|Prêtresse des marées d'argent|Elle chante, et la mer du ciel lui répond.|o=coat;w=moonstaff;h=longwavy;hc=#9fd8ff;e=closed
+R|v|h|Kiyoharu Asano|Lieutenant de la Lanterne d'Or|Il a négocié la paix entre le Seuil et la Lune. Avec du thé.|h=slick;e=smile
+R|v|f|Misaki Kurogane|Lieutenante de la Lanterne Pourpre|Elle rit pendant les combats. C'est contagieux, et inquiétant.|h=twin;hc=#6a4aa0;e=smirk
+R|e|f|Reina Shiba|L'Éveillée des étoiles|Elle voit les constellations même en plein jour.|o=sailor;h=long;hc=#2a3a78;w=orbs
+R|e|h|Jin Wakabayashi|Garde du corps éveillé|Il protège une princesse de la Lune. Elle ne le sait pas.|o=jacket;h=slick;a=scar;e=cold
+R|m|x|Masque-Phalène|Ombre majeure|Elle se brûle à la lune chaque nuit, et revient.|m=insect;p=#e2a33a
+R|m|x|Masque-Juge|Ombre majeure|Il pèse les âmes. Sa balance est truquée.|m=round;p=#3a7bd5
+E|l|f|Héloïse de Clairlune|Princesse de la Cour|Elle n'a jamais quitté la Lune. Elle rêve du Seuil.|o=coat;h=longwavy;hc=#f6e7b0;a=tiara;e=calm
+E|l|h|Perceval Astrefer|Champion de la Lune|Il n'a jamais perdu un tournoi. Il n'a jamais aimé gagner.|o=armor;w=rapier;hc=#c9c9d6;e=cold
+E|v|f|Tsubaki Shinonome|Capitaine de la Lanterne de Jade|Ses camélias de jade guérissent ou empoisonnent, selon son humeur.|h=longwavy;hc=#1c1a24;a=flower;e=smirk;w=fan
+E|v|h|Hyōga Kamina|Capitaine de la Lanterne d'Or|Il a fait le tour de la Lune à pied, pour voir.|h=spiky;hc=#e8c46a;e=smile;w=naginata
+E|m|x|Masque-Couronné|Prétendant masqué|Il veut la couronne de la Lune. Il a déjà le masque.|m=horned;p=#ffd24a
+E|e|f|Aya Tsukishiro|Hôtesse du dernier train|Son train relie la Terre à la Lune. Il ne passe qu'une fois par vie.|o=jacket;h=bob;hc=#1c1a24;e=calm;w=lanterns
+L|l|f|La Reine Séléné|Souveraine de la Cour|Elle règne depuis que la Lune existe, et elle est encore jeune.|o=coat;h=longwavy;hc=#f2f0ff;a=tiara;w=moonstaff;i=#9fd8ff;e=calm
+L|l|h|Tancrède Nuitargent|Chevalier éternel|Il a juré de protéger la Reine jusqu'à la fin des temps. Il en est à la moitié.|o=armor;w=rapier;hc=#1c1a24;h=long;e=cold
+L|v|f|Mikoto Yamabuki|Capitaine des Lanternes réunies|Toutes les lanternes du Seuil brûlent pour elle.|h=long;hc=#e0752f;e=fierce;w=lanterns;k=#ffd24a
+L|m|x|Masque-Lune-Noire|Calamité|Une lune entière, avec un visage. Il a faim.|m=void;p=#9fb4ff
+M|l|f|L'Astre-Couronne|Divinité lunaire|La Lune elle-même, venue choisir son héritier.|o=coat;h=longwavy;hc=#fff4d6;i=#ffd36b;a=tiara;w=orbs;k=#ffd36b;e=closed`}
 ];
 
-/* Construction du catalogue */
+/* ============================ Catalogue ============================ */
 function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 function rng(seed) { let s = seed || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; }; }
 const STAT_BASE = {C:[1,3], P:[2,4], R:[3,6], E:[5,8], L:[8,10], M:[11,12]};
+const SKINS = ["#f7dcc8","#f1cdb1","#e8bd98","#d6a47c","#b9825c","#8f5e3e"];
+const HAIR_DARK = ["#1c1a24","#2a2028","#3a2620","#22283c","#2b2232"];
+const HAIR_ALL = ["#1c1a24","#3a2620","#6b4430","#e0752f","#e8c46a","#d9dbe6","#b8323a","#2a3a78","#2f8f8a","#e88aa8","#6a4aa0","#7a5a48"];
+const HAIR_LUNE = ["#e8c46a","#d9dbe6","#f2f0f5","#cfe0ff","#a98a6a","#3a2620","#1c1a24"];
+const IRIS = ["#7a3e1e","#2d6fb8","#3a9a5a","#8a4bd6","#c0392b","#c9921a","#4a5a8a","#1aa3a3"];
+const MASKPAT = ["#d6334a","#2fb6a8","#e2a33a","#7c4ddb","#3a7bd5","#e05fa8"];
+const STYLES_F = ["long","bob","pony","twin","bun","longwavy"], STYLES_H = ["spiky","shaggy","slick","buzz","short","pony"];
 const CARDS = {};
 for (const s of SERIES) {
   const rows = s.list.trim().split("\n").map(l => {
-    const [r, el, em, name, type, flavor] = l.split("|").map(x => x.trim());
-    return {r, el, em, name, type, flavor};
+    const [r, f, g, name, title, flavor, look = ""] = l.split("|").map(x => x.trim());
+    return {r, f, g, name, title, flavor, look};
   });
-  rows.sort((a, b) => RAR[a.r].ord - RAR[b.r].ord || EL_ORDER.indexOf(a.el) - EL_ORDER.indexOf(b.el));
+  rows.sort((a, b) => RAR[a.r].ord - RAR[b.r].ord || FAC_ORDER.indexOf(a.f) - FAC_ORDER.indexOf(b.f));
   s.cards = [];
   s.main = rows.filter(r => r.r !== "M").length;
   rows.forEach((c, i) => {
     c.no = i + 1; c.series = s.code; c.id = s.code + String(c.no).padStart(3, "0");
     const R = rng(hash(c.id + c.name)); const [lo, hi] = STAT_BASE[c.r];
     c.atk = lo + Math.round(R() * (hi - lo)); c.def = lo + Math.round(R() * (hi - lo));
-    c.art = {sx: 15 + R() * 70 | 0, sy: 14 + R() * 22 | 0, ss: 5 + R() * 6 | 0, st1: `${R() * 13 | 0}cqw ${R() * 11 | 0}cqw`, st2: `${R() * 19 | 0}cqw ${R() * 17 | 0}cqw`, h1: 10 + R() * 40 | 0, h2: 55 + R() * 40 | 0};
+    c.L = buildLook(c);
     CARDS[c.id] = c; s.cards.push(c);
   });
+}
+function buildLook(c) {
+  const R = rng(hash(c.name + "look"));
+  const pick = a => a[R() * a.length | 0];
+  const o = {};
+  c.look.split(";").filter(Boolean).forEach(kv => { const [k, v] = kv.split("="); o[k] = v; });
+  const L = {};
+  L.R = R;
+  if (c.f === "m") {
+    L.mask = o.m || pick(["round","bird","fox","beast","insect","horned"]);
+    L.pat = o.p || pick(MASKPAT);
+    L.aura = o.p || L.pat;
+    return L;
+  }
+  L.skin = o.s || pick(SKINS);
+  L.style = o.h || pick(c.g === "f" ? STYLES_F : STYLES_H);
+  L.hair = o.hc || (c.f === "v" ? (R() < .75 ? pick(HAIR_DARK) : pick(HAIR_ALL)) : c.f === "l" ? pick(HAIR_LUNE) : pick(HAIR_ALL));
+  L.iris = o.i || pick(IRIS);
+  L.expr = o.e || pick(["calm","calm","smile","smirk","fierce","cold"]);
+  L.acc = (o.a || "").split(",").filter(Boolean);
+  L.g = c.g;
+  const lant = Object.keys(LANTERNS).find(k => c.title.includes(k));
+  L.accent = o.k || (lant ? LANTERNS[lant] : pick(["#f0a830","#3fc28a","#4aa3ff","#e8443a","#b36cf0","#2fc4b2","#e88aa8"]));
+  L.rank = /Capitaine/.test(c.title) ? "cap" : /Lieutenant/.test(c.title) ? "lt" : "";
+  L.outfit = o.o || (c.f === "v" ? "kimono" : c.f === "l" ? "coat" : pick(["hoodie","jacket","uniform"]));
+  if (L.outfit === "uniform" && c.g === "f") L.outfit = "sailor";
+  L.weapon = o.w || (c.f === "v" ? "katana" : "none");
+  L.cloth = c.f === "e" ? pick(["#2b3a55","#7a2a35","#2f5a48","#3a3550","#c8a24a","#e0e0e8","#4a6fa5"]) : "#1b1822";
+  L.aura = L.accent;
+  return L;
 }
 const SER = Object.fromEntries(SERIES.map(s => [s.code, s]));
 const ALL = Object.values(CARDS);
 
+/* ============================ Portraits (SVG) ============================ */
+let SVGN = 0;
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = n >> 8 & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, p = Math.abs(amt);
+  r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+const OUT = "#1a1222";
+const mirrorPath = d => d.replace(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)/g, (m, x, y) => `${(200 - parseFloat(x)).toFixed(1)} ${y}`);
+
+function bgSVG(c, id, R, sil) {
+  if (sil) return `<rect width="200" height="125" fill="#151126"/>`;
+  let s = "";
+  const stars = n => { let t = ""; for (let i = 0; i < n; i++) t += `<circle cx="${(R() * 200).toFixed(1)}" cy="${(R() * 70).toFixed(1)}" r="${(R() * .9 + .3).toFixed(2)}" fill="#fff" opacity="${(R() * .6 + .3).toFixed(2)}"/>`; return t; };
+  if (c.f === "v") {
+    s += `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241a4a"/><stop offset=".6" stop-color="#6b3a62"/><stop offset="1" stop-color="#d97a52"/></linearGradient></defs>
+      <rect width="200" height="125" fill="url(#${id}s)"/>${stars(14)}
+      <circle cx="${30 + R() * 140 | 0}" cy="22" r="11" fill="#ffe9c2" opacity=".85"/>`;
+    for (let i = 0; i < 6; i++) { const x = R() * 200, y = 20 + R() * 55, r = 1.6 + R() * 1.6; s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r * 3).toFixed(1)}" fill="#ffb85a" opacity=".18"/><rect x="${(x - r).toFixed(1)}" y="${(y - r * 1.3).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2.6).toFixed(1)}" rx="${r.toFixed(1)}" fill="#ffc46e"/>`; }
+    s += `<path d="M0 104 L18 98 Q30 92 42 98 L60 104 L60 125 L0 125Z M140 102 Q156 92 172 96 Q186 92 200 100 L200 125 L140 125Z" fill="#1a1230"/>
+      <path d="M8 96 Q30 84 52 96 L50 99 Q30 90 10 99Z M146 94 Q170 82 194 94 L192 97 Q170 88 148 97Z" fill="#2a1c40"/>`;
+  } else if (c.f === "m") {
+    s += `<defs><radialGradient id="${id}s" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#5a1424"/><stop offset=".7" stop-color="#1c0812"/><stop offset="1" stop-color="#0a0408"/></radialGradient></defs>
+      <rect width="200" height="125" fill="url(#${id}s)"/>
+      <circle cx="${40 + R() * 120 | 0}" cy="24" r="17" fill="#c8344a" opacity=".55"/><circle cx="${40 + R() * 120 | 0}" cy="24" r="17" fill="none" stroke="#ff6a7a" stroke-width=".6" opacity=".4"/>`;
+    for (let i = 0; i < 9; i++) s += `<circle cx="${(R() * 200).toFixed(1)}" cy="${(R() * 125).toFixed(1)}" r="${(R() * 6 + 1).toFixed(1)}" fill="#000" opacity=".45"/>`;
+    s += `<path d="M0 125 L0 100 Q20 92 34 106 Q50 88 70 104 L70 125Z M130 125 L130 106 Q150 90 166 104 Q182 94 200 102 L200 125Z" fill="#0a0408"/>`;
+  } else if (c.f === "l") {
+    s += `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1440"/><stop offset=".7" stop-color="#2c2a6e"/><stop offset="1" stop-color="#5b4a9e"/></linearGradient>
+      <radialGradient id="${id}m" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9d4ff"/></radialGradient></defs>
+      <rect width="200" height="125" fill="url(#${id}s)"/>${stars(26)}`;
+    const mx = R() < .5 ? 38 : 162;
+    s += `<circle cx="${mx}" cy="34" r="30" fill="#cfd8ff" opacity=".12"/><circle cx="${mx}" cy="34" r="22" fill="url(#${id}m)"/>
+      <circle cx="${mx - 7}" cy="29" r="4" fill="#b9c3ec" opacity=".7"/><circle cx="${mx + 6}" cy="40" r="3" fill="#b9c3ec" opacity=".6"/><circle cx="${mx + 8}" cy="26" r="2" fill="#b9c3ec" opacity=".6"/>
+      <path d="M0 112 Q40 100 80 110 Q120 100 160 108 Q185 104 200 108 L200 125 L0 125Z" fill="#dfe4ff" opacity=".22"/>
+      <path d="M0 118 Q50 108 100 116 Q150 108 200 116 L200 125 L0 125Z" fill="#eef1ff" opacity=".25"/>`;
+  } else {
+    s += `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2a6b"/><stop offset=".55" stop-color="#c0567a"/><stop offset="1" stop-color="#ffae6a"/></linearGradient></defs>
+      <rect width="200" height="125" fill="url(#${id}s)"/>${stars(6)}`;
+    let x = 0; let bld = "", win = "";
+    while (x < 200) { const w = 12 + R() * 20, h = 26 + R() * 44; bld += `<rect x="${x.toFixed(1)}" y="${(125 - h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/>`;
+      for (let k = 0; k < 4; k++) if (R() < .6) win += `<rect x="${(x + 2 + R() * (w - 6)).toFixed(1)}" y="${(125 - h + 4 + R() * (h - 10)).toFixed(1)}" width="2" height="2.6" fill="#ffd27a" opacity="${(.5 + R() * .5).toFixed(2)}"/>`;
+      x += w + 1; }
+    s += `<g fill="#241838">${bld}</g>${win}<path d="M0 46 Q100 60 200 40" stroke="#241838" stroke-width=".8" fill="none"/>`;
+  }
+  return s;
+}
+function auraSVG(L, id, r, R) {
+  const o = RAR[r].ord; if (o < 2) return "";
+  let s = `<defs><radialGradient id="${id}a" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="${L.aura}" stop-opacity=".75"/><stop offset="1" stop-color="${L.aura}" stop-opacity="0"/></radialGradient>
+    <filter id="${id}b" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.6"/></filter></defs>`;
+  if (o >= 3) {
+    let rays = ""; for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2 + R() * .1; rays += `M100 58 L${(100 + Math.cos(a) * 160).toFixed(1)} ${(58 + Math.sin(a) * 160).toFixed(1)} L${(100 + Math.cos(a + .05) * 160).toFixed(1)} ${(58 + Math.sin(a + .05) * 160).toFixed(1)}Z `; }
+    s += `<path d="${rays}" fill="#fff" opacity="${o >= 4 ? .14 : .09}"/>`;
+  }
+  s += `<ellipse cx="100" cy="66" rx="${o >= 4 ? 82 : 66}" ry="${o >= 4 ? 70 : 56}" fill="url(#${id}a)"/>`;
+  if (o >= 3) {
+    const flame = (rad, amp, n) => { let p = ""; for (let i = 0; i <= n; i++) { const a = Math.PI + i / n * Math.PI; const rr = rad + (i % 2 ? amp * (0.6 + R() * .7) : 0); p += (i ? "L" : "M") + (100 + Math.cos(a) * rr * 1.05).toFixed(1) + " " + (84 + Math.sin(a) * rr * 1.25).toFixed(1) + " "; } return p + "L170 125 L30 125Z"; };
+    s += `<path d="${flame(48, o >= 4 ? 30 : 20, 22)}" fill="${L.aura}" opacity=".55" filter="url(#${id}b)"/>`;
+    if (o >= 4) s += `<path d="${flame(42, 18, 18)}" fill="${shade(L.aura, .55)}" opacity=".6" filter="url(#${id}b)"/>`;
+  }
+  return s;
+}
+function particles(L, r, R) {
+  const o = RAR[r].ord; if (o < 4) return "";
+  let s = ""; for (let i = 0; i < (o === 5 ? 26 : 16); i++) { const x = R() * 200, y = R() * 125, rr = R() * 1.6 + .5;
+    s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rr.toFixed(2)}" fill="${R() < .5 ? "#fff" : shade(L.aura, .4)}" opacity="${(.5 + R() * .5).toFixed(2)}"/>`; }
+  return s;
+}
+
+function weaponSVG(L, r, sil) {
+  const released = RAR[r].ord >= 4;
+  const glow = released ? L.aura : null;
+  const steel = sil ? OUT : "#d7dde8", dark = sil ? OUT : "#2a2030", gold = sil ? OUT : "#c9a046";
+  const glowLine = (d, w) => glow && !sil ? `<path d="${d}" stroke="${glow}" stroke-width="${w + 5}" stroke-linecap="round" opacity=".45" fill="none"/>` : "";
+  switch (L.weapon) {
+    case "katana": {
+      const blade = "M58 125 L141 40";
+      return `${glowLine(blade, 3.5)}<path d="${blade}" stroke="${steel}" stroke-width="3.6" stroke-linecap="round"/><path d="M60 123 L141 41" stroke="${sil ? OUT : "#fff"}" stroke-width=".9" opacity=".7"/>
+        <path d="M141 40 L157 13" stroke="${dark}" stroke-width="6.4" stroke-linecap="round"/><path d="M141 40 L157 13" stroke="${sil ? OUT : shade(L.accent, -.1)}" stroke-width="3.6" stroke-dasharray="2.2 2.4"/>
+        <ellipse cx="141" cy="40" rx="7" ry="2.6" transform="rotate(-48 141 40)" fill="${gold}" stroke="${OUT}" stroke-width=".8"/>
+        ${glow && !sil ? `<path d="M157 13 L165 4" stroke="${glow}" stroke-width="1.4" opacity=".8"/>` : ""}`;
+    }
+    case "bokken": return `<path d="M60 125 L156 14" stroke="${sil ? OUT : "#a8743f"}" stroke-width="5" stroke-linecap="round"/><path d="M62 123 L156 15" stroke="${sil ? OUT : "#d6a26a"}" stroke-width="1.4"/>`;
+    case "rapier": return `${glowLine("M64 125 L150 26", 2)}<path d="M64 125 L150 26" stroke="${steel}" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M150 26 L160 14" stroke="${dark}" stroke-width="4" stroke-linecap="round"/><path d="M143 26 Q150 18 158 32" stroke="${gold}" stroke-width="2" fill="none"/><circle cx="161" cy="12" r="2.4" fill="${gold}"/>`;
+    case "naginata": return `${glowLine("M146 125 L166 0", 3)}<path d="M146 125 L163 18" stroke="${sil ? OUT : "#4a3020"}" stroke-width="3.6" stroke-linecap="round"/><path d="M163 18 C168 8 170 0 166 -6 L160 16Z" fill="${steel}" stroke="${OUT}" stroke-width=".8"/>`;
+    case "scythe": return `${glowLine("M150 125 L166 6", 3)}<path d="M150 125 L166 6" stroke="${sil ? OUT : "#3a2a30"}" stroke-width="3.4" stroke-linecap="round"/><path d="M166 8 C140 0 116 10 104 28 C124 18 146 14 166 16Z" fill="${steel}" stroke="${OUT}" stroke-width=".8"/>`;
+    case "moonstaff": return `${glowLine("M152 125 L160 22", 3)}<path d="M152 125 L160 22" stroke="${sil ? OUT : "#d9c27a"}" stroke-width="3" stroke-linecap="round"/><path d="M160 4 A13 13 0 1 0 172 22 A10 10 0 1 1 160 4Z" fill="${sil ? OUT : "#fff6d6"}" stroke="${OUT}" stroke-width=".8"/>${!sil ? `<circle cx="162" cy="16" r="16" fill="${L.accent}" opacity=".18"/>` : ""}`;
+    case "fan": { let ribs = ""; for (let i = 0; i <= 8; i++) { const a = Math.PI * (1.08 + i / 8 * .64); ribs += `M52 100 L${(52 + Math.cos(a) * 44).toFixed(1)} ${(100 + Math.sin(a) * 44).toFixed(1)} `; }
+      return `<path d="M52 100 L${(52 + Math.cos(Math.PI * 1.08) * 44).toFixed(1)} ${(100 + Math.sin(Math.PI * 1.08) * 44).toFixed(1)} A44 44 0 0 1 ${(52 + Math.cos(Math.PI * 1.72) * 44).toFixed(1)} ${(100 + Math.sin(Math.PI * 1.72) * 44).toFixed(1)}Z" fill="${sil ? OUT : L.accent}" stroke="${OUT}" stroke-width=".8"/><path d="${ribs}" stroke="${sil ? OUT : shade(L.accent, -.35)}" stroke-width=".8"/>`; }
+    case "shield": return `<circle cx="46" cy="98" r="24" fill="${sil ? OUT : "#efe6cf"}" stroke="${OUT}" stroke-width="1.2"/><circle cx="46" cy="98" r="18" fill="none" stroke="${sil ? OUT : "#c9a046"}" stroke-width="1.2"/><rect x="40" y="88" width="12" height="18" rx="5" fill="${sil ? OUT : L.accent}"/>`;
+    case "chains": { let s = ""; for (let i = 0; i < 12; i++) { const t = i / 11, x = 160 - t * 40 + Math.sin(t * 7) * 10, y = 4 + t * 120; s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="3.2" ry="5" transform="rotate(${i % 2 ? 30 : -30} ${x.toFixed(1)} ${y.toFixed(1)})" fill="none" stroke="${sil ? OUT : "#b8bcc8"}" stroke-width="1.6"/>`; } return s; }
+    default: return "";
+  }
+}
+function frontFX(L, c, R, sil) {
+  if (sil) return "";
+  let s = "";
+  if (c.f === "v" || L.weapon === "lanterns") {
+    const big = L.rank === "cap" || RAR[c.r].ord >= 4;
+    const lan = (x, y, k) => `<line x1="${x}" y1="${y - 14 * k}" x2="${x}" y2="${y - 30 * k}" stroke="#2a1c30" stroke-width=".8"/><circle cx="${x}" cy="${y}" r="${16 * k}" fill="${L.accent}" opacity=".25"/>
+      <rect x="${x - 3.5 * k}" y="${y - 12 * k}" width="${7 * k}" height="${3 * k}" rx="1" fill="#2a1c30"/><ellipse cx="${x}" cy="${y}" rx="${8 * k}" ry="${10 * k}" fill="${shade(L.accent, .25)}" stroke="#2a1c30" stroke-width=".9"/>
+      <path d="M${x - 8 * k} ${y} Q${x} ${y + 2 * k} ${x + 8 * k} ${y} M${x - 7 * k} ${y - 5 * k} Q${x} ${y - 3 * k} ${x + 7 * k} ${y - 5 * k} M${x - 7 * k} ${y + 5 * k} Q${x} ${y + 7 * k} ${x + 7 * k} ${y + 5 * k}" stroke="${shade(L.accent, -.3)}" stroke-width=".6" fill="none"/>
+      <rect x="${x - 3.5 * k}" y="${y + 9 * k}" width="${7 * k}" height="${3 * k}" rx="1" fill="#2a1c30"/>`;
+    if (L.weapon === "lanterns") s += lan(32, 46, .85) + lan(170, 64, .95) + lan(150, 20, .6) + lan(52, 16, .55);
+    else s += lan(L.weapon === "fan" || L.weapon === "shield" ? 170 : 32, big ? 58 : 66, big ? 1.1 : .8);
+  }
+  if (L.weapon === "orbs") for (const [x, y, r] of [[36, 40, 6], [168, 58, 7.5], [150, 18, 4.5], [56, 14, 3.5]]) s += `<circle cx="${x}" cy="${y}" r="${r * 2.2}" fill="${L.accent}" opacity=".25"/><circle cx="${x}" cy="${y}" r="${r}" fill="${shade(L.accent, .55)}"/><circle cx="${x - r * .3}" cy="${y - r * .3}" r="${r * .35}" fill="#fff"/>`;
+  if (L.weapon === "talismans") for (const [x, y, a] of [[34, 44, -14], [166, 52, 12], [150, 16, -6]]) s += `<g transform="rotate(${a} ${x} ${y})"><rect x="${x - 5}" y="${y - 13}" width="10" height="26" fill="#f4ecd4" stroke="#8a7a5a" stroke-width=".5"/><path d="M${x - 2} ${y - 8} L${x + 2} ${y - 4} M${x - 2} ${y} L${x + 2} ${y} M${x} ${y + 3} L${x} ${y + 9}" stroke="#c8344a" stroke-width="1.2"/></g>`;
+  if (L.weapon === "notes") for (const [x, y, t] of [[36, 40, "♪"], [164, 52, "♫"], [150, 20, "♪"], [52, 16, "♬"]]) s += `<text x="${x}" y="${y}" font-size="14" fill="${shade(L.accent, .5)}" text-anchor="middle">${t}</text>`;
+  if (L.weapon === "foxspirit") s += `<g opacity=".85"><path d="M150 70 C150 52 160 42 168 40 L166 30 L174 38 L182 30 L180 42 C188 48 190 62 184 72 C178 82 158 84 150 70Z" fill="#fff4e6" stroke="#e0752f" stroke-width="1"/><path d="M160 58 Q164 55 168 58 M174 58 Q178 55 182 58" stroke="#e0412f" stroke-width="1.4" fill="none"/><path d="M186 66 C198 60 198 44 192 36" stroke="#ffd2a8" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+  return s;
+}
+
+function hairBack(L, R, col, out) {
+  const st = L.style;
+  const cap = `<ellipse cx="100" cy="46" rx="29" ry="28.5" fill="${col}" stroke="${out}" stroke-width="1.3"/>`;
+  const spikes = (cx, cy, r1, r2, a0, a1, n) => { let p = ""; for (let i = 0; i <= n * 2; i++) { const a = (a0 + (a1 - a0) * i / (n * 2)) * Math.PI / 180; const rr = i % 2 ? r2 + (R() - .5) * 8 : r1; p += (i ? "L" : "M") + (cx + Math.cos(a) * rr).toFixed(1) + " " + (cy + Math.sin(a) * rr).toFixed(1) + " "; } return p + "Z"; };
+  switch (st) {
+    case "spiky": return `<path d="${spikes(100, 48, 28, 46, 160, 380, 7)}" fill="${col}" stroke="${out}" stroke-width="1.3" stroke-linejoin="round"/>` + cap;
+    case "shaggy": return `<path d="${spikes(100, 50, 29, 38, 130, 410, 11)}" fill="${col}" stroke="${out}" stroke-width="1.3" stroke-linejoin="round"/>` + cap;
+    case "wild": return `<path d="${spikes(100, 54, 30, 56, 110, 430, 10)}" fill="${col}" stroke="${out}" stroke-width="1.3" stroke-linejoin="round"/>` + cap;
+    case "long": return `<path d="M72 42 C62 70 62 104 64 125 L136 125 C138 104 138 70 128 42 C120 20 80 20 72 42Z" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap;
+    case "longwavy": return `<path d="M72 42 C60 62 66 76 60 92 C56 104 64 114 60 125 L140 125 C136 114 144 104 140 92 C134 76 140 62 128 42 C120 20 80 20 72 42Z" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap;
+    case "bob": return `<path d="M71 44 C65 64 67 84 73 93 Q100 98 127 93 C133 84 135 64 129 44 C122 22 78 22 71 44Z" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap;
+    case "pony": return `<path d="M114 22 C148 12 164 46 156 100 C152 78 142 56 122 40Z" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap + `<circle cx="120" cy="24" r="3.4" fill="${L.accent}" stroke="${out}" stroke-width=".8"/>`;
+    case "twin": { const t = "M80 32 C58 38 48 80 54 122 C62 98 66 66 84 44Z"; return `<path d="${t}" fill="${col}" stroke="${out}" stroke-width="1.3"/><path d="${mirrorPath(t)}" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap + `<circle cx="79" cy="31" r="3.4" fill="${L.accent}"/><circle cx="121" cy="31" r="3.4" fill="${L.accent}"/>`; }
+    case "bun": return cap + `<circle cx="100" cy="15" r="12" fill="${col}" stroke="${out}" stroke-width="1.3"/><path d="M92 8 L84 -2" stroke="${L.accent}" stroke-width="2" stroke-linecap="round"/><circle cx="84" cy="-2" r="2.4" fill="${L.accent}"/>`;
+    case "slick": return `<path d="${spikes(102, 46, 28, 34, 200, 330, 4)}" fill="${col}" stroke="${out}" stroke-width="1.3"/>` + cap;
+    default: return cap;
+  }
+}
+function hairFront(L, R, col, out, hi) {
+  const capTop = "M72 52 C70 28 86 14 100 14 C114 14 130 28 128 52";
+  const j = n => ((R() - .5) * n).toFixed(1);
+  let d;
+  switch (L.style) {
+    case "spiky": case "shaggy": case "wild": case "short": {
+      const deep = L.style === "short" ? 7 : 14;
+      const xs = [124, 118, 112, 106, 100, 94, 88, 82, 76];
+      d = capTop + " L128 56 ";
+      xs.forEach((x, i) => { d += `L${(x + +j(2)).toFixed(1)} ${(i % 2 ? 37 + +j(3) : 40 + deep + +j(4)).toFixed(1)} `; });
+      d += "L72 58Z"; break;
+    }
+    case "long": case "longwavy": d = capTop + " L128 64 C125 40 114 26 101 24 L99 24 C86 26 75 40 72 64Z"; break;
+    case "bob": case "twin": d = capTop + " L128 64 C126 54 124 48 120 46 Q110 49 100 47 Q90 49 80 46 C76 48 74 54 72 64Z"; break;
+    case "pony": case "bun": d = capTop + " L128 50 C122 40 108 36 94 41 C86 44 80 51 75 62 L72 56Z"; break;
+    case "slick": d = capTop + " L128 46 C122 34 112 30 100 30 C88 30 78 34 72 46Z"; break;
+    case "buzz": d = "M74 46 C74 28 86 20 100 20 C114 20 126 28 126 46 C120 38 112 35 100 35 C88 35 80 38 74 46Z"; break;
+  }
+  let s = `<path d="${d}" fill="${col}" stroke="${out}" stroke-width="1.3" stroke-linejoin="round"/>`;
+  if (["long","longwavy","bob","twin","bun"].includes(L.style) && L.g === "f") {
+    const len = L.style === "bob" ? 92 : 108;
+    const lock = `M75 46 C71 66 71 ${len - 14} 76 ${len} C78 ${len - 12} 80 ${len - 30} 82 52Z`;
+    s += `<path d="${lock}" fill="${col}" stroke="${out}" stroke-width="1.2"/><path d="${mirrorPath(lock)}" fill="${col}" stroke="${out}" stroke-width="1.2"/>`;
+  }
+  if (L.style === "slick") s += `<path d="M97 30 C94 38 92 44 89 51" stroke="${col}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M97 30 C94 38 92 44 89 51" stroke="${out}" stroke-width=".7" fill="none"/>`;
+  if (L.style === "pony" || L.style === "bun") s += `<path d="M104 18 C94 28 84 40 78 58 L84 44 C90 34 96 26 104 18Z" fill="${col}" stroke="${out}" stroke-width="1"/>`;
+  if (hi) s += `<path d="M84 24 Q100 17 116 24" stroke="${hi}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".55"/><path d="M88 29 Q100 24 112 29" stroke="${hi}" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".35"/>`;
+  return s;
+}
+function faceSVG(L, id, r, sil) {
+  const skin = sil ? OUT : L.skin, sh = sil ? OUT : shade(L.skin, -.16), out = OUT;
+  const released = RAR[r].ord >= 4;
+  let s = `<path d="M92 76 L92 99 Q100 103 108 99 L108 76Z" fill="${skin}" stroke="${out}" stroke-width="1.2"/><path d="M92 82 Q100 92 108 82 L108 78 L92 78Z" fill="${sh}" opacity=".7"/>`;
+  return s; // cou, le reste après le corps
+}
+function headSVG(L, id, r, sil) {
+  const skin = sil ? OUT : L.skin, sh = sil ? OUT : shade(L.skin, -.16), out = OUT;
+  let s = `<ellipse cx="76.5" cy="56" rx="3.6" ry="6.2" fill="${skin}" stroke="${out}" stroke-width="1.1"/><ellipse cx="123.5" cy="56" rx="3.6" ry="6.2" fill="${skin}" stroke="${out}" stroke-width="1.1"/>
+    <path d="M76 50 C76 70 84 84 100 91 C116 84 124 70 124 50 C124 32 113 22 100 22 C87 22 76 32 76 50Z" fill="${skin}" stroke="${out}" stroke-width="1.4"/>`;
+  if (sil) return s;
+  s += `<path d="M78 48 C80 44 92 42 100 43 C108 42 120 44 122 48 L122 52 C114 48 86 48 78 52Z" fill="${sh}" opacity=".45"/>`;
+  if (L.acc.includes("beard")) s += `<path d="M82 70 C86 86 94 92 100 93 C106 92 114 86 118 70 C114 78 108 82 100 82 C92 82 86 78 82 70Z" fill="${L.hair}" stroke="${out}" stroke-width="1"/>`;
+  // yeux
+  const released = RAR[r].ord >= 4;
+  const iris = released ? shade(L.iris, .25) : L.iris;
+  const e = L.expr;
+  const eye = (cx, m) => {
+    const sx = x => (m ? 200 - x : x);
+    if (e === "closed") return `<path d="M${sx(cx - 7)} 57 Q${sx(cx)} 61 ${sx(cx + 7)} 57" stroke="${out}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+    if (e === "smile") return `<path d="M${sx(cx - 7)} 58.5 Q${sx(cx)} 52 ${sx(cx + 7)} 58.5" stroke="${out}" stroke-width="1.9" fill="none" stroke-linecap="round"/>`;
+    const top = e === "fierce" || e === "cold" ? 53.6 : 51.6, bot = e === "fierce" ? 60 : 61;
+    const pth = `M${sx(cx - 7.5)} 57 Q${sx(cx - 1)} ${top} ${sx(cx + 7)} ${e === "fierce" ? 57.8 : 56.4} Q${sx(cx)} ${bot} ${sx(cx - 7.5)} 57Z`;
+    const cid = id + (m ? "r" : "l");
+    return `<clipPath id="${cid}"><path d="${pth}"/></clipPath><path d="${pth}" fill="#fff"/>
+      <g clip-path="url(#${cid})"><circle cx="${sx(cx + .4)}" cy="57" r="3.7" fill="${iris}"/><circle cx="${sx(cx + .4)}" cy="58" r="2.3" fill="${shade(iris, -.45)}"/><circle cx="${sx(cx + .4)}" cy="55.4" r="3.7" fill="${shade(iris, .35)}" opacity=".35"/>
+      <circle cx="${sx(cx - .6)}" cy="55.6" r="1.15" fill="#fff"/></g>
+      <path d="M${sx(cx - 8)} 57.2 Q${sx(cx - 1)} ${top - .6} ${sx(cx + 7.5)} ${e === "fierce" ? 57.4 : 56}" stroke="${out}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M${sx(cx + 7)} ${e === "fierce" ? 57.6 : 56.2} L${sx(cx + 9)} ${e === "fierce" ? 56 : 54.6}" stroke="${out}" stroke-width="1.3" stroke-linecap="round"/>
+      ${released ? `<circle cx="${sx(cx + .4)}" cy="57" r="6" fill="${L.aura}" opacity=".35"/>` : ""}`;
+  };
+  s += eye(89, false) + eye(89, true);
+  // sourcils
+  const brow = e === "fierce" ? "M82 47.5 L95 50.5" : e === "cold" ? "M82 48.5 L95 49" : e === "smile" ? "M82 48 Q88 45 95 47" : "M82 48.5 Q88 46 95 47.6";
+  s += `<path d="${brow}" stroke="${shade(L.hair, -.3)}" stroke-width="1.9" stroke-linecap="round" fill="none"/><path d="${mirrorPath(brow)}" stroke="${shade(L.hair, -.3)}" stroke-width="1.9" stroke-linecap="round" fill="none"/>`;
+  s += `<path d="M100.6 63 L98.8 68.4 L101 68.8" stroke="${sh}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
+  const mouth = {calm: "M96.5 76 Q100 77.2 103.5 76", smile: "M95 74.6 Q100 80 105 74.6", smirk: "M96 76.6 Q101 77.4 105.4 74.4", fierce: "M95.5 77 L104.5 76.2", cold: "M97 76.4 L103 76.4", closed: "M96.5 76 Q100 77.6 103.5 76"}[e] || "M96.5 76 Q100 77.2 103.5 76";
+  s += `<path d="${mouth}" stroke="${shade(L.skin, -.45)}" stroke-width="1.4" fill="none" stroke-linecap="round"/>`;
+  if (L.g === "f" || e === "smile") s += `<ellipse cx="85" cy="66" rx="4.4" ry="2" fill="#ff8a8a" opacity=".28"/><ellipse cx="115" cy="66" rx="4.4" ry="2" fill="#ff8a8a" opacity=".28"/>`;
+  return s;
+}
+function accSVG(L, sil) {
+  if (sil) return "";
+  let s = "";
+  const A = L.acc;
+  if (A.includes("scar")) s += `<path d="M107 47 L117 69" stroke="#9b3a3a" stroke-width="1.5" stroke-linecap="round"/><path d="M109 54 L113 52 M111 60 L115 58" stroke="#9b3a3a" stroke-width="1" stroke-linecap="round"/>`;
+  if (A.includes("bandage")) s += `<rect x="80" y="66" width="10" height="5" rx="1.2" transform="rotate(-12 85 68)" fill="#f2e8d8" stroke="#8a7a6a" stroke-width=".6"/><path d="M83 67 L83 71 M86 66.5 L86 70.5" stroke="#c8b8a0" stroke-width=".5"/>`;
+  if (A.includes("patch")) s += `<path d="M118 50 L76 40 M118 60 L124 64" stroke="#1a1222" stroke-width="1.2"/><ellipse cx="111" cy="57" rx="7.6" ry="6.4" fill="#1d1824" stroke="#000" stroke-width=".8"/>`;
+  if (A.includes("glasses")) s += `<g fill="none" stroke="#2a2030" stroke-width="1.2"><rect x="81" y="51" width="15" height="11" rx="4"/><rect x="104" y="51" width="15" height="11" rx="4"/><path d="M96 55 Q100 53 104 55 M81 55 L77 54 M119 55 L123 54"/></g><path d="M83 53 L87 52" stroke="#fff" stroke-width=".8" opacity=".7"/>`;
+  if (A.includes("marks")) s += `<path d="M84 64 L90 63 M84 67 L89 66.2" stroke="${L.accent}" stroke-width="1.3" stroke-linecap="round"/><path d="M116 64 L110 63 M116 67 L111 66.2" stroke="${L.accent}" stroke-width="1.3" stroke-linecap="round"/>`;
+  if (A.includes("headband")) s += `<path d="M73 38 Q100 31 127 38 L127 44 Q100 37 73 44Z" fill="${L.accent}" stroke="#1a1222" stroke-width="1"/><path d="M127 40 L141 46 L138 51Z M127 42 L137 54 L133 56Z" fill="${shade(L.accent, -.15)}" stroke="#1a1222" stroke-width=".8"/>`;
+  if (A.includes("flower")) s += `<g transform="translate(122 32)">${[0, 72, 144, 216, 288].map(a => `<ellipse cx="0" cy="-4" rx="2.8" ry="4" transform="rotate(${a})" fill="${shade(L.accent, .3)}" stroke="#1a1222" stroke-width=".5"/>`).join("")}<circle r="1.8" fill="#ffe08a"/></g>`;
+  if (A.includes("earring")) s += `<circle cx="124" cy="64" r="1.8" fill="#e8c46a"/><circle cx="76" cy="64" r="1.8" fill="#e8c46a"/>`;
+  if (A.includes("tiara")) s += `<path d="M82 31 L88 24 L93 30 L100 18 L107 30 L112 24 L118 31 Q100 35 82 31Z" fill="#ffd96a" stroke="#8a6a1a" stroke-width=".8"/><circle cx="100" cy="25" r="2" fill="${L.accent === "#ffd36b" ? "#9fd8ff" : L.accent}"/>`;
+  return s;
+}
+function bodySVG(L, c, sil) {
+  const out = OUT;
+  const C = x => (sil ? OUT : x);
+  const base = "M34 125 C38 107 58 99 80 97 L120 97 C142 99 162 107 166 125Z";
+  let s = "";
+  switch (L.outfit) {
+    case "kimono":
+      s += `<path d="${base}" fill="${C("#1b1822")}" stroke="${out}" stroke-width="1.3"/><path d="M86 97 L100 122 L114 97Z" fill="${C("#2e2a36")}"/>
+        <path d="M111 97 L116 97 L101 125 L95 125Z" fill="${C("#f1ede4")}" stroke="${out}" stroke-width=".8"/><path d="M84 97 L89 97 L104 125 L98 125Z" fill="${C("#f1ede4")}" stroke="${out}" stroke-width=".8"/>
+        <path d="M54 112 Q62 106 70 110 M130 110 Q138 106 146 112" stroke="${C("#3a3444")}" stroke-width="1.2" fill="none"/>`;
+      if (L.rank === "cap") { const m = "M36 125 C40 108 58 100 82 98 L88 106 C70 108 58 114 54 125Z";
+        s += `<path d="${m}" fill="${C(L.accent)}" stroke="${out}" stroke-width="1"/><path d="${mirrorPath(m)}" fill="${C(L.accent)}" stroke="${out}" stroke-width="1"/>
+          <path d="M44 118 L58 108 M150 108 L164 118" stroke="${C(shade(L.accent, -.3))}" stroke-width="1.4"/><circle cx="100" cy="118" r="4.5" fill="${C(shade(L.accent, .4))}" stroke="${out}" stroke-width=".8"/>`; }
+      if (L.rank === "lt") s += `<path d="M42 118 L58 109 L63 118 L48 125Z" fill="${C(L.accent)}" stroke="${out}" stroke-width=".9"/><circle cx="52" cy="116" r="2.4" fill="${C("#fff8e0")}"/>`;
+      break;
+    case "coat":
+      s += `<path d="${base}" fill="${C("#e9e7f2")}" stroke="${out}" stroke-width="1.3"/><path d="M60 110 Q70 104 80 104 M120 104 Q130 104 140 110" stroke="${C("#b9b6cc")}" stroke-width="1.2" fill="none"/>
+        <path d="M86 99 L80 80 L95 92Z" fill="${C("#f6f4fb")}" stroke="${out}" stroke-width="1"/><path d="M114 99 L120 80 L105 92Z" fill="${C("#f6f4fb")}" stroke="${out}" stroke-width="1"/>
+        <path d="M80 80 L86 99 M120 80 L114 99" stroke="${C(L.accent)}" stroke-width="1.6"/><path d="M100 100 L100 125" stroke="${C(L.accent)}" stroke-width="1.4"/>
+        <circle cx="100" cy="105" r="4.4" fill="${C(L.accent)}" stroke="${out}" stroke-width=".8"/><circle cx="101.6" cy="104" r="3.4" fill="${C("#e9e7f2")}"/>`;
+      break;
+    case "armor":
+      s += `<path d="${base}" fill="${C("#8f98ae")}" stroke="${out}" stroke-width="1.3"/><path d="M86 98 Q100 106 114 98 L114 104 Q100 112 86 104Z" fill="${C("#c9cfdd")}" stroke="${out}" stroke-width=".9"/>
+        <ellipse cx="54" cy="113" rx="22" ry="12" fill="${C("#c9cfdd")}" stroke="${out}" stroke-width="1.1"/><ellipse cx="146" cy="113" rx="22" ry="12" fill="${C("#c9cfdd")}" stroke="${out}" stroke-width="1.1"/>
+        <path d="M40 112 Q54 104 68 112 M132 112 Q146 104 160 112" stroke="${C("#eef1f8")}" stroke-width="1.3" fill="none"/>
+        <path d="M100 110 A6 6 0 1 0 106 118 A4.6 4.6 0 1 1 100 110Z" fill="${C(L.accent)}"/>`;
+      break;
+    case "hoodie":
+      s += `<path d="${base}" fill="${C(L.cloth)}" stroke="${out}" stroke-width="1.3"/><path d="M72 101 C72 86 128 86 128 101 L118 100 C116 93 84 93 82 100Z" fill="${C(shade(L.cloth, -.2))}" stroke="${out}" stroke-width="1"/>
+        <path d="M95 101 L93 117 M105 101 L107 117" stroke="${C("#f0eef4")}" stroke-width="1.1"/><circle cx="93" cy="118" r="1.2" fill="${C("#f0eef4")}"/><circle cx="107" cy="118" r="1.2" fill="${C("#f0eef4")}"/>`;
+      break;
+    case "jacket":
+      s += `<path d="${base}" fill="${C(L.cloth)}" stroke="${out}" stroke-width="1.3"/><path d="M84 97 Q100 104 116 97 L112 125 L88 125Z" fill="${C(L.cloth === "#e0e0e8" ? "#2b2a36" : "#ecebf2")}" stroke="${out}" stroke-width=".9"/>
+        <path d="M84 97 L80 106 L90 112 L88 125 M116 97 L120 106 L110 112 L112 125" stroke="${out}" stroke-width="1" fill="${C(shade(L.cloth, -.15))}"/>`;
+      break;
+    case "uniform":
+      s += `<path d="${base}" fill="${C("#1e2238")}" stroke="${out}" stroke-width="1.3"/><path d="M88 97 L88 90 Q100 94 112 90 L112 97 Q100 101 88 97Z" fill="${C("#262b46")}" stroke="${out}" stroke-width="1"/>
+        <circle cx="100" cy="106" r="1.6" fill="${C("#e8c46a")}"/><circle cx="100" cy="115" r="1.6" fill="${C("#e8c46a")}"/><circle cx="100" cy="124" r="1.6" fill="${C("#e8c46a")}"/>`;
+      break;
+    case "sailor":
+      s += `<path d="${base}" fill="${C("#f2f1f6")}" stroke="${out}" stroke-width="1.3"/><path d="M80 97 L100 118 L120 97 L134 104 L100 125 L66 104Z" fill="${C("#22305e")}" stroke="${out}" stroke-width="1"/>
+        <path d="M70 105 L100 122 L130 105" stroke="${C("#f2f1f6")}" stroke-width="1" fill="none"/><path d="M94 112 L100 118 L106 112 L102 124 L98 124Z" fill="${C(L.accent)}" stroke="${out}" stroke-width=".8"/>`;
+      break;
+  }
+  return s;
+}
+
+const MASKS = {
+  fox: "M70 44 L74 10 L92 28 L108 28 L126 10 L130 44 C130 66 116 84 100 92 C84 84 70 66 70 44Z",
+  bird: "M72 38 C72 22 86 16 100 16 C114 16 128 22 128 38 C128 54 114 62 106 66 L100 100 L94 66 C86 62 72 54 72 38Z",
+  horned: "M74 46 C74 26 86 18 100 18 C114 18 126 26 126 46 C126 70 114 86 100 90 C86 86 74 70 74 46Z",
+  round: "M70 52 C70 32 84 20 100 20 C116 20 130 32 130 52 C130 72 116 86 100 86 C84 86 70 72 70 52Z",
+  insect: "M66 50 C66 30 84 20 100 20 C116 20 134 30 134 50 C134 70 118 82 100 84 C82 82 66 70 66 50Z",
+  beast: "M68 48 C68 30 82 22 100 22 C118 22 132 30 132 48 C132 66 120 82 100 86 C80 82 68 66 68 48Z",
+  rabbit: "M74 48 C74 32 86 24 100 24 C114 24 126 32 126 48 C126 68 114 82 100 86 C86 82 74 68 74 48Z",
+  unicorn: "M74 46 C74 26 86 18 100 18 C114 18 126 26 126 46 C126 70 114 86 100 90 C86 86 74 70 74 46Z",
+  void: "M58 54 C58 28 76 12 100 12 C124 12 142 28 142 54 C142 80 124 98 100 98 C76 98 58 80 58 54Z"
+};
+function monsterSVG(c, L, id, R, sil) {
+  const ink = sil ? OUT : "#120c1a", out = OUT, P = L.pat;
+  const porc = sil ? OUT : `url(#${id}p)`;
+  let s = sil ? "" : `<defs><radialGradient id="${id}p" cx=".42" cy=".35" r=".75"><stop offset="0" stop-color="#fffaf0"/><stop offset=".7" stop-color="#ece3d2"/><stop offset="1" stop-color="#c9bba4"/></radialGradient>
+    <filter id="${id}g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6"/></filter></defs>`;
+  // corps d'encre et vrilles
+  s += `<path d="M22 125 C28 98 56 84 100 82 C144 84 172 98 178 125Z" fill="${ink}" stroke="${sil ? OUT : "#3a2450"}" stroke-width="1"/>`;
+  for (const t of ["M44 108 C30 92 20 80 16 58", "M58 98 C50 80 46 70 50 50", "M38 118 C22 112 10 104 4 90"]) s += `<path d="${t}" stroke="${ink}" stroke-width="4.5" stroke-linecap="round" fill="none"/><path d="${mirrorPath(t)}" stroke="${ink}" stroke-width="4.5" stroke-linecap="round" fill="none"/>`;
+  s += `<path d="M84 84 C84 96 88 104 86 112 M116 84 C116 98 112 104 114 114 M100 88 C100 100 102 106 100 118" stroke="${ink}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+  const m = L.mask;
+  // cornes et oreilles
+  if (m === "horned") { const h = "M84 28 C70 14 68 0 76 -8 C78 4 86 12 94 20Z"; s += `<path d="${h}" fill="${sil ? OUT : "#e9e1cf"}" stroke="${out}" stroke-width="1.1"/><path d="${mirrorPath(h)}" fill="${sil ? OUT : "#e9e1cf"}" stroke="${out}" stroke-width="1.1"/>`; }
+  if (m === "unicorn") s += `<path d="M96 22 L100 -10 L104 22Z" fill="${sil ? OUT : "#1d1426"}" stroke="${sil ? OUT : P}" stroke-width="1"/>`;
+  if (m === "rabbit") { const e = "M86 30 C78 10 80 -6 88 -10 C94 -2 94 14 94 26Z"; s += `<path d="${e}" fill="${porc}" stroke="${out}" stroke-width="1.1"/><path d="${mirrorPath(e)}" fill="${porc}" stroke="${out}" stroke-width="1.1"/>`; }
+  if (m === "beast") { const e = "M72 34 L70 14 L86 24Z"; s += `<path d="${e}" fill="${porc}" stroke="${out}" stroke-width="1.1"/><path d="${mirrorPath(e)}" fill="${porc}" stroke="${out}" stroke-width="1.1"/>`; }
+  if (m === "insect") s += `<path d="M90 22 C84 8 74 2 66 4 M110 22 C116 8 126 2 134 4" stroke="${sil ? OUT : "#e9e1cf"}" stroke-width="1.6" fill="none"/><circle cx="66" cy="4" r="2.4" fill="${sil ? OUT : P}"/><circle cx="134" cy="4" r="2.4" fill="${sil ? OUT : P}"/>`;
+  s += `<path d="${MASKS[m]}" fill="${porc}" stroke="${out}" stroke-width="1.4" stroke-linejoin="round"/>`;
+  if (sil) return s;
+  // motifs peints
+  const pat = [];
+  if (m === "fox") pat.push("M82 50 L72 40", "M118 50 L128 40", "M86 62 Q80 70 76 64", "M114 62 Q120 70 124 64", "M100 30 L100 40");
+  if (m === "bird") pat.push("M80 36 Q86 30 92 34", "M120 36 Q114 30 108 34", "M100 70 L100 92");
+  if (m === "horned") pat.push("M86 38 L96 46", "M114 38 L104 46", "M90 70 Q100 76 110 70");
+  if (m === "round" || m === "rabbit") pat.push("M84 66 Q88 72 92 66", "M108 66 Q112 72 116 66", "M100 28 L100 36");
+  if (m === "insect") pat.push("M76 46 Q80 40 86 42", "M124 46 Q120 40 114 42", "M92 72 L108 72");
+  if (m === "beast") pat.push("M84 64 L76 68", "M116 64 L124 68", "M96 70 Q100 74 104 70");
+  if (m === "unicorn") pat.push("M92 32 L108 32", "M86 66 Q100 74 114 66");
+  if (m === "void") { pat.push("M76 54 A24 24 0 0 1 124 54", "M86 54 A14 14 0 0 1 114 54", "M92 70 Q100 78 108 70"); for (let i = 0; i < 7; i++) { const a = Math.PI * (1.1 + i * .13); pat.push(`M${(100 + Math.cos(a) * 30).toFixed(1)} ${(54 + Math.sin(a) * 30).toFixed(1)} L${(100 + Math.cos(a) * 38).toFixed(1)} ${(54 + Math.sin(a) * 38).toFixed(1)}`); } }
+  s += pat.map(d => `<path d="${d}" stroke="${P}" stroke-width="${m === "void" ? 1.6 : 2.2}" stroke-linecap="round" fill="none"/>`).join("");
+  if (m !== "void") s += `<path d="M100 22 L100 26" stroke="${P}" stroke-width="0"/><path d="M96 26 L100 22 L104 26 L100 30Z" fill="${P}"/>`;
+  // yeux
+  const eyeHole = (cx, cy, shape, mr) => {
+    const X = dx => (cx + (mr ? -dx : dx)).toFixed(1);
+    const holes = {
+      slant: `M${X(-8)} ${cy + 2} Q${X(0)} ${cy - 6} ${X(8)} ${cy} Q${X(0)} ${cy + 5} ${X(-8)} ${cy + 2}Z`,
+      round: `M${X(-5.5)} ${cy} A5.5 5.5 0 1 0 ${X(5.5)} ${cy} A5.5 5.5 0 1 0 ${X(-5.5)} ${cy}Z`,
+      angry: `M${X(-8)} ${cy - 3} L${X(7)} ${cy + 1} Q${X(0)} ${cy + 6} ${X(-8)} ${cy - 3}Z`
+    };
+    return `<path d="${holes[shape]}" fill="#0a0610" stroke="${out}" stroke-width=".8"/><circle cx="${X(0)}" cy="${cy + 1}" r="3.2" fill="${P}" opacity=".75" filter="url(#${id}g)"/><circle cx="${X(0)}" cy="${cy + 1}" r="1.3" fill="${shade(P, .7)}"/>`;
+  };
+  if (m === "void") s += `<circle cx="100" cy="54" r="4" fill="#0a0610"/><circle cx="100" cy="54" r="2" fill="${P}" filter="url(#${id}g)"/>`;
+  else if (m === "insect") { for (const [x, y] of [[86, 52], [114, 52], [92, 62], [108, 62]]) s += eyeHole(x, y, "round"); }
+  else { const shp = m === "bird" || m === "round" || m === "rabbit" ? "round" : m === "horned" || m === "unicorn" ? "angry" : "slant";
+    s += eyeHole(88, 52, shp, false) + eyeHole(112, 52, shp, true); }
+  // fissure dorée (kintsugi)
+  let crack = `M${(84 + R() * 20).toFixed(1)} ${(26 + R() * 6).toFixed(1)}`; let x = 0, y = 0;
+  for (let i = 0; i < 5; i++) crack += ` l${((R() - .5) * 14).toFixed(1)} ${(6 + R() * 6).toFixed(1)}`;
+  s += `<path d="${crack}" stroke="#e8c46a" stroke-width="1.3" fill="none" stroke-linejoin="round"/><path d="${crack}" stroke="#fff3c4" stroke-width=".4" fill="none"/>`;
+  // coulures d'encre
+  s += `<path d="M90 84 Q91 92 90 98 Q89 92 88 86Z M110 84 Q111 94 110 102 Q109 94 108 86Z" fill="#120c1a"/>`;
+  return s;
+}
+
+function portraitSVG(c, o = {}) {
+  const id = "p" + (++SVGN);
+  const L = c.L, R = rng(hash(c.id + "draw")), sil = !!o.sil;
+  let s = `<svg viewBox="0 0 200 125" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">`;
+  s += bgSVG(c, id, R, sil);
+  if (!sil) s += auraSVG(L, id, c.r, R);
+  s += `<g transform="translate(100 125) scale(1.16) translate(-100 -122)">`;
+  if (c.f === "m") s += monsterSVG(c, L, id, R, sil);
+  else {
+    const hair = sil ? OUT : L.hair, hi = sil ? null : shade(L.hair, .45);
+    s += weaponSVG(L, c.r, sil) + hairBack(L, R, hair, OUT) + faceSVG(L, id, c.r, sil) + bodySVG(L, c, sil) + headSVG(L, id, c.r, sil) + hairFront(L, R, hair, OUT, hi) + accSVG(L, sil);
+  }
+  s += `</g>`;
+  s += frontFX(L, c, R, sil);
+  if (!sil) s += particles(L, c.r, R);
+  return s + "</svg>";
+}
+const FAC_ICON = {
+  v: `<svg viewBox="0 0 20 20"><path d="M10 1 L10 4" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="4" width="6" height="2" rx=".6" fill="currentColor"/><ellipse cx="10" cy="11" rx="5" ry="5.4" fill="currentColor" opacity=".9"/><rect x="7" y="16" width="6" height="2" rx=".6" fill="currentColor"/></svg>`,
+  m: `<svg viewBox="0 0 20 20"><path d="M3 8 C3 3 7 1.5 10 1.5 C13 1.5 17 3 17 8 C17 13 13 17.5 10 18.5 C7 17.5 3 13 3 8Z" fill="currentColor"/><path d="M5.5 8 Q7.5 6 9 8 Q7.5 9.5 5.5 8Z M14.5 8 Q12.5 6 11 8 Q12.5 9.5 14.5 8Z" fill="#000"/></svg>`,
+  l: `<svg viewBox="0 0 20 20"><path d="M12 2 A8 8 0 1 0 18 13 A6.4 6.4 0 1 1 12 2Z" fill="currentColor"/></svg>`,
+  e: `<svg viewBox="0 0 20 20"><path d="M11 1 L4 11 H9 L8 19 L16 8 H11Z" fill="currentColor"/></svg>`
+};
+
+const ALLC = ALL;
 /* ============================ Sauvegarde ============================ */
 const LS_KEY = "ombrelune-collection-v1";
-function fresh() { return {v: 1, rev: 0, coins: START_COINS, owned: {}, packs: 0, pity: 0, nextFree: 0, lastDaily: "", bonus: {}, best: "", made: Date.now()}; }
-function normalize(x) { const f = fresh(); if (!x || typeof x !== "object") return f; return Object.assign(f, x, {owned: Object.assign({}, x.owned || {}), bonus: Object.assign({}, x.bonus || {})}); }
+function fresh() { return {v: 2, rev: 0, coins: START_COINS, owned: {}, packs: 0, pity: 0, nextFree: 0, lastDaily: "", bonus: {}, best: "", made: Date.now()}; }
+function normalize(x) {
+  const f = fresh(); if (!x || typeof x !== "object") return f;
+  const n = Object.assign(f, x, {owned: Object.assign({}, x.owned || {}), bonus: Object.assign({}, x.bonus || {})});
+  if ((x.v || 1) < 2) {
+    const old = Object.keys(n.owned).length;
+    n.coins += old * 25; n.owned = {}; n.bonus = {}; n.best = ""; n.pity = 0; n.v = 2; n.migrated = old;
+  }
+  for (const id of Object.keys(n.owned)) if (!CARDS[id]) delete n.owned[id];
+  if (n.best && !CARDS[n.best]) n.best = "";
+  return n;
+}
 let S = (() => { try { return normalize(JSON.parse(localStorage.getItem(LS_KEY))); } catch { return fresh(); } })();
 let dbDoc = null, writing = false, pending = false, saveTimer = 0, syncMode = "local";
 
@@ -604,24 +998,22 @@ function claimDaily() {
 /* ============================ Rendu des cartes ============================ */
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 function cardHTML(c, o = {}) {
-  const E = ELEM[c.el], a = c.art;
-  const missing = o.missing;
-  const st = `--ea:${E.ea};--eb:${E.eb};--sky1:${E.sky1};--sky2:${E.sky2};--glow:${E.glow};--sx:${a.sx}%;--sy:${a.sy}%;--ss:${a.ss}cqw;--st1:${a.st1};--st2:${a.st2};--h1:${a.h1}%;--h2:${a.h2}%`;
+  const F = FAC[c.f], missing = o.missing, s = SER[c.series];
   const cls = ["tc", "r-" + c.r, o.foil && !missing ? "foil" : "", missing ? "missing" : "", o.live ? "live" : ""].join(" ");
-  const s = SER[c.series];
-  const num = c.r === "M" ? `${String(c.no).padStart(3, "0")}/${String(s.main).padStart(3, "0")}` : `${String(c.no).padStart(3, "0")}/${String(s.main).padStart(3, "0")}`;
-  return `<div class="${cls}" style="${st}"><div class="face"><div class="inner">
-    <div class="hd"><span class="nm ${c.name.length > 19 ? "long" : ""}">${missing ? "???" : esc(c.name)}</span><span class="es">${E.s}</span></div>
-    <div class="art">${"LM".includes(c.r) ? `<div class="rays"></div>` : ""}<div class="halo"></div><div class="ground"></div><div class="em">${c.em}</div></div>
-    <div class="typ"><span>${esc(c.type)} · ${E.n}</span><span class="gem g-${c.r}" title="${RAR[c.r].n}">${RAR[c.r].g}</span></div>
-    <div class="flv">${missing ? "Carte non découverte. Ouvrez des boosters " + esc(s.name) + " pour la trouver." : esc(c.flavor)}</div>
-    <div class="ft"><span class="st"><span>⚔ ${c.atk}</span><span>🛡 ${c.def}</span></span><span class="no">${c.series} ${num}</span></div>
+  const num = `${String(c.no).padStart(3, "0")}/${String(s.main).padStart(3, "0")}`;
+  return `<div class="${cls}" style="--ea:${F.ea};--eb:${F.eb}"><div class="face"><div class="inner">
+    <div class="hd"><span class="nm ${c.name.length > 17 ? "long" : ""}">${missing ? "???" : esc(c.name)}</span><span class="es" title="${F.n}">${FAC_ICON[c.f]}</span></div>
+    <div class="art">${portraitSVG(c, {sil: missing})}</div>
+    <div class="typ"><span>${missing ? F.n : esc(c.title)}</span><span class="gem g-${c.r}" title="${RAR[c.r].n}">${RAR[c.r].g}</span></div>
+    <div class="flv">${missing ? "Carte non découverte. Ouvrez des boosters « " + esc(s.name) + " » pour la trouver." : "« " + esc(c.flavor) + " »"}</div>
+    <div class="ft"><span class="st"><span>ATQ ${c.atk}</span><span>DÉF ${c.def}</span></span><span class="no">${c.series} ${num}</span></div>
   </div></div></div>`;
 }
-function backHTML(aura) { return `<div class="tc"><div class="back ${aura ? "aura-" + aura : ""}"><span class="mo">🌙</span><span class="wd">Ombrelune</span></div></div>`; }
+function backHTML(aura) { return `<div class="tc"><div class="back ${aura ? "aura-" + aura : ""}"><span class="mo">${FAC_ICON.l}</span><span class="wd">Ombrelune</span></div></div>`; }
 function packHTML(s, w) {
+  const hero = s.cards.find(c => c.name === s.hero) || s.cards[s.cards.length - 1];
   return `<div class="pk" style="${w ? `--pw:${w};` : ""}--p1:${s.p1};--p2:${s.p2};--pa:${s.pa}"><div class="pack"><span class="tear"></span>
-    <span class="logo">Ombrelune</span><span class="emb">${s.emblem}</span><span class="pn">${esc(s.name)}</span><span class="six">6 cartes</span></div></div>`;
+    <span class="logo">Ombrelune</span><span class="win">${portraitSVG(hero)}</span><span class="pn">${esc(s.name)}</span><span class="six">6 cartes</span></div></div>`;
 }
 
 /* ============================ Vues ============================ */
@@ -646,7 +1038,7 @@ function renderShop() {
   const totalHave = ALL.filter(c => ownedAny(c.id)).length;
   $view.innerHTML = `
     <div><div class="eyebrow">Boutique des portails</div><h1>Ouvrez des boosters</h1>
-      <p class="lead">Chaque booster contient 6 cartes, dont au moins une Rare ou mieux. ${fmt(ALL.length)} cartes à collectionner, chacune existe aussi en version brillante.</p></div>
+      <p class="lead">Veilleurs, ombres masquées, chevaliers de la Lune et humains éveillés : ${fmt(ALL.length)} personnages à collectionner, chacun en version normale et brillante. Chaque booster contient 6 cartes, dont au moins une Rare.</p></div>
     <div class="banner"><span style="font-size:28px">🎁</span><div class="t">${fl ? `<b>Booster gratuit dans ${fmtDur(fl)}</b><small>Un booster offert toutes les 4 heures.</small>` : `<b>Un booster gratuit vous attend</b><small>Choisissez sa série ci-dessous.</small>`}</div></div>
     <div class="shop">${SERIES.map(s => {
       const p = seriesProgress(s.code);
@@ -859,7 +1251,7 @@ function drawDetail() {
       </div>
       <div class="dinfo">
         <h2>${have ? esc(c.name) : "Carte inconnue"}</h2>
-        <div class="meta"><span class="gem g-${c.r}">${RAR[c.r].g} ${RAR[c.r].n}</span><span>${ELEM[c.el].s} ${ELEM[c.el].n}</span>${have ? `<span>${esc(c.type)}</span><span>⚔ ${c.atk} · 🛡 ${c.def}</span>` : ""}</div>
+        <div class="meta"><span class="gem g-${c.r}">${RAR[c.r].g} ${RAR[c.r].n}</span><span>${FAC[c.f].n}</span>${have ? `<span>${esc(c.title)}</span><span>ATQ ${c.atk} · DÉF ${c.def}</span>` : ""}</div>
         ${have ? `<div class="own"><span>Normale ×${o[0]}</span><span>✦ Brillante ×${o[1]}</span></div>` : `<p class="note">Vous ne possédez pas encore cette carte. Trouvez-la dans un booster ${esc(s.name)} ou fabriquez-la.</p>`}
         <div class="acts">
           ${have && o[0] > 0 && o[1] > 0 ? `<button class="btn sm ghost" data-act="togglefoil">${showFoil ? "Voir la version normale" : "Voir la version brillante"}</button>` : ""}
@@ -961,6 +1353,7 @@ function route() {
 addEventListener("hashchange", route);
 setInterval(() => { if (view === "boutique" && !OPEN && !DET) renderShop(); }, 30000);
 
+if (S.migrated !== undefined && !S.migNoted) { S.migNoted = true; save(); setTimeout(() => toast(`Nouvel univers ! Vos ${S.migrated} anciennes cartes ont été converties en ${fmt(S.migrated * 25)} 🌙`), 600); }
 claimDaily();
 route();
 connectCloud();
